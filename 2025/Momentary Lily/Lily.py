@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# VSPipe Lily.py -c y4m - | x264_x64 --threads 20 --demuxer y4m --output-csp i420 --output-depth 8 --crf 19 --preset veryslow --keyint 360 --min-keyint 1 --ref 13 --deblock 1:1 --rc-lookahead 250 --aq-mode 3 --aq-strength 0.8 --qcomp 0.75 --fade-compensate 0.33 --psy-rd 0.4:0.15 --colorprim bt709 --transfer bt709 --colormatrix bt709 --output "../Lily new.264" -
-
 import os
 import sys
 sys.path.insert(0, os.getcwd())
