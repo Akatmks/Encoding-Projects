@@ -63,6 +63,57 @@ function encode_h264
 end
 
 # $argv[1]: Episode number "01"
+function prepare_av1
+    set episode $argv[1]
+    if test -z $episode
+        set_color red ; echo "[prepare_av1] Episode number not provided." ; set_color normal
+        return 126
+    end
+
+    set prefix ..
+
+    set source_file (find $prefix -regex "$prefix/\[SubsPlease\] Momentary Lily - $episode (1080p) \[[0-9A-F]+\].mkv")
+    if not test -e $source_file
+        set_color red ; echo "[prepare_av1] Source file not found." ; set_color normal
+        return 126
+    end
+    
+    set_color -o white ; echo "[prepare_av1] Preparing Lily episode $episode..." ; set_color normal
+    
+    set temp_dir "$prefix/Lily $episode.prepare.tmp"
+    set prezone_scenes_file "$prefix/Lily $episode.prezone.scenes.json"
+    if test -e $temp_dir
+        rm -r $temp_dir
+    end
+    if test -e $prezone_scenes_file
+        rm $prezone_scenes_file
+    end
+    av1an -y --max-tries 10 --temp $temp_dir --verbose --log-level debug -i $source_file --sc-only --scenes $prezone_scenes_file --split-method av-scenechange --sc-method standard --extra-split 360 --min-scene-len 6
+    or return $status
+    if not test -e $scenes_file
+        set_color red ; echo "[prepare_av1] Generated prezone scenes file missing. Exiting..." ; set_color normal
+        return 126
+    end
+    
+    set zones_file "$prefix/Lily $episode.zones.txt"
+    SOURCE_FILE=$source_file SCENES_FILE=$prezone_scenes_file ZONES_FILE=$zones_file python "Lily.av1.zones.py"
+    if not test -e $zones_file
+        set_color red ; echo "[prepare_av1] Generated zones file missing. Exiting..." ; set_color normal
+        return 126
+    end
+
+    set scenes_file "$prefix/Lily $episode.scenes.json"
+    if test -e $scenes_file
+        rm $scenes_file
+    end
+    av1an -y --max-tries 10 --temp $temp_dir --verbose --log-level debug -i $source_file --sc-only --scenes $scenes_file --split-method av-scenechange --sc-method standard --extra-split 360 --min-scene-len 6 --encoder svt-av1 --zones $zones_file
+    if not test -e $scenes_file
+        set_color red ; echo "[prepare_av1] Generated scenes file missing. Exiting..." ; set_color normal
+        return 126
+    end
+end
+
+# $argv[1]: Episode number "01"
 function encode_av1
     set episode $argv[1]
     if test -z $episode
@@ -78,21 +129,21 @@ function encode_av1
         return 126
     end
     
+    set scenes_file "$prefix/Lily $episode.scenes.json"
+    if not test -e $scenes_file
+        set_color red ; echo "[encode_av1] Scenes file not found." ; set_color normal
+        return 126
+    end
+    
     set_color -o white ; echo "[encode_av1] Encoding Lily episode $episode..." ; set_color normal
     
     set video_file "$prefix/Lily $episode.mkv"
     set temp_dir "$prefix/Lily $episode.tmp"
-    set scenes_file "$prefix/Lily $episode.scenes.json"
     set keyframes_file "$prefix/Lily $episode.keyframes.txt"
-    if not test -e $scenes_file
-        av1an -y --max-tries 10 --temp $temp_dir --verbose --log-level debug -i $source_file --sc-only --scenes $scenes_file --split-method av-scenechange --sc-method standard --extra-split 360 --min-scene-len 6
-        or return $status
+    if test -e $temp_dir
+        set_color -o yellow ; echo "[encode_av1] Temp dir already exists. Continuing..." ; set_color normal
     end
-    if not test -e $scenes_file
-        set_color red ; echo "[encode_av1] Generated scenes file missing. Exiting..." ; set_color normal
-        return 126
-    end
-    SOURCE_FILE=$source_file KEYFRAMES_FILE=$keyframes_file av1an -y --max-tries 10 --temp $temp_dir --resume --verbose --log-level debug -i "Lily.av1.py" -o $video_file --scenes $scenes_file --chunk-method bestsource --encoder svt-av1 --pix-format yuv420p10le --workers 3 --video-params "--lp 6 --keyint -1 --lookahead 120 --preset 1 --tune 3 --sharpness 0 --rc 0 --crf 28 --aq-mode 2 --qm-min 8 --film-grain 2 --film-grain-denoise 0 --enable-variance-boost 0 --enable-tf 2 --enable-dlf 2 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.3 --spy-rd 1 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0" --concat mkvmerge
+    SOURCE_FILE=$source_file KEYFRAMES_FILE=$keyframes_file av1an -y --max-tries 10 --temp $temp_dir --resume --verbose --log-level debug -i "Lily.av1.py" -o $video_file --scenes $scenes_file --chunk-method bestsource --encoder svt-av1 --pix-format yuv420p10le --workers 3 --video-params "--lp 6 --keyint -1 --lookahead 120 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0" --concat mkvmerge
     or return $status
     if not test -e $video_file
         set_color red ; echo "[encode_av1] Encoded video file missing. Exiting..." ; set_color normal
