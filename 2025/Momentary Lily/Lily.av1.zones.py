@@ -73,7 +73,7 @@ with zones_file.open("w") as f:
     weak_noise_total = 0
     weak_noise_count = 0
     for fno, frame in enumerate(noise.frames(close=True)):
-        print(f"Zoning Frame {fno} ({fno / (time() - start):.02f} fps)...", end="\r")
+        print(f"Zoning Frame {fno} ({fno / (time() - start):.02f} fps)...", end="\r", file=sys.stderr)
         strong_noise_total += frame.props["StrongNoiseAverage"]
         strong_noise_count += 1
         weak_noise_total += frame.props["WeakNoiseAverage"]
@@ -98,4 +98,4 @@ with zones_file.open("w") as f:
             strong_noise_total = 0
             strong_noise_count = 0
             scenes_head += 1
-    print()
+    print(file=sys.stderr)
