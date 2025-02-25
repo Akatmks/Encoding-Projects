@@ -94,7 +94,7 @@ function prepare_av1
         set_color red ; echo "[prepare_av1] Generated prezone scenes file missing. Exiting..." ; set_color normal
         return 126
     end
-    
+
     set zones_file "$prefix/Lily $episode.zones.txt"
     SOURCE_FILE=$source_file SCENES_FILE=$prezone_scenes_file ZONES_FILE=$zones_file python "Lily.av1.zones.py"
     if not test -e $zones_file

@@ -85,13 +85,13 @@ with zones_file.open("w") as f:
 
             # Strong boost
             if strong_noise_average < 0.03 and weak_noise_average < 0.06:
-                f.write(f"{scenes["scenes"][scenes_head]["start_frame"]} {scenes["scenes"][scenes_head]["end_frame"]} svt-av1 --preset 1 --tune 3 --rc 0 --crf 21 --aq-mode 2 --qm-min 8 --sharpness 1 --film-grain 0 --enable-variance-boost 1 --variance-boost-strength 3 --variance-octile 4 --enable-tf 2 --enable-dlf 1 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.0 --spy-rd 1\n")
+                f.write(f"{scenes["scenes"][scenes_head]["start_frame"]} {scenes["scenes"][scenes_head]["end_frame"]} svt-av1 --preset 1 --tune 3 --rc 0 --crf 21.5 --aq-mode 2 --qm-min 8 --sharpness 1 --film-grain 0 --enable-variance-boost 1 --variance-boost-strength 3 --variance-octile 4 --enable-tf 2 --enable-dlf 1 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.0 --spy-rd 1\n")
             # Weak boost
             elif strong_noise_average < 0.05 and weak_noise_average < 0.11:
-                f.write(f"{scenes["scenes"][scenes_head]["start_frame"]} {scenes["scenes"][scenes_head]["end_frame"]} svt-av1 --preset 1 --tune 3 --rc 0 --crf 27 --aq-mode 2 --qm-min 8 --sharpness 0 --film-grain 1 --film-grain-denoise 0 --enable-variance-boost 1 --variance-boost-strength 1 --variance-octile 6 --enable-tf 2 --enable-dlf 1 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.4 --spy-rd 1\n")
+                f.write(f"{scenes["scenes"][scenes_head]["start_frame"]} {scenes["scenes"][scenes_head]["end_frame"]} svt-av1 --preset 1 --tune 3 --rc 0 --crf 27 --aq-mode 2 --qm-min 8 --sharpness 0 --film-grain 2 --film-grain-denoise 0 --enable-variance-boost 1 --variance-boost-strength 1 --variance-octile 6 --enable-tf 2 --enable-dlf 1 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.3 --spy-rd 1\n")
             # Actually a drop
             else:
-                f.write(f"{scenes["scenes"][scenes_head]["start_frame"]} {scenes["scenes"][scenes_head]["end_frame"]} svt-av1 --preset 1 --tune 3 --rc 0 --crf 30 --aq-mode 2 --qm-min 8 --sharpness 0 --film-grain 2 --film-grain-denoise 0 --enable-variance-boost 0 --enable-tf 2 --enable-dlf 1 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.8 --spy-rd 1\n")
+                f.write(f"{scenes["scenes"][scenes_head]["start_frame"]} {scenes["scenes"][scenes_head]["end_frame"]} svt-av1 --preset 1 --tune 3 --rc 0 --crf 30 --aq-mode 2 --qm-min 8 --sharpness 0 --film-grain 2 --film-grain-denoise 0 --enable-variance-boost 0 --enable-tf 2 --enable-dlf 1 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.9 --spy-rd 1\n")
 
             weak_noise_total = 0
             weak_noise_count = 0
