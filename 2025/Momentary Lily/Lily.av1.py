@@ -26,10 +26,6 @@ if not frame_diff_file.exists():
 strong_noise_file = SPath(os.environ["STRONG_NOISE_FILE"])
 if not strong_noise_file.exists():
     raise FileNotFoundError("Strong noise file not found.")
-subtitle_file = SPath(os.environ["SUBTITLE_FILE"])
-if not subtitle_file.exists():
-    raise FileNotFoundError("Subtitle file not found.")
-fonts_dir = SPath(os.environ["FONTS_DIR"])
 
 src = core.lsmas.LWLibavSource(str(source_file))
 src = mvsfunc.Depth(src, 16)
