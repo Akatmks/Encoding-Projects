@@ -9,6 +9,7 @@ import vsdehalo
 import EoEfunc
 import dfttest2
 from functools import partial
+import havsfunc
 import vsmasktools
 import mvsfunc
 import vsTAAmbk
@@ -104,12 +105,12 @@ aa = core.std.ShufflePlanes(clips=[aa, sec_1], planes=[0, 1, 2], colorfamily=vs.
 
 cat_2 = aa
 
-def FrameEval(n, cat_1, cat_2, frame_diff):
+def FrameEval(n, cat_1, cat_2, frame_diff, strong_noise):
     if frame_diff[n] >= 0.07 or strong_noise[n] >= 0.09:
         return cat_1
     else:
         return cat_2
-sec_2 = core.std.FrameEval(src, partial(FrameEval, cat_1=cat_1, cat_2=cat_2, frame_diff=frame_diff))
+sec_2 = core.std.FrameEval(src, partial(FrameEval, cat_1=cat_1, cat_2=cat_2, frame_diff=frame_diff, strong_noise=strong_noise))
 
 
 out = mvsfunc.Depth(sec_2, 10)
