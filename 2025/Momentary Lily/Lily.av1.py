@@ -7,103 +7,110 @@ sys.path.insert(0, os.getcwd())
 import vsdenoise
 import vsdehalo
 import EoEfunc
+import dfttest2
 from functools import partial
-import havsfunc
 import vsmasktools
-import muvsfunc
 import mvsfunc
 import vsTAAmbk
 import vstools
 from vstools import core, SPath, vs
 
+
 source_file = SPath(os.environ["SOURCE_FILE"])
 if not source_file.exists():
     raise FileNotFoundError("Source file not found.")
-keyframes_file = SPath(os.environ["KEYFRAMES_FILE"])
+frame_diff_file = SPath(os.environ["FRAME_DIFF_FILE"])
+if not frame_diff_file.exists():
+    raise FileNotFoundError("Frame diff file not found.")
+strong_noise_file = SPath(os.environ["STRONG_NOISE_FILE"])
+if not strong_noise_file.exists():
+    raise FileNotFoundError("Strong noise file not found.")
+subtitle_file = SPath(os.environ["SUBTITLE_FILE"])
+if not subtitle_file.exists():
+    raise FileNotFoundError("Subtitle file not found.")
+fonts_dir = SPath(os.environ["FONTS_DIR"])
 
 src = core.lsmas.LWLibavSource(str(source_file))
 src = mvsfunc.Depth(src, 16)
 
-if not keyframes_file.exists():
-    vstools.Keyframes.from_clip(src).to_file(keyframes_file)
-keyframes = vstools.Keyframes.from_file(keyframes_file)
+# This file is biased in Lily.prepare.py
+with frame_diff_file.open("r") as f:
+    frame_diff = f.read()
+    frame_diff = [float(line) for line in frame_diff.splitlines()]
 
-y = vstools.plane(src, 0)
-diffnext = core.std.PlaneStats(y, y.std.DeleteFrames([0, 1, 2]), prop="DBNext")
-diffprev = core.std.PlaneStats(y, y[0] * 3 + y, prop="DBPrev")
+with strong_noise_file.open("r") as f:
+    strong_noise = f.read()
+    strong_noise = [float(line) for line in strong_noise.splitlines()]
 
-class SceneStats(vstools.SceneBasedDynamicCache):
-    class cache(dict[int, tuple[float, float, float]]):
-        def __init__(self, clip: vs.VideoNode, keyframes: vstools.Keyframes) -> None:
-            self.clip = clip
-            self.keyframes = keyframes
-
-        def __getitem__(self, idx: int) -> tuple[float, float, float]:
-            if idx not in self:
-                frame_range = self.keyframes.scenes[idx]
-                cut_clip = self.clip[frame_range.start:frame_range.stop]
-
-                min_max_avg = vstools.clip_data_gather(cut_clip, None, lambda n, f: (float(f.props[f"DBFrameDiff"]),))
-                frame = [x[0] for x in min_max_avg]
-                self[idx] = (min(frame), max(frame), sum(frame) / len(frame))
-
-            return super().__getitem__(idx)
-
-    def __init__(self, clip: vs.VideoNode, keyframes: vstools.Keyframes | str, cache_size: int = 5) -> None:
-        super().__init__(clip, keyframes, cache_size)
-
-        self.prop_keys = tuple(f"DBFrameDiff{key}" for key in ("Min", "Max", "Average"))
-        self.scene_avgs = self.__class__.cache(self.clip, self.keyframes)
-
-    def get_clip(self, key: int) -> vs.VideoNode:
-        return self.clip.std.SetFrameProps(**dict(zip(self.prop_keys, self.scene_avgs[key])))
-
-avgdiff = core.akarin.PropExpr([diffnext, diffprev], lambda: dict(DBFrameDiff="x.DBNextDiff y.DBPrevDiff min"))
-avgdiff = SceneStats.from_clip(avgdiff, keyframes)
-eval_1 = avgdiff
 
 db = vsdenoise.dpir.DEBLOCK(src, strength=16)
-dn = db.dfttest.DFTTest(slocation=[0.0,5.0 , 0.4,5.0 , 0.6,0.5 , 1.0,0.5], planes=[0], tbsize=1)
-dn = dn.dfttest.DFTTest(slocation=[0.0,5.0 , 0.4,5.0 , 0.6,2.0 , 1.0,2.0], planes=[1, 2], tbsize=1)
+dn = dfttest2.DFTTest(db, slocation=[0.0,5.0 , 0.4,5.0 , 0.6,0.5 , 1.0,0.5], planes=[0], tbsize=1)
+dn = dfttest2.DFTTest(dn, slocation=[0.0,5.0 , 0.4,5.0 , 0.6,2.0 , 1.0,2.0], planes=[1, 2], tbsize=1)
 cat_1 = dn
 
 smd = havsfunc.SMDegrain(src, tr=3, thSAD=35, thSADC=0)
 ref = smd.dfttest.DFTTest(slocation=EoEfunc.freq._slocation, planes=[0], **EoEfunc.freq._dfttest_args)
+dn = vsdenoise.BM3D(smd, sigma=[1.0, 0], radius=3, ref=ref).final()
+dn = dfttest2.DFTTest(dn, sigma=2, planes=[1, 2], tbsize=1)
+cat_21 = dn
+
+smd = havsfunc.SMDegrain(src, tr=3, thSAD=35, thSADC=0)
+ref = smd.dfttest.DFTTest(slocation=EoEfunc.freq._slocation, planes=[0], **EoEfunc.freq._dfttest_args)
 dn = vsdenoise.BM3D(smd, sigma=[0.6, 0], radius=3, ref=ref).final()
-dn = dn.dfttest.DFTTest(sigma=2, planes=[1, 2], tbsize=1)
-cat_2 = dn
+dn = dfttest2.DFTTest(dn, sigma=2, planes=[1, 2], tbsize=1)
+cat_22 = dn
 
-def FrameEval(n, f, cat_1, cat_2):
-    if f.props["DBFrameDiffAverage"] >= 0.07:
+smd = havsfunc.SMDegrain(src, tr=3, thSAD=35, thSADC=0)
+ref = smd.dfttest.DFTTest(slocation=EoEfunc.freq._slocation, planes=[0], **EoEfunc.freq._dfttest_args)
+dn = vsdenoise.BM3D(smd, sigma=[0.3, 0], radius=3, ref=ref).final()
+dn = dfttest2.DFTTest(dn, sigma=2, planes=[1, 2], tbsize=1)
+cat_23 = dn
+
+def FrameEval(n, cat_1, cat_21, cat_22, cat_23, frame_diff, strong_noise):
+    if frame_diff[n] >= 0.08:
         return cat_1
+    elif frame_diff[n] >= 0.04 and strong_noise[n] >= 0.10:
+        return cat_21
+    elif strong_noise[n] >= 0.05:
+        return cat_22
     else:
-        return cat_2
+        return cat_23
+sec_1 = core.std.FrameEval(src, partial(FrameEval, cat_1=cat_1, cat_21=cat_21, cat_22=cat_22, cat_23=cat_23, frame_diff=frame_diff, strong_noise=strong_noise))
 
-sec_1 = core.std.FrameEval(src, partial(FrameEval, cat_1=cat_1, cat_2=cat_2), prop_src=[eval_1])
 
-y = vstools.plane(sec_1, 0)
-mask0 = vsTAAmbk.mask_prewitt(mthr=2500)(y)
+y = vstools.get_y(sec_1)
+mask0 = vsTAAmbk.mask_prewitt(mthr=3000)(y)
 mask1 = vsmasktools.luma_credit_mask(y, thr=0.88)
 y = y.std.Invert()
 mask2 = vsmasktools.luma_credit_mask(y, thr=0.88)
 mask = core.akarin.Expr([mask0, mask1, mask2], "x y z + -")
-y = vstools.plane(sec_1, 0)
-aa = vsTAAmbk.TAAmbk(y, aatype="Eedi2", sharp=-0.15, dark=0.15, mclip=mask)
+
+dh = vsdehalo.edge_cleaner(sec_1)
+dh = mvsfunc.LimitFilter(dh, sec_1, thr=1.9, elast=4)
+
+y = vstools.get_y(dh)
+aa = vsTAAmbk.TAAmbk(y, aatype="Eedi2", dark=0.12, mclip=mask)
+aaf = y.fmtc.resample(kernel="gaussian", a1=85, fh=0.80, fv=0.80)
+aa = core.akarin.Expr([y, aa, aaf, mask], "x y z - 1.2 * a * 65536 / +")
+aa = core.std.ShufflePlanes(clips=[aa, dh], planes=[0, 1, 2], colorfamily=vs.YUV)
+
+cat_1 = aa
+
+y = vstools.get_y(sec_1)
+aa = vsTAAmbk.TAAmbk(y, aatype="Eedi2", dark=0.12, mclip=mask)
+aaf = y.fmtc.resample(kernel="gaussian", a1=85, fh=0.80, fv=0.80)
+aa = core.akarin.Expr([y, aa, aaf, mask], "x y z - 0.5 * a * 65536 / +")
 aa = core.std.ShufflePlanes(clips=[aa, sec_1], planes=[0, 1, 2], colorfamily=vs.YUV)
 
-dh = vsdehalo.fine_dehalo(aa, brightstr=0.7)
-dh = mvsfunc.LimitFilter(dh, aa, thr=1.8, elast=4)
-cat_1 = dh
+cat_2 = aa
 
-cat_2 = sec_1
-
-def FrameEval(n, f, cat_1, cat_2):
-    if f.props["DBFrameDiffAverage"] >= 0.05:
+def FrameEval(n, cat_1, cat_2, frame_diff):
+    if frame_diff[n] >= 0.07 or strong_noise[n] >= 0.09:
         return cat_1
     else:
         return cat_2
+sec_2 = core.std.FrameEval(src, partial(FrameEval, cat_1=cat_1, cat_2=cat_2, frame_diff=frame_diff))
 
-sec_2 = core.std.FrameEval(src, partial(FrameEval, cat_1=cat_1, cat_2=cat_2), prop_src=[eval_1])
 
 out = mvsfunc.Depth(sec_2, 10)
 out.set_output()
