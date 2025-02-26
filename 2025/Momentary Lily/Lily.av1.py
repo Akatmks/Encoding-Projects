@@ -41,26 +41,26 @@ with strong_noise_file.open("r") as f:
 
 
 db = vsdenoise.dpir.DEBLOCK(src, strength=16)
-dn = dfttest2.DFTTest(db, slocation=[0.0,5.0 , 0.4,5.0 , 0.6,0.5 , 1.0,0.5], planes=[0], tbsize=1)
-dn = dfttest2.DFTTest(dn, slocation=[0.0,5.0 , 0.4,5.0 , 0.6,2.0 , 1.0,2.0], planes=[1, 2], tbsize=1)
+dn = dfttest2.DFTTest(db, slocation=[0.0,5.0 , 0.4,5.0 , 0.6,0.5 , 1.0,0.5], planes=[0], tbsize=1, backend=dfttest2.Backend.CPU)
+dn = dfttest2.DFTTest(dn, slocation=[0.0,5.0 , 0.4,5.0 , 0.6,2.0 , 1.0,2.0], planes=[1, 2], tbsize=1, backend=dfttest2.Backend.CPU)
 cat_1 = dn
 
 smd = havsfunc.SMDegrain(src, tr=3, thSAD=35, thSADC=0)
 ref = smd.dfttest.DFTTest(slocation=EoEfunc.freq._slocation, planes=[0], **EoEfunc.freq._dfttest_args)
 dn = vsdenoise.BM3D(smd, sigma=[1.0, 0], radius=3, ref=ref).final()
-dn = dfttest2.DFTTest(dn, sigma=2, planes=[1, 2], tbsize=1)
+dn = dfttest2.DFTTest(dn, sigma=2, planes=[1, 2], tbsize=1, backend=dfttest2.Backend.CPU)
 cat_21 = dn
 
 smd = havsfunc.SMDegrain(src, tr=3, thSAD=35, thSADC=0)
 ref = smd.dfttest.DFTTest(slocation=EoEfunc.freq._slocation, planes=[0], **EoEfunc.freq._dfttest_args)
 dn = vsdenoise.BM3D(smd, sigma=[0.6, 0], radius=3, ref=ref).final()
-dn = dfttest2.DFTTest(dn, sigma=2, planes=[1, 2], tbsize=1)
+dn = dfttest2.DFTTest(dn, sigma=2, planes=[1, 2], tbsize=1, backend=dfttest2.Backend.CPU)
 cat_22 = dn
 
 smd = havsfunc.SMDegrain(src, tr=3, thSAD=35, thSADC=0)
 ref = smd.dfttest.DFTTest(slocation=EoEfunc.freq._slocation, planes=[0], **EoEfunc.freq._dfttest_args)
 dn = vsdenoise.BM3D(smd, sigma=[0.3, 0], radius=3, ref=ref).final()
-dn = dfttest2.DFTTest(dn, sigma=2, planes=[1, 2], tbsize=1)
+dn = dfttest2.DFTTest(dn, sigma=2, planes=[1, 2], tbsize=1, backend=dfttest2.Backend.CPU)
 cat_23 = dn
 
 def FrameEval(n, cat_1, cat_21, cat_22, cat_23, frame_diff, strong_noise):
