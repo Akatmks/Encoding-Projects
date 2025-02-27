@@ -89,7 +89,7 @@ function encode_av1
     
     set_color -o white ; echo "[encode_av1] Encoding Lily episode $episode..." ; set_color normal
     
-    set_color -o magenta ; echo "[encode_av1] Encoding server started for episode $episode..." ; set_color normal
+    set_color -o magenta ; echo "[encode_av1] Encoding server starting for episode $episode..." ; set_color normal
     EPISODE=$episode python Lily.server.py &
     
     set video_file "$prefix/Lily $episode.mkv"
