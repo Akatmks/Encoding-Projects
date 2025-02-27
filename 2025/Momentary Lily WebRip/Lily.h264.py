@@ -91,16 +91,16 @@ dh = vsdehalo.edge_cleaner(sec_1)
 dh = mvsfunc.LimitFilter(dh, sec_1, thr=1.9, elast=4)
 
 y = vstools.get_y(dh)
-aa = vsTAAmbk.TAAmbk(y, aatype="Eedi2", dark=0.12, mclip=mask)
+aa = vsTAAmbk.TAAmbk(y, aatype="Eedi2", dark=0.12, mclip=mask, cuda=True)
 aaf = y.fmtc.resample(kernel="gaussian", a1=85, fh=0.80, fv=0.80)
-aa = core.akarin.Expr([y, aa, aaf, mask], "x y z - 1.2 * a * 65536 / +")
+aa = core.akarin.Expr([y, aa, aaf, mask], "x y z - 1.1 * a * 65536 / +")
 aa = core.std.ShufflePlanes(clips=[aa, dh], planes=[0, 1, 2], colorfamily=vs.YUV)
 
 cat_1 = aa
 
 y = vstools.get_y(sec_1)
-aa = vsTAAmbk.TAAmbk(y, aatype="Eedi2", dark=0.12, mclip=mask)
-aaf = y.fmtc.resample(kernel="gaussian", a1=82, fh=0.80, fv=0.80)
+aa = vsTAAmbk.TAAmbk(y, aatype="Eedi2", dark=0.13, mclip=mask, cuda=True)
+aaf = y.fmtc.resample(kernel="gaussian", a1=90, fh=0.80, fv=0.80)
 aa = core.akarin.Expr([y, aa, aaf, mask], "x y z - 0.5 * a * 65536 / +")
 aa = core.std.ShufflePlanes(clips=[aa, sec_1], planes=[0, 1, 2], colorfamily=vs.YUV)
 
