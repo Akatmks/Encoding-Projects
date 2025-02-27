@@ -102,13 +102,13 @@ with zones_file.open("w") as zones:
 
                     # Strong boost
                     if strong_noise_scene_average < 0.03 and weak_noise_scene_average < 0.06:
-                        zones.write(f"{scenes["scenes"][scenes_head]["start_frame"]} {scenes["scenes"][scenes_head]["end_frame"]} svt-av1 --preset 1 --tune 3 --rc 0 --crf 21.5 --aq-mode 2 --qm-min 8 --sharpness 1 --film-grain 0 --enable-variance-boost 1 --variance-boost-strength 3 --variance-octile 4 --enable-tf 2 --enable-dlf 1 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.0 --spy-rd 1\n")
+                        zones.write(f"{scenes["scenes"][scenes_head]["start_frame"]} {scenes["scenes"][scenes_head]["end_frame"]} svt-av1 --keyint -1 --lookahead 120 --tile-columns 0 --tile-rows 0 --preset 1 --tune 3 --rc 0 --crf 21.5 --aq-mode 2 --qm-min 8 --sharpness 1 --film-grain 0 --enable-variance-boost 1 --variance-boost-strength 3 --variance-octile 4 --enable-tf 2 --enable-dlf 1 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.0 --spy-rd 1\n")
                     # Weak boost
                     elif strong_noise_scene_average < 0.05 and weak_noise_scene_average < 0.11:
-                        zones.write(f"{scenes["scenes"][scenes_head]["start_frame"]} {scenes["scenes"][scenes_head]["end_frame"]} svt-av1 --preset 1 --tune 3 --rc 0 --crf 27 --aq-mode 2 --qm-min 8 --sharpness 0 --film-grain 2 --film-grain-denoise 0 --enable-variance-boost 1 --variance-boost-strength 1 --variance-octile 6 --enable-tf 2 --enable-dlf 1 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.3 --spy-rd 1\n")
+                        zones.write(f"{scenes["scenes"][scenes_head]["start_frame"]} {scenes["scenes"][scenes_head]["end_frame"]} svt-av1 --keyint -1 --lookahead 120 --tile-columns 0 --tile-rows 0 --preset 1 --tune 3 --rc 0 --crf 27 --aq-mode 2 --qm-min 8 --sharpness 0 --film-grain 2 --film-grain-denoise 0 --enable-variance-boost 1 --variance-boost-strength 1 --variance-octile 6 --enable-tf 2 --enable-dlf 1 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.3 --spy-rd 1\n")
                     # Actually a drop
                     else:
-                        zones.write(f"{scenes["scenes"][scenes_head]["start_frame"]} {scenes["scenes"][scenes_head]["end_frame"]} svt-av1 --preset 1 --tune 3 --rc 0 --crf 30 --aq-mode 2 --qm-min 8 --sharpness 1 --film-grain 2 --film-grain-denoise 0 --enable-variance-boost 0 --enable-tf 2 --enable-dlf 1 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.9 --spy-rd 1\n")
+                        zones.write(f"{scenes["scenes"][scenes_head]["start_frame"]} {scenes["scenes"][scenes_head]["end_frame"]} svt-av1 --keyint -1 --lookahead 120 --tile-columns 0 --tile-rows 0 --preset 1 --tune 3 --rc 0 --crf 30 --aq-mode 2 --qm-min 8 --sharpness 1 --film-grain 2 --film-grain-denoise 0 --enable-variance-boost 0 --enable-tf 2 --enable-dlf 1 --enable-cdef 1 --enable-restoration 1 --psy-rd 1.9 --spy-rd 1\n")
 
                     scenes_head += 1
                     weak_noise_scene_total = 0
@@ -129,5 +129,13 @@ with zones_file.open("w") as zones:
                     keyframes_head += 1
                     frame_diff_keyframe_total = 0
                     strong_noise_keyframe_total = 0
+                    
+            frame_diff_keyframe_count = collect.num_frames - keyframes[keyframes_head]
+            frame_diff_keyframe_average = frame_diff_keyframe_total / (frame_diff_keyframe_count - 4 if frame_diff_keyframe_count >= 8 else frame_diff_keyframe_count / 2)
+            strong_noise_keyframe_average = strong_noise_keyframe_total / (collect.num_frames - keyframes[keyframes_head])
+
+            for _ in range(keyframes[keyframes_head], collect.num_frames):
+                frame_diff.write(f"{frame_diff_keyframe_average:.06f}\n")
+                strong_noise.write(f"{strong_noise_keyframe_average:.06f}\n")
 
             print(file=sys.stderr)

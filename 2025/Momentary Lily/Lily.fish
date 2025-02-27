@@ -162,17 +162,36 @@ function encode_av1
     
     set_color -o white ; echo "[encode_av1] Encoding Lily episode $episode..." ; set_color normal
     
+    set_color -o magenta ; echo "[encode_av1] Encoding server started for episode $episode..." ; set_color normal
+    EPISODE=$episode python Lily.server.py &
+    
     set video_file "$prefix/Lily $episode.mkv"
     set temp_dir "$prefix/Lily $episode.tmp"
     if test -e $temp_dir
         set_color -o yellow ; echo "[encode_av1] Temp dir already exists. Continuing..." ; set_color normal
     end
-    SOURCE_FILE=$source_file FRAME_DIFF_FILE=$frame_diff_file STRONG_NOISE_FILE=$strong_noise_file av1an -y --max-tries 10 --temp $temp_dir --resume --verbose --log-level debug -i "Lily.av1.py" -o $video_file --scenes $scenes_file --chunk-method bestsource --encoder svt-av1 --pix-format yuv420p10le --workers 3 --video-params "--lp 6 --keyint -1 --lookahead 120 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0" --concat mkvmerge
+    EPISODE=$episode SOURCE_FILE=$source_file FRAME_DIFF_FILE=$frame_diff_file STRONG_NOISE_FILE=$strong_noise_file av1an -y --max-tries 10 --temp $temp_dir --resume --verbose --log-level debug -i "Lily.av1.py" -o $video_file --scenes $scenes_file --chunk-order random --chunk-method bestsource --encoder svt-av1 --pix-format yuv420p10le --workers 5 --video-params "--lp 5 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0" --concat mkvmerge
     or return $status
     if not test -e $video_file
         set_color red ; echo "[encode_av1] Encoded video file missing. Exiting..." ; set_color normal
         return 126
     end
+
+    EPISODE=$episode python Lily.server.shutdown.py
+    or return $status
+    set_color -o magenta ; echo "[encode_av1] Encoding server stopped for episode $episode..." ; set_color normal
+end
+
+# $argv[1]: Episode number "01"
+function shutdown_av1
+    set episode $argv[1]
+    if test -z $episode
+        set_color red ; echo "[mux_av1] Episode number not provided." ; set_color normal
+        return 126
+    end
+
+    EPISODE=$episode python Lily.server.shutdown.py
+    or return $status
 end
 
 # $argv[1]: Episode number "01"
@@ -237,7 +256,7 @@ function mux_av1
         return 126
     end
 
-    set output_file "$prefix/publish/[SweetSub] Momentary Lily - $episode [WebRip][1080P][AV1 10bit][$language].mkv"
+    set output_file "$prefix/publish/[SweetSub] Momentary Lily - $episode [WebRip 1080P AV1-10bit AAC $language].mkv"
     set subset_subtitle_file "$prefix/Lily $episode.AssFontSubset.ass"
     mv $output_subset_subtitle_file $subset_subtitle_file
     set font_files
