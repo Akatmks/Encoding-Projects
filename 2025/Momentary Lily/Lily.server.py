@@ -41,9 +41,6 @@ class QueueService(Service):
                     
             return False
 
-    def exposed_test(self):
-        return self.queue
-
     def exposed_shutdown(self):
         server.close()
 
