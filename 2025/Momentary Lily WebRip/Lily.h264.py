@@ -116,7 +116,7 @@ sec_2 = core.std.FrameEval(src, partial(FrameEval, cat_1=cat_1, cat_2=cat_2, fra
 
 sub = sec_2.assrender.TextSub(subtitle_file, fontdir=str(fonts_dir))
 
-cat_1 = adptvgrnMod.adptvgrnMod(sub, strength=0.20, luma_scaling=10, static=True)
+cat_1 = adptvgrnMod.adptvgrnMod(sub, strength=0.19, luma_scaling=10, static=True)
 cat_2 = adptvgrnMod.adptvgrnMod(sub, strength=0.05, luma_scaling=10, static=True)
 
 def FrameEval(n, cat_1, cat_2, frame_diff):

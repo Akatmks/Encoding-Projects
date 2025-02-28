@@ -54,7 +54,7 @@ function prepare
 end
 
 # $argv[1]: Episode number "01"
-# $argv[2]: Workers "5"
+# $argv[2]: Workers "5" (Default)
 function encode_av1
     set episode $argv[1]
     if test -z $episode
@@ -98,6 +98,9 @@ function encode_av1
     EPISODE=$episode python Lily.server.py &
     
     set video_file "$prefix/Lily $episode.mkv"
+    if test -e $video_file
+        set_color -o yellow ; echo "[encode_av1] Target video file already exists. Continuing..." ; set_color normal
+    end
     set temp_dir "$prefix/Lily $episode.tmp"
     if test -e $temp_dir
         set_color -o yellow ; echo "[encode_av1] Temp dir already exists. Continuing..." ; set_color normal
