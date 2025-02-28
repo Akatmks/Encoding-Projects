@@ -253,7 +253,7 @@ function encode_h264
     
     set fonts_dir "$prefix/fonts"
     set video_file "$prefix/Lily $episode.264"
-    SOURCE_FILE=$source_file FRAME_DIFF_FILE=$frame_diff_file STRONG_NOISE_FILE=$strong_noise_file SUBTITLE_FILE=$subtitle_file FONTS_DIR=$fonts_dir VSPipe "Lily.h264.py" -c y4m - | x264_x64 --threads 20 --demuxer y4m --output-csp i420 --output-depth 8 --crf 19 --preset veryslow --keyint 360 --min-keyint 1 --ref 13 --deblock 1:1 --rc-lookahead 250 --aq-mode 3 --aq-strength 0.8 --qcomp 0.75 --fade-compensate 0.33 --psy-rd 0.4:0.15 --colorprim bt709 --transfer bt709 --colormatrix bt709 --output $video_file -
+    SOURCE_FILE=$source_file FRAME_DIFF_FILE=$frame_diff_file STRONG_NOISE_FILE=$strong_noise_file SUBTITLE_FILE=$subtitle_file FONTS_DIR=$fonts_dir VSPipe "Lily.h264.py" -c y4m - | x264_x64 --threads 20 --demuxer y4m --output-csp i420 --output-depth 8 --crf 20 --preset veryslow --keyint 360 --min-keyint 1 --ref 13 --deblock 1:1 --rc-lookahead 250 --aq-mode 3 --aq-strength 0.8 --qcomp 0.77 --fade-compensate 0.33 --psy-rd 0.4:0.15 --colorprim bt709 --transfer bt709 --colormatrix bt709 --output $video_file -
     or return $status
     if not test -e $video_file
         set_color red ; echo "[encode_h264] Encoded video file missing. Exiting..." ; set_color normal
