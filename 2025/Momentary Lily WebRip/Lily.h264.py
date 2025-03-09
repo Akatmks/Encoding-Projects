@@ -88,7 +88,7 @@ mask2 = vsmasktools.luma_credit_mask(y, thr=0.88)
 mask = core.akarin.Expr([mask0, mask1, mask2], "x y z + -")
 
 dh = vsdehalo.edge_cleaner(sec_1)
-dh = mvsfunc.LimitFilter(dh, sec_1, thr=1.9, elast=4)
+dh = mvsfunc.LimitFilter(dh, sec_1, thr=1.9, elast=3.5)
 
 y = vstools.get_y(dh)
 aa = vsTAAmbk.TAAmbk(y, aatype="Eedi2", dark=0.12, mclip=mask, cuda=True)
