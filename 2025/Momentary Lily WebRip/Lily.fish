@@ -54,7 +54,7 @@ function prepare
 end
 
 # $argv[1]: Episode number "01"
-# $argv[2]: Workers "5" (Default)
+# $argv[2]: Workers "6" (Default)
 function encode_av1
     set episode $argv[1]
     if test -z $episode
@@ -63,7 +63,7 @@ function encode_av1
     end
     set workers $argv[2]
     if test -z $workers
-        set workers 5
+        set workers 6
     end
 
     set prefix ..
