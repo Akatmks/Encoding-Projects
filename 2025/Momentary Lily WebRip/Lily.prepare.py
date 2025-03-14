@@ -99,7 +99,8 @@ with zones_file.open("w") as zones:
                 weak_noise_scene_total += frame.props["WeakNoiseAverage"]
 
                 if fno >= scenes["scenes"][scenes_head]["end_frame"] - 1:
-                    frame_diff_scene_average = frame_diff_scene_total / (scenes["scenes"][scenes_head]["end_frame"] - scenes["scenes"][scenes_head]["start_frame"])
+                    frame_diff_scene_count = scenes["scenes"][scenes_head]["end_frame"] - scenes["scenes"][scenes_head]["start_frame"]
+                    frame_diff_scene_average = frame_diff_scene_total / (frame_diff_scene_count - 4 if frame_diff_scene_count >= 8 else frame_diff_scene_count / 2)
                     strong_noise_scene_average = strong_noise_scene_total / (scenes["scenes"][scenes_head]["end_frame"] - scenes["scenes"][scenes_head]["start_frame"])
                     weak_noise_scene_average = weak_noise_scene_total / (scenes["scenes"][scenes_head]["end_frame"] - scenes["scenes"][scenes_head]["start_frame"])
 
