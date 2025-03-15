@@ -38,7 +38,7 @@ class QueueService(Service):
 
                 free = nvmlDeviceGetMemoryInfo(handle).free - required_vram * len(self.released_reserve)
                 cpu = cpu_percent(interval=0.1) - necessary_cpu * len(self.released_reserve)
-                if free >= required_vram and cpu_percent(interval=0.1) < usage:
+                if free >= required_vram and cpu < usage:
                     self.queue.pop(0)
                     self.released_reserve.append(time_ns() + released_reserve_time)
                     return True
