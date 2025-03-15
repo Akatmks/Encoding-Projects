@@ -69,7 +69,7 @@ dn = dfttest2.DFTTest(dn, sigma=2, planes=[1, 2], tbsize=1)
 cat_23 = dn
 
 def FrameEval(n, cat_1, cat_21, cat_22, cat_23, frame_diff, strong_noise):
-    if frame_diff[n] >= 0.08:
+    if frame_diff[n] >= 0.10:
         return cat_1
     elif frame_diff[n] >= 0.04 and strong_noise[n] >= 0.10:
         return cat_21

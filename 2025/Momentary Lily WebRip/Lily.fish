@@ -54,16 +54,16 @@ function prepare
 end
 
 # $argv[1]: Episode number "01"
-# $argv[2]: Workers "5" (Default)
+# $argv[2]: CPU Usage "100" (Default)
 function encode_av1
     set episode $argv[1]
     if test -z $episode
         set_color red ; echo "[encode_av1] Episode number not provided." ; set_color normal
         return 126
     end
-    set workers $argv[2]
-    if test -z $workers
-        set workers 5
+    set usage $argv[2]
+    if test -z $usage
+        set usage 100
     end
 
     set prefix ..
@@ -95,7 +95,7 @@ function encode_av1
     set_color -o white ; echo "[encode_av1] Encoding Lily episode $episode..." ; set_color normal
     
     set_color -o magenta ; echo "[encode_av1] Encoding server starting for episode $episode..." ; set_color normal
-    EPISODE=$episode python Lily.server.py &
+    EPISODE=$episode USAGE=$usage python Lily.server.py &
     
     set video_file "$prefix/Lily $episode.mkv"
     if test -e $video_file
@@ -105,7 +105,7 @@ function encode_av1
     if test -e $temp_dir
         set_color -o yellow ; echo "[encode_av1] Temp dir already exists. Continuing..." ; set_color normal
     end
-    EPISODE=$episode SOURCE_FILE=$source_file FRAME_DIFF_FILE=$frame_diff_file STRONG_NOISE_FILE=$strong_noise_file av1an -y --max-tries 5 --temp $temp_dir --resume --verbose --log-level debug -i "Lily.av1.py" -o $video_file --scenes $scenes_file --chunk-order random --chunk-method bestsource --workers $workers --encoder svt-av1 --video-params "[1;5m:ferncheer:[0m" --pix-format yuv420p10le --concat mkvmerge
+    EPISODE=$episode SOURCE_FILE=$source_file FRAME_DIFF_FILE=$frame_diff_file STRONG_NOISE_FILE=$strong_noise_file av1an -y --max-tries 5 --temp $temp_dir --resume --verbose --log-level debug -i "Lily.av1.py" -o $video_file --scenes $scenes_file --chunk-order random --chunk-method bestsource --workers 7 --encoder svt-av1 --video-params "[1;5m:ferncheer:[0m" --pix-format yuv420p10le --concat mkvmerge
     or return $status
     if not test -e $video_file
         set_color red ; echo "[encode_av1] Encoded video file missing. Exiting..." ; set_color normal

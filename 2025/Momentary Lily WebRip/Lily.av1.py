@@ -11,7 +11,7 @@ port = 18860 + int(os.environ["EPISODE"])
 c = rpyc.connect("localhost", port)
 tid = c.root.register()
 while not c.root.request_release(tid):
-    time.sleep(0.5)
+    time.sleep(0.1)
 
 import vsdenoise
 import vsdehalo
