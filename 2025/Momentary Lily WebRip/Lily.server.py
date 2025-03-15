@@ -10,7 +10,7 @@ from rpyc import Service, ThreadedServer
 usage = float(os.environ["USAGE"])
 required_vram = 5368709120
 necessary_cpu = 16.667
-released_reserve_time = 8000000000
+released_reserve_time = 7000000000
 port = 18860 + int(os.environ["EPISODE"])
 
 nvmlInit()
@@ -37,7 +37,7 @@ class QueueService(Service):
                 self.locked_clean_reserve()
 
                 free = nvmlDeviceGetMemoryInfo(handle).free - required_vram * len(self.released_reserve)
-                cpu = cpu_percent(interval=0.1) - necessary_cpu * len(self.released_reserve)
+                cpu = cpu_percent(interval=0.1) + necessary_cpu * len(self.released_reserve)
                 if free >= required_vram and cpu < usage:
                     self.queue.pop(0)
                     self.released_reserve.append(time_ns() + released_reserve_time)
