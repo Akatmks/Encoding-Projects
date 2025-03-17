@@ -9,7 +9,7 @@ from rpyc import Service, ThreadedServer
 
 usage = float(os.environ["USAGE"])
 required_vram = 5368709120
-necessary_cpu = 16.667
+necessary_cpu = 25
 released_reserve_time = 7000000000
 port = 18860 + int(os.environ["EPISODE"])
 
