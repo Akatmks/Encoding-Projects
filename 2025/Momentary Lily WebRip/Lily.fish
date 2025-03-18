@@ -279,3 +279,16 @@ function encode_h264
         return 126
     end
 end
+
+# $argv[1]: Episode number "01"
+function clean
+    set episode $argv[1]
+    if test -z $episode
+        set_color red ; echo "[clean] Episode number not provided." ; set_color normal
+        return 126
+    end
+
+    set prefix ..
+
+    rm -rf "$prefix/Lily $episode.prepare.tmp" "$prefix/Lily $episode.prezone.scenes.json" "$prefix/Lily $episode.tmp" "$prefix/Lily $episode.aac" "$prefix/Lily $episode.AssFontSubset.ass" "$prefix/Lily $episode.fonts" "$prefix/Lily $episode.264"
+end
