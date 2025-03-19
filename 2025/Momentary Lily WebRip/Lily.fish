@@ -54,7 +54,7 @@ function prepare
 end
 
 # $argv[1]: Episode number "01"
-# $argv[2]: CPU Usage "100" (Default)
+# $argv[2]: CPU Usage "75" (Default)
 function encode_av1
     set episode $argv[1]
     if test -z $episode
@@ -63,7 +63,7 @@ function encode_av1
     end
     set usage $argv[2]
     if test -z $usage
-        set usage 100
+        set usage 75
     end
 
     set prefix ..
