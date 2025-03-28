@@ -24,7 +24,7 @@ function prepare
         rm -r $temp_dir
     end
     if not test -e $prezone_scenes_file
-        av1an -y --max-tries 5 --temp $temp_dir --verbose -i $source_file --sc-only --scenes $prezone_scenes_file --split-method av-scenechange --sc-method standard --extra-split 360 --min-scene-len 6
+        av1an -y --max-tries 5 --temp $temp_dir --verbose --log-level debug -i $source_file --sc-only --scenes $prezone_scenes_file --split-method av-scenechange --sc-method standard --extra-split 360 --min-scene-len 6
         or return $status
     end
     if not test -e $prezone_scenes_file
@@ -46,7 +46,7 @@ function prepare
     if test -e $scenes_file
         rm $scenes_file
     end
-    av1an -y --max-tries 5 --temp $temp_dir --verbose -i $source_file --sc-only --scenes $scenes_file --split-method av-scenechange --sc-method standard --extra-split 360 --min-scene-len 6 --encoder svt-av1 --zones $zones_file
+    av1an -y --max-tries 5 --temp $temp_dir --verbose --log-level debug -i $source_file --sc-only --scenes $scenes_file --split-method av-scenechange --sc-method standard --extra-split 360 --min-scene-len 6 --encoder svt-av1 --zones $zones_file
     if not test -e $scenes_file
         set_color red ; echo "[prepare] Generated scenes file missing. Exiting..." ; set_color normal
         return 126
@@ -105,7 +105,7 @@ function encode_av1
     if test -e $temp_dir
         set_color -o yellow ; echo "[encode_av1] Temp dir already exists. Continuing..." ; set_color normal
     end
-    EPISODE=$episode SOURCE_FILE=$source_file FRAME_DIFF_FILE=$frame_diff_file STRONG_NOISE_FILE=$strong_noise_file av1an -y --max-tries 5 --temp $temp_dir --resume --keep --verbose -i "Lily.av1.py" -o $video_file --scenes $scenes_file --chunk-order random --chunk-method bestsource --workers 12 --encoder svt-av1 --video-params "[1;5m:ferncheer:[0m" --pix-format yuv420p10le --concat mkvmerge
+    EPISODE=$episode SOURCE_FILE=$source_file FRAME_DIFF_FILE=$frame_diff_file STRONG_NOISE_FILE=$strong_noise_file av1an -y --max-tries 5 --temp $temp_dir --resume --keep --verbose --log-level debug -i "Lily.av1.py" -o $video_file --scenes $scenes_file --chunk-order random --chunk-method bestsource --workers 12 --encoder svt-av1 --video-params "[1;5m:ferncheer:[0m" --pix-format yuv420p10le --concat mkvmerge
     or return $status
     if not test -e $video_file
         set_color red ; echo "[encode_av1] Encoded video file missing. Exiting..." ; set_color normal
@@ -290,5 +290,5 @@ function clean
 
     set prefix ..
 
-    rm -rf "$prefix/Lily $episode.prepare.tmp" "$prefix/Lily $episode.prezone.scenes.json" "$prefix/Lily $episode.tmp" "$prefix/Lily $episode.aac" "$prefix/Lily $episode.AssFontSubset.ass" "$prefix/Lily $episode.fonts" "$prefix/Lily $episode.264"
+    rm -rf "$prefix/Lily $episode.prepare.tmp" "$prefix/Lily $episode.prezone.scenes.json" "logs" "$prefix/Lily $episode.tmp" "$prefix/Lily $episode.aac" "$prefix/Lily $episode.AssFontSubset.ass" "$prefix/Lily $episode.fonts" "$prefix/Lily $episode.264"
 end
