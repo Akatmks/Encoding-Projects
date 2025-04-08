@@ -338,6 +338,9 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
     :param video_params: custom encoder params for av1an
     :type video_prams: str    
     """
+    # Modified
+    average = 89.200
+
     zones_iter = 0
     # Determine effective deviation limits
     base_deviation = float(args.deviation)
@@ -361,7 +364,7 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
         multiplier = 40 if args.aggressive else 20
         # Modified
         # adjustment = ceil((1.0 - (percentile_5_total[i] / average)) * multiplier * 4) / 4
-        adjustment = ceil((1.0 - (percentile_5_total[i] / average) ** 3.1) * multiplier * 4) / 4
+        adjustment = ceil((1.0 - (percentile_5_total[i] / average) ** 3.2) * multiplier * 4) / 4
         new_crf = crf - adjustment
 
         # Apply deviation limits
