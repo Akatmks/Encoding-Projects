@@ -45,7 +45,7 @@ parser.add_argument("-s", "--stage", help = "Select stage: 1 = encode, 2 = calcu
 parser.add_argument("-i", "--input", required=True, help = "Video input filepath (original source file)")
 parser.add_argument("-t", "--temp", help = "The temporary directory for av1an to store files in | Default: video input filename")
 parser.add_argument("-q", "--quality", help = "Base quality (CRF) | Default: 30", default=30)
-parser.add_argument("-d", "--deviation", help = "Base deviation limit for CRF changes (used if max_positive_dev or max_negative_dev not set) | Default: 15", default=15) # Modified
+parser.add_argument("-d", "--deviation", help = "Base deviation limit for CRF changes (used if max_positive_dev or max_negative_dev not set) | Default: 10", default=10)
 parser.add_argument("--max-positive-dev", help = "Maximum allowed positive CRF deviation | Default: None", type=float, default=None)
 parser.add_argument("--max-negative-dev", help = "Maximum allowed negative CRF deviation | Default: None", type=float, default=None)
 parser.add_argument("-p", "--preset", help = "Fast encode preset | Default: 7", default=7)
@@ -339,7 +339,7 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
     :type video_prams: str    
     """
     # Modified
-    average = 87.800
+    average = 87.900
 
     zones_iter = 0
     # Determine effective deviation limits
@@ -364,7 +364,7 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
         multiplier = 40 if args.aggressive else 20
         # Modified
         # adjustment = ceil((1.0 - (percentile_5_total[i] / average)) * multiplier * 4) / 4
-        adjustment = ceil((1.0 - (percentile_5_total[i] / average) ** 3.4) * multiplier * 4) / 4
+        adjustment = ceil((1.0 - (percentile_5_total[i] / average) ** 3.3) * multiplier * 4) / 4
         new_crf = crf - adjustment
 
         # Apply deviation limits
