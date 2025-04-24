@@ -8,7 +8,7 @@ from threading import Lock
 from rpyc import Service, ThreadedServer
 
 usage = float(os.environ["USAGE"])
-required_vram = 3758096384
+required_vram = 3489660928
 necessary_cpu = 20
 released_reserve_time = 5000000000
 port = 18860 + int(os.environ["EPISODE"])

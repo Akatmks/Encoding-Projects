@@ -22,11 +22,11 @@ function prepare
     set autoboost_temp_dir "$prefix/Kanpeki $episode.autoboost.tmp"
     set output_zone_file "$autoboost_temp_dir/ssimu2_zones.txt"
     set zones_file "$prefix/Kanpeki $episode.zones.txt"
-    if not test -e $output_zone_file
+    if not test -e $zones_file
         if test -e $autoboost_temp_dir
             rm -r $autoboost_temp_dir
         end
-        python auto-boost_2.5.py --input $source_file --temp $autoboost_temp_dir --quality 16 --preset 5 --video_params "--tune 3 --qm-min 9 --chroma-qm-min 8 --enable-tf 1 --kf-tf-strength 1 --tf-strength 2 --sharpness 0 --psy-rd 2.7 --spy-rd 0" --skip 2
+        python auto-boost_2.5.py --input $source_file --temp $autoboost_temp_dir --quality 19 --preset 5 --video_params "--tune 3 --qm-min 9 --chroma-qm-min 8 --enable-tf 1 --kf-tf-strength 1 --tf-strength 2 --sharpness 0 --psy-rd 2.4 --spy-rd 0" --skip 2
         or return $status
         if not test -e $output_zone_file
             set_color red ; echo "[prepare] Generated zone file missing. Exiting..." ; set_color normal
@@ -37,11 +37,16 @@ function prepare
 
     set keyframes_file "$prefix/Kanpeki $episode.keyframes.txt"
     set error_file "$prefix/Kanpeki $episode.error.txt"
-    if not test -e $error_file
-        SOURCE_FILE=$source_file KEYFRAMES_FILE=$keyframes_file ERROR_FILE=$error_file python "Kanpeki-Prepare.py"
+    set frame_diff_file "$prefix/Kanpeki $episode.frame diff.txt"
+    if begin not test -e $error_file; or not test -e $frame_diff_file; end
+        SOURCE_FILE=$source_file KEYFRAMES_FILE=$keyframes_file ERROR_FILE=$error_file FRAME_DIFF_FILE=$frame_diff_file python "Kanpeki-Prepare.py"
     end
     if not test -e $error_file
         set_color red ; echo "[prepare] Generated error file missing. Exiting..." ; set_color normal
+        return 126
+    end
+    if not test -e $frame_diff_file
+        set_color red ; echo "[prepare] Generated frame diff file missing. Exiting..." ; set_color normal
         return 126
     end
 
@@ -50,10 +55,9 @@ function prepare
         rm -r $temp_dir
     end
     set scenes_file "$prefix/Kanpeki $episode.scenes.json"
-    if test -e $scenes_file
-        rm $scenes_file
+    if not test -e $scenes_file
+        av1an -y --max-tries 5 --temp $temp_dir --verbose --log-level debug -i $source_file --sc-only --scenes $scenes_file --extra-split 360 --min-scene-len 24 --zones $zones_file --encoder svt-av1 --video-params "--keyint -1 --input-depth 10 --tune 3 --qm-min 9 --chroma-qm-min 8 --enable-tf 1 --kf-tf-strength 1 --tf-strength 2 --sharpness 0 --film-grain 7 --spy-rd 0 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
     end
-    av1an -y --max-tries 5 --temp $temp_dir --verbose --log-level debug -i $source_file --sc-only --scenes $scenes_file --extra-split 360 --min-scene-len 24 --zones $zones_file --encoder svt-av1 --video-params "--keyint -1 --input-depth 10 --tune 3 --qm-min 9 --chroma-qm-min 8 --enable-tf 1 --kf-tf-strength 1 --tf-strength 2 --sharpness 0 --film-grain 7 --psy-rd 2.7 --spy-rd 0 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
     if not test -e $scenes_file
         set_color red ; echo "[prepare] Generated scenes file missing. Exiting..." ; set_color normal
         return 126
@@ -98,6 +102,12 @@ function encode
         set_color red ; echo "[encode] Error file not found." ; set_color normal
         return 126
     end
+
+    set frame_diff_file "$prefix/Kanpeki $episode.frame diff.txt"
+    if not test -e $frame_diff_file
+        set_color red ; echo "[encode] Frame diff file not found." ; set_color normal
+        return 126
+    end
     
     set_color -o white ; echo "[encode] Encoding Kanpeki episode $episode..." ; set_color normal
     
@@ -112,7 +122,7 @@ function encode
     if test -e $temp_dir
         set_color -o yellow ; echo "[encode] Temp dir already exists. Continuing..." ; set_color normal
     end
-    EPISODE=$episode SOURCE_FILE=$source_file ERROR_FILE=$error_file av1an -y --max-tries 5 --temp $temp_dir --resume --keep --verbose --log-level debug -i "Kanpeki.py" -o $video_file --scenes $scenes_file --chunk-order random --chunk-method bestsource --workers 12 --encoder svt-av1 --video-params "[1;5m:ferncheer:[0m" --pix-format yuv420p10le --concat mkvmerge
+    EPISODE=$episode SOURCE_FILE=$source_file ERROR_FILE=$error_file FRAME_DIFF_FILE=$frame_diff_file av1an -y --max-tries 5 --temp $temp_dir --resume --keep --verbose --log-level debug -i "Kanpeki.py" -o $video_file --scenes $scenes_file --chunk-order random --chunk-method bestsource --workers 12 --encoder svt-av1 --video-params "[1;5m:ferncheer:[0m" --pix-format yuv420p10le --concat mkvmerge
     or return $status
     if not test -e $video_file
         set_color red ; echo "[encode] Encoded video file missing. Exiting..." ; set_color normal

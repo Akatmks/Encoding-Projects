@@ -339,7 +339,7 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
     :type video_prams: str    
     """
     # Modified
-    average = 89.100
+    average = 87.900
 
     zones_iter = 0
     # Determine effective deviation limits
@@ -394,12 +394,20 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
         # zone_params = f"--crf {new_crf:.2f} --lp 2"
         # if video_params:  # Only append video_params if it exists and is not None
         #     zone_params += f' {video_params}'
-        if new_crf >= crf + 0.5:
-            zone_params = f"--preset 2 --crf {new_crf - 0.5:.2f} --lp 3"
-        elif new_crf >= crf - 3:
-            zone_params = f"--preset 0 --crf {new_crf:.2f} --lp 3"
+        if new_crf >= crf + 1.0:
+            zone_params = f"--preset 2 --crf {new_crf:.2f} --lp 3 --psy-rd 2.4"
+        elif new_crf >= crf:
+            zone_params = f"--preset 2 --crf {new_crf - 0.5:.2f} --lp 3 --psy-rd 2.4"
+        elif new_crf >= crf - 1.5:
+            zone_params = f"--preset 0 --crf {new_crf:.2f} --lp 3 --psy-rd 2.4"
+        elif new_crf >= crf - 2.5:
+            zone_params = f"--preset -1 --crf {new_crf + 0.5:.2f} --lp 3 --psy-rd 2.4"
+        elif new_crf >= crf - 3.5:
+            zone_params = f"--preset -1 --crf {new_crf + 0.25:.2f} --lp 3 --psy-rd 2.5"
+        elif new_crf >= crf - 4.5:
+            zone_params = f"--preset -1 --crf {new_crf:.2f} --lp 3 --psy-rd 2.5"
         else:
-            zone_params = f"--preset -1 --crf {new_crf:.2f} --lp 3"
+            zone_params = f"--preset -1 --crf {new_crf:.2f} --lp 3 --psy-rd 2.6"
 
         with zones_txt_path.open("w" if zones_iter == 1 else "a") as file:
             file.write(f"{ranges[i]} {ranges[i+1]} svt-av1 {zone_params}\n")
