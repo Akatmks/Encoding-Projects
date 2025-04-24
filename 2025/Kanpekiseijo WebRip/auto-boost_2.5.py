@@ -118,8 +118,9 @@ def fast_pass(
         '--keep',
         '-m', 'bestsource', # Modified
         '-c', 'mkvmerge',
+        '--sc-method', 'fast', # Modified
         '--extra-split', '360', # Modified
-        '--min-scene-len', '24',
+        '--min-scene-len', '12',
 	# '--sc-downscale-height', '720', # Modified
         '--set-thread-affinity', '2',
         '-e', 'svt-av1',
@@ -339,7 +340,7 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
     :type video_prams: str    
     """
     # Modified
-    average = 87.900
+    average = 88.100
 
     zones_iter = 0
     # Determine effective deviation limits
@@ -394,17 +395,17 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
         # zone_params = f"--crf {new_crf:.2f} --lp 2"
         # if video_params:  # Only append video_params if it exists and is not None
         #     zone_params += f' {video_params}'
-        if new_crf >= crf + 1:
+        if new_crf >= crf + 1.0:
             zone_params = f"--preset 2 --crf {new_crf:.2f} --lp 4 --psy-rd 2.4"
         elif new_crf >= crf:
             zone_params = f"--preset 2 --crf {new_crf - 0.5:.2f} --lp 4 --psy-rd 2.4"
-        elif new_crf >= crf - 2:
+        elif new_crf >= crf - 2.5:
             zone_params = f"--preset 0 --crf {new_crf:.2f} --lp 4 --psy-rd 2.4"
-        elif new_crf >= crf - 3:
+        elif new_crf >= crf - 3.5:
             zone_params = f"--preset -1 --crf {new_crf + 0.25:.2f} --lp 4 --psy-rd 2.4"
-        elif new_crf >= crf - 4:
+        elif new_crf >= crf - 4.5:
             zone_params = f"--preset -1 --crf {new_crf + 0.25:.2f} --lp 4 --psy-rd 2.5"
-        elif new_crf >= crf - 5:
+        elif new_crf >= crf - 6.0:
             zone_params = f"--preset -1 --crf {new_crf:.2f} --lp 4 --psy-rd 2.5"
         else:
             zone_params = f"--preset -1 --crf {new_crf:.2f} --lp 4 --psy-rd 2.6"

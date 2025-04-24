@@ -56,7 +56,7 @@ function prepare
     end
     set scenes_file "$prefix/Kanpeki $episode.scenes.json"
     if not test -e $scenes_file
-        av1an -y --max-tries 5 --temp $temp_dir --verbose --log-level debug -i $source_file --sc-only --scenes $scenes_file --extra-split 360 --min-scene-len 24 --zones $zones_file --encoder svt-av1 --video-params "--keyint -1 --input-depth 10 --tune 3 --qm-min 9 --chroma-qm-min 8 --enable-tf 1 --kf-tf-strength 1 --tf-strength 2 --sharpness 0 --film-grain 7 --spy-rd 0 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
+        av1an -y --max-tries 5 --temp $temp_dir --verbose --log-level debug -i $source_file --sc-only --scenes $scenes_file --sc-method fast --extra-split 360 --min-scene-len 12 --zones $zones_file --encoder svt-av1 --video-params "--keyint -1 --input-depth 10 --tune 3 --qm-min 9 --chroma-qm-min 8 --enable-tf 1 --kf-tf-strength 1 --tf-strength 2 --sharpness 0 --film-grain 7 --spy-rd 0 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
     end
     if not test -e $scenes_file
         set_color red ; echo "[prepare] Generated scenes file missing. Exiting..." ; set_color normal
@@ -88,12 +88,6 @@ function encode
     set scenes_file "$prefix/Kanpeki $episode.scenes.json"
     if not test -e $scenes_file
         set_color red ; echo "[encode] Scenes file not found." ; set_color normal
-        return 126
-    end
-    
-    set zones_file "$prefix/Kanpeki $episode.zones.txt"
-    if not test -e $zones_file
-        set_color red ; echo "[encode] Zones file not found." ; set_color normal
         return 126
     end
     
