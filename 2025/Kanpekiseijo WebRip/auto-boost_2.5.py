@@ -339,7 +339,7 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
     :type video_prams: str    
     """
     # Modified
-    average = 87.900
+    average = 87.800
 
     zones_iter = 0
     # Determine effective deviation limits
