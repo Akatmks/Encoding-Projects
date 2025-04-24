@@ -10,7 +10,7 @@ from rpyc import Service, ThreadedServer
 usage = float(os.environ["USAGE"])
 required_vram = 3758096384
 necessary_cpu = 20
-released_reserve_time = 5000000000
+released_reserve_time = 10000000000
 port = 18860 + int(os.environ["EPISODE"])
 
 nvmlInit()
