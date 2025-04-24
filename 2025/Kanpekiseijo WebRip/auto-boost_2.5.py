@@ -364,7 +364,7 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
         multiplier = 40 if args.aggressive else 20
         # Modified
         # adjustment = ceil((1.0 - (percentile_5_total[i] / average)) * multiplier * 4) / 4
-        adjustment = ceil((1.0 - (percentile_5_total[i] / average) ** 3.2) * multiplier * 4) / 4
+        adjustment = ceil((1.0 - (percentile_5_total[i] / average) ** 3.4) * multiplier * 4) / 4
         new_crf = crf - adjustment
 
         # Apply deviation limits
