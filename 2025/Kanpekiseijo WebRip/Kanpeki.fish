@@ -32,8 +32,8 @@ function prepare
             set_color red ; echo "[prepare] Generated zone file missing. Exiting..." ; set_color normal
             return 126
         end
+        cp $output_zone_file $zones_file
     end
-    cp $output_zone_file $zones_file
 
     set keyframes_file "$prefix/Kanpeki $episode.keyframes.txt"
     set error_file "$prefix/Kanpeki $episode.error.txt"
