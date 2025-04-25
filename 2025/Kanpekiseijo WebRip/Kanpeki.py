@@ -106,7 +106,7 @@ merge = core.std.MaskedMerge(src, dh_noise, mask=mask, planes=[0])
 cat_4 = merge
 
 def FrameEval(n, cat_1, cat_2, cat_3, cat_4, error):
-    if frame_diff[n] > 0.07:
+    if frame_diff[n] > 0.08:
         return cat_1
     elif error[n] > 0.09:
         return cat_2
