@@ -26,7 +26,7 @@ function prepare
         if test -e $autoboost_temp_dir
             rm -r $autoboost_temp_dir
         end
-        python auto-boost_2.5.py --input $source_file --temp $autoboost_temp_dir --quality 20 --max-positive-dev 4 --max-negative-dev 16 --preset 5 --video_params "--tune 3 --qm-min 9 --chroma-qm-min 8 --enable-tf 1 --kf-tf-strength 1 --tf-strength 2 --sharpness 0 --psy-rd 2.4 --spy-rd 0" --skip 2
+        python auto-boost_2.5.py --input $source_file --temp $autoboost_temp_dir --quality 20.50 --max-positive-dev 3.50 --max-negative-dev 14.50 --preset 5 --video_params "--tune 3 --qm-min 10 --chroma-qm-min 9 --enable-tf 1 --kf-tf-strength 1 --tf-strength 2 --sharpness 0 --psy-rd 2.9 --spy-rd 0" --skip 2
         or return $status
         if not test -e $output_zone_file
             set_color red ; echo "[prepare] Generated zone file missing. Exiting..." ; set_color normal
@@ -56,7 +56,7 @@ function prepare
     end
     set scenes_file "$prefix/Kanpeki $episode.scenes.json"
     if not test -e $scenes_file
-        av1an -y --max-tries 5 --temp $temp_dir --verbose --log-level debug -i $source_file --sc-only --scenes $scenes_file --sc-method fast --extra-split 360 --min-scene-len 12 --zones $zones_file --encoder svt-av1 --video-params "--keyint -1 --input-depth 10 --tune 3 --qm-min 9 --chroma-qm-min 8 --enable-tf 1 --kf-tf-strength 1 --tf-strength 2 --sharpness 0 --film-grain 7 --spy-rd 0 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
+        av1an -y --max-tries 5 --temp $temp_dir --verbose --log-level debug -i $source_file --sc-only --scenes $scenes_file --sc-method fast --extra-split 360 --min-scene-len 12 --zones $zones_file --encoder svt-av1 --video-params "--keyint -1 --input-depth 10 --tune 3 --qm-min 10 --chroma-qm-min 9 --enable-tf 1 --kf-tf-strength 1 --tf-strength 2 --sharpness 0 --film-grain 7 --psy-rd 2.9 --spy-rd 0 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
     end
     if not test -e $scenes_file
         set_color red ; echo "[prepare] Generated scenes file missing. Exiting..." ; set_color normal

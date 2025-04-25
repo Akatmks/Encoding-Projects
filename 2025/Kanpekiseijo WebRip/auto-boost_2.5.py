@@ -340,7 +340,7 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
     :type video_prams: str    
     """
     # Modified
-    average = 88.100
+    average = 88.000 # This is in fact the reference for the 5th percentile
 
     zones_iter = 0
     # Determine effective deviation limits
@@ -384,7 +384,7 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
         # print(f'Enc:  [{ranges[i]}:{ranges[i+1]}]\n'
         #       f'Chunk 5th percentile: {percentile_5_total[i]}\n'
         #       f'CRF adjustment: {adjustment:.2f}\n'
-        #       f'Final CRF: {new_crf:.2f}\n')
+        #       f'Reference CRF: {new_crf:.2f}\n')
         if percentile_5_total[i] / average < 0.95 or percentile_5_total[i] / average > 1.04:
             print(f'Enc: [{ranges[i]:>5}:{ranges[i+1]:>5}]\t'
                 f'Chunk 5th percentile: {percentile_5_total[i]:.3f}\t'
@@ -395,20 +395,16 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
         # zone_params = f"--crf {new_crf:.2f} --lp 2"
         # if video_params:  # Only append video_params if it exists and is not None
         #     zone_params += f' {video_params}'
-        if new_crf >= crf + 1.0:
-            zone_params = f"--preset 2 --crf {new_crf:.2f} --lp 4 --psy-rd 2.4"
+        if new_crf >= crf + 1:
+            zone_params = f"--lp 4 --preset 2 --crf {new_crf:.2f}"
         elif new_crf >= crf:
-            zone_params = f"--preset 2 --crf {new_crf - 0.5:.2f} --lp 4 --psy-rd 2.4"
-        elif new_crf >= crf - 2.5:
-            zone_params = f"--preset 0 --crf {new_crf:.2f} --lp 4 --psy-rd 2.4"
-        elif new_crf >= crf - 3.5:
-            zone_params = f"--preset -1 --crf {new_crf + 0.25:.2f} --lp 4 --psy-rd 2.4"
-        elif new_crf >= crf - 4.5:
-            zone_params = f"--preset -1 --crf {new_crf + 0.25:.2f} --lp 4 --psy-rd 2.5"
-        elif new_crf >= crf - 6.0:
-            zone_params = f"--preset -1 --crf {new_crf:.2f} --lp 4 --psy-rd 2.5"
+            zone_params = f"--lp 4 --preset 2 --crf {new_crf - 0.25:.2f}"
+        elif new_crf >= crf - 2:
+            zone_params = f"--lp 4 --preset 0 --crf {new_crf:.2f}"
+        elif new_crf >= crf - 3:
+            zone_params = f"--lp 4 --preset -1 --crf {new_crf + 0.25:.2f}"
         else:
-            zone_params = f"--preset -1 --crf {new_crf:.2f} --lp 4 --psy-rd 2.6"
+            zone_params = f"--lp 4 --preset -1 --crf {new_crf:.2f}"
 
         with zones_txt_path.open("w" if zones_iter == 1 else "a") as file:
             file.write(f"{ranges[i]} {ranges[i+1]} svt-av1 {zone_params}\n")
