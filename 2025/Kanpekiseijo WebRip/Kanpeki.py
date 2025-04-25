@@ -46,10 +46,8 @@ with frame_diff_file.open("r") as f:
     frame_diff = [float(line) for line in frame_diff.splitlines()]
 
 
-cat_1 = src
-
 y = get_y(src)
-db = dpir.DEBLOCK(y, tiles=2)
+db = dpir.DEBLOCK(y, strength=9, tiles=2)
 db = join(db, src)
 
 dh = edge_cleaner(db, strength=11)
@@ -73,9 +71,11 @@ aaf = y.fmtc.resample(kernel="gaussian", a1=100, fh=0.80, fv=0.80)
 aa = core.akarin.Expr([y, aa, aaf], "x y z - 1.3 * +")
 aa = join(aa, merge_noise)
 
-cat_2 = aa
+cat_1 = aa
 
-dh = fine_dehalo(src, brightstr=0.46, thmi=40, thlimi=170, thlima=240)
+cat_2 = src
+
+dh = fine_dehalo(src, brightstr=0.45, thmi=40, thlimi=110, thlima=210)
 aa = based_aa(dh, rfactor=1.5, supersampler=ArtCNN.R8F64(tiles=2))
 
 cat_3 = aa
@@ -106,11 +106,9 @@ merge = core.std.MaskedMerge(src, dh_noise, mask=mask, planes=[0])
 cat_4 = merge
 
 def FrameEval(n, cat_1, cat_2, cat_3, cat_4, error):
-    if error[n] > 0.02 and frame_diff[n] > 0.04:
-        return cat_2
-    elif error[n] > 0.04:
+    if frame_diff[n] > 0.07:
         return cat_1
-    elif frame_diff[n] > 0.07:
+    elif error[n] > 0.09:
         return cat_2
     elif error[n] > 0.014:
         return cat_3

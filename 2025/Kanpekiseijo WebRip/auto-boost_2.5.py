@@ -340,7 +340,7 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
     :type video_prams: str    
     """
     # Modified
-    average = 88.000 # This is in fact the reference for the 5th percentile
+    average = 88.800
 
     zones_iter = 0
     # Determine effective deviation limits
@@ -365,7 +365,7 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
         multiplier = 40 if args.aggressive else 20
         # Modified
         # adjustment = ceil((1.0 - (percentile_5_total[i] / average)) * multiplier * 4) / 4
-        adjustment = ceil((1.0 - (percentile_5_total[i] / average) ** 3.3) * multiplier * 4) / 4
+        adjustment = ceil((1.0 - (percentile_5_total[i] / average) ** 2.4) * multiplier * 4) / 4
         new_crf = crf - adjustment
 
         # Apply deviation limits
@@ -384,8 +384,8 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
         # print(f'Enc:  [{ranges[i]}:{ranges[i+1]}]\n'
         #       f'Chunk 5th percentile: {percentile_5_total[i]}\n'
         #       f'CRF adjustment: {adjustment:.2f}\n'
-        #       f'Reference CRF: {new_crf:.2f}\n')
-        if percentile_5_total[i] / average < 0.95 or percentile_5_total[i] / average > 1.04:
+        #       f'Final CRF: {new_crf:.2f}\n')
+        if percentile_5_total[i] / average < 0.95 or percentile_5_total[i] / average > 1.05:
             print(f'Enc: [{ranges[i]:>5}:{ranges[i+1]:>5}]\t'
                 f'Chunk 5th percentile: {percentile_5_total[i]:.3f}\t'
                 f'CRF adjustment: {-adjustment:.2f}\t'
@@ -395,14 +395,8 @@ def generate_zones(ranges: list, percentile_5_total: list, average: int, crf: fl
         # zone_params = f"--crf {new_crf:.2f} --lp 2"
         # if video_params:  # Only append video_params if it exists and is not None
         #     zone_params += f' {video_params}'
-        if new_crf >= crf + 1:
-            zone_params = f"--lp 4 --preset 2 --crf {new_crf:.2f}"
-        elif new_crf >= crf:
-            zone_params = f"--lp 4 --preset 2 --crf {new_crf - 0.25:.2f}"
-        elif new_crf >= crf - 2:
+        if new_crf >= crf - 3.00:
             zone_params = f"--lp 4 --preset 0 --crf {new_crf:.2f}"
-        elif new_crf >= crf - 3:
-            zone_params = f"--lp 4 --preset -1 --crf {new_crf + 0.25:.2f}"
         else:
             zone_params = f"--lp 4 --preset -1 --crf {new_crf:.2f}"
 
