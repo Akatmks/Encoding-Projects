@@ -4,15 +4,6 @@ import os
 import sys
 sys.path.insert(0, os.getcwd())
 
-import rpyc
-import time
-
-port = 18860 + int(os.environ["EPISODE"])
-c = rpyc.connect("localhost", port)
-tid = c.root.register()
-while not c.root.request_release(tid):
-    time.sleep(0.1)
-
 from vsaa import based_aa
 from vsdehalo import edge_cleaner, fine_dehalo
 from vsdenoise import dpir
@@ -23,6 +14,17 @@ from vsscale import ArtCNN, Rescale
 from vskernels import Lanczos
 import vsTAAmbk
 from vstools import core, depth, get_y, initialize_clip, join, SPath, vs
+
+
+port = 18861
+
+import rpyc
+import time
+
+c = rpyc.connect("localhost", port)
+tid = c.root.register()
+while not c.root.request_release(tid):
+    time.sleep(0.1)
 
 
 source_file = SPath(os.environ["SOURCE_FILE"])
