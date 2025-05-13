@@ -120,6 +120,9 @@ class QueueService(Service):
     released_reserve = []
     last_contact_first_in_queue = time_ns()
 
+    testing_last_contact = None
+    testing_last_contact_time = None
+
     def locked_clean_reserve(self):
         self.released_reserve = [item for item in self.released_reserve if item > time_ns()]
 
@@ -145,26 +148,42 @@ class QueueService(Service):
             return tid
 
     def exposed_request_release(self, tid):
-        with self.lock:
-            self.locked_check_first_in_queue(tid)
+        self.testing_last_contact = tid
+        self.testing_last_contact_time = time_ns()
 
-            if self.queue[0] == tid or tid not in self.queue:
+        with self.lock:
+            if tid not in self.queue:
                 self.locked_clean_reserve()
 
                 free = nvmlDeviceGetMemoryInfo(handle).free - required_vram * len(self.released_reserve)
                 cpu = cpu_percent(interval=0.1) + necessary_cpu * len(self.released_reserve)
                 if free >= required_vram and cpu < usage:
-                    self.queue.pop(0)
                     self.released_reserve.append(time_ns() + released_reserve_time)
 
-                    self.locked_reset_first_in_queue()
-
                     return True
-                    
+            else:
+                self.locked_check_first_in_queue(tid)
+
+                if self.queue[0] == tid:
+                    self.locked_clean_reserve()
+
+                    free = nvmlDeviceGetMemoryInfo(handle).free - required_vram * len(self.released_reserve)
+                    cpu = cpu_percent(interval=0.1) + necessary_cpu * len(self.released_reserve)
+                    if free >= required_vram and cpu < usage:
+                        self.queue.pop(0)
+                        self.released_reserve.append(time_ns() + released_reserve_time)
+
+                        self.locked_reset_first_in_queue()
+
+                        return True
+
             return False
 
     def exposed_shutdown(self):
         server.close()
+
+    def exposed_test(self):
+        return self.queue, self.testing_last_contact, self.testing_last_contact_time
 
 server = ThreadedServer(QueueService(), port=port)
 server.start()
