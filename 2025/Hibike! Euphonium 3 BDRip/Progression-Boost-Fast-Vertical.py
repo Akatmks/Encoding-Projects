@@ -335,7 +335,7 @@ scene_detection_vapoursynth_method = "wwxd".lower() # Fast
 # testing, for SVT-AV1-PSY v2.3.0-B, it's optimum to use `--lp 3` and
 # `--workers 8` for system with 32 threads, and `--lp 3` and
 # `--workers 6` for system with 24 threads.
-testing_av1an_parameters = "--workers 12 --chunk-method lsmash --pix-format yuv420p10le --encoder svt-av1 --concat mkvmerge"
+testing_av1an_parameters = "--workers 10 --chunk-method lsmash --pix-format yuv420p10le --encoder svt-av1 --concat mkvmerge"
 # Below are the parameters that should always be used. Regular users
 # would not need to modify these.
 testing_av1an_parameters += " -y"

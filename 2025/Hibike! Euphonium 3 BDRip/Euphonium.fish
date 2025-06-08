@@ -108,7 +108,7 @@ function encode
     if test -e $temp_dir
         set_color -o yellow ; echo "[encode] Temp dir already exists. Continuing..." ; set_color normal
     end
-    SOURCE_FILE=$source_file LWI_FILE=$lwi_file av1an -y --max-tries 5 --temp $temp_dir --resume --keep --verbose --log-level debug -i "Euphonium.py" -o $video_file --scenes $scenes_file --chunk-order random --chunk-method lsmash --workers 12 --encoder svt-av1 --no-defaults --video-params "[1;5m:kumikana:[0m" --pix-format yuv420p10le --concat mkvmerge
+    SOURCE_FILE=$source_file LWI_FILE=$lwi_file av1an -y --max-tries 5 --temp $temp_dir --resume --keep --verbose --log-level debug -i "Euphonium.py" -o $video_file --scenes $scenes_file --chunk-order random --chunk-method lsmash --workers 10 --encoder svt-av1 --no-defaults --video-params "[1;5m:kumikana:[0m" --pix-format yuv420p10le --concat mkvmerge
     or begin set status_ $status
         python Server-Shutdown.py
         set_color -o magenta ; echo "[encode] Stopping dispatch server..." ; set_color normal
