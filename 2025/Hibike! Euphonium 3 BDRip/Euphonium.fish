@@ -247,7 +247,7 @@ function mux
     set subtitle_file_JPN "Subtitles/$name.jpn.sup"
     if test -e $subtitle_file_JPN
         set output_filename "$output_filename JPN"
-        set -a mkv_input_arguments --language 0:ja $subtitle_file_JPN
+        set -a mkv_input_arguments --language 0:ja --hearing-impaired-flag 0:1 $subtitle_file_JPN
     end
     set subtitle_file_CHS "Subtitles/$name.chs.ass"
     set subtitle_file_CHT "Subtitles/$name.cht.ass"
