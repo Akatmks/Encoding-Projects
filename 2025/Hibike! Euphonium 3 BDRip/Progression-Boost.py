@@ -138,7 +138,7 @@ def testing_dynamic_parameters(crf: float) -> str:
 # preset. You need to specify everything other than `--input`,
 # `--output`, `--crf` and the parameters you've set to generate
 # dynamically.
-testing_parameters = "--lp 3 --keyint -1 --input-depth 10 --preset 6 --fast-decode 1 --tune 0 --qm-min 8 --chroma-qm-min 10 --luminance-qp-bias 8 --qp-scale-compress-strength 3 --noise-norm-strength 4 --enable-cdef 0 --enable-restoration 0 --film-grain 0 --psy-rd 3.7 --spy-rd 0 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
+testing_parameters = "--lp 3 --keyint -1 --input-depth 10 --preset 6 --fast-decode 1 --tune 0 --qm-min 8 --chroma-qm-min 10 --luminance-qp-bias 8 --qp-scale-compress-strength 3 --noise-norm-strength 4 --film-grain 0 --psy-rd 3.5 --spy-rd 0 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
 # ---------------------------------------------------------------------
 # ---------------------------------------------------------------------
 # Config for the target quality to generate the final `--crf` comes
@@ -171,7 +171,7 @@ final_max_crf = 25.00
 # `final_max_crf` from last section. They are necessary for Progression
 # Boost to work, even if you apply additional limits here.
 def final_dynamic_crf(crf: float) -> float:
-    return (crf / 25.00) ** 0.81 * 25.00
+    return (crf / 25.00) ** 0.80 * 25.00
 # ---------------------------------------------------------------------
 # Do you want to change other parameters than `--crf` dynamically
 # for the output zones file (and the eventual final encode)? This
@@ -201,7 +201,7 @@ def final_dynamic_parameters(crf: float) -> str:
 # You should also set `testing_parameters` above with the same
 # parameters you use here. Read the guide above for
 # `testing_parameters` for the details.
-final_parameters = "--lp 3 --keyint -1 --input-depth 10 --tune 0 --qm-min 8 --chroma-qm-min 10 --luminance-qp-bias 8 --qp-scale-compress-strength 3 --noise-norm-strength 4 --enable-cdef 0 --enable-restoration 0 --film-grain 0 --complex-hvs 1 --psy-rd 3.7 --spy-rd 0 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
+final_parameters = "--lp 3 --keyint -1 --input-depth 10 --tune 0 --qm-min 8 --chroma-qm-min 10 --luminance-qp-bias 8 --qp-scale-compress-strength 3 --noise-norm-strength 4 --film-grain 0 --complex-hvs 1 --psy-rd 3.5 --spy-rd 0 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
 # If you put all your parameters here, you can also enable this option
 # to use the reset flag in the zones file. This only affects
 # `--output-zones` and not `--output-scenes`.
@@ -678,7 +678,7 @@ def metric_model(crfs: np.ndarray[float], quantisers: np.ndarray[float]) -> Call
 # default, the quality we get from test encodes will be lower than that
 # of the final encode using slower presets. You should account for this
 # when setting the number.
-metric_target = 0.617
+metric_target = 0.615
 # ---------------------------------------------------------------------
 # ---------------------------------------------------------------------
 
