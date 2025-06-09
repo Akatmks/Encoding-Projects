@@ -218,7 +218,7 @@ function mux
         set_color red ; echo "[mux] Video file not found." ; set_color normal
         return 126
     end
-    set -a mkv_input_arguments --language 0:jpn $video_file
+    set -a mkv_input_arguments --language 0:ja $video_file
 
     if test $audio_quality = "Standard"
         set audio_file "Audio/$name.opus"
@@ -234,7 +234,7 @@ function mux
         set_color red ; echo "[mux] Audio file not found." ; set_color normal
         return 126
     end
-    set -a mkv_input_arguments --language 0:jpn $audio_file
+    set -a mkv_input_arguments --language 0:ja $audio_file
     
     set_color -o white ; echo "[mux] Muxing Euphonium - $name..." ; set_color normal
 
@@ -247,22 +247,22 @@ function mux
     set subtitle_file_JPN "Subtitles/$name.jpn.sup"
     if test -e $subtitle_file_JPN
         set output_filename "$output_filename JPN"
-        set -a mkv_input_arguments --language 0:jpn $subtitle_file_JPN
+        set -a mkv_input_arguments --language 0:ja $subtitle_file_JPN
     end
     set subtitle_file_CHS "Subtitles/$name.chs.ass"
     set subtitle_file_CHT "Subtitles/$name.cht.ass"
     set subtitle_file_ENG "Subtitles/$name.eng.ass"
     if test -e $subtitle_file_CHS
         set output_filename "$output_filename CHS"
-        set -a mkv_input_arguments --language 0:chi --track-name 0:"北宇治字幕组・简日双语" $subtitle_file_CHS
+        set -a mkv_input_arguments --language 0:zh-CN --track-name 0:"北宇治字幕组・简日双语" $subtitle_file_CHS
     end
     if test -e $subtitle_file_CHT
         set output_filename "$output_filename CHT"
-        set -a mkv_input_arguments --language 0:chi --track-name 0:"北宇治字幕組・繁日雙語" $subtitle_file_CHT
+        set -a mkv_input_arguments --language 0:zh-TW --track-name 0:"北宇治字幕組・繁日雙語" $subtitle_file_CHT
     end
     if test -e $subtitle_file_ENG
         set output_filename "$output_filename ENG"
-        set -a mkv_input_arguments --language 0:eng --track-name 0:"Virtuality / TakaNishi" $subtitle_file_ENG
+        set -a mkv_input_arguments --language 0:en --track-name 0:"Virtuality / TakaNishi" $subtitle_file_ENG
     end
     if begin test -e $subtitle_file_CHS ; or test -e $subtitle_file_CHT ; or test -e $subtitle_file_ENG ; end
         set subtitle_fonts_dirname (string replace --regex "[0-9][0-9]" "Fonts" $name)
