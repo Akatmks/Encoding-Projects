@@ -153,7 +153,7 @@ testing_parameters = "--lp 3 --keyint -1 --input-depth 10 --preset 6 --fast-deco
 # If you're using the default `testing_crfs` for Butteraugli 3Norm,
 # comment the line above for SSIMU2 and uncomment the lines below.
 final_min_crf = 6.00
-final_max_crf = 28.00
+final_max_crf = 25.00
 # ---------------------------------------------------------------------
 # Do you want a real constant quality, or do you just want a small
 # boost, not wishing to throw a lot of bitrates on the most demanding
@@ -171,7 +171,7 @@ final_max_crf = 28.00
 # `final_max_crf` from last section. They are necessary for Progression
 # Boost to work, even if you apply additional limits here.
 def final_dynamic_crf(crf: float) -> float:
-    return (crf / 28.00) ** 0.82 * 28.00
+    return (crf / 25.00) ** 0.81 * 25.00
 # ---------------------------------------------------------------------
 # Do you want to change other parameters than `--crf` dynamically
 # for the output zones file (and the eventual final encode)? This
@@ -678,7 +678,7 @@ def metric_model(crfs: np.ndarray[float], quantisers: np.ndarray[float]) -> Call
 # default, the quality we get from test encodes will be lower than that
 # of the final encode using slower presets. You should account for this
 # when setting the number.
-metric_target = 0.626
+metric_target = 0.627
 # ---------------------------------------------------------------------
 # ---------------------------------------------------------------------
 
