@@ -171,7 +171,7 @@ final_max_crf = 25.00
 # `final_max_crf` from last section. They are necessary for Progression
 # Boost to work, even if you apply additional limits here.
 def final_dynamic_crf(crf: float) -> float:
-    return (crf / 25.00) ** 0.80 * 25.00
+    return (crf / 25.00) ** 0.81 * 25.00
 # ---------------------------------------------------------------------
 # Do you want to change other parameters than `--crf` dynamically
 # for the output zones file (and the eventual final encode)? This
@@ -678,7 +678,7 @@ def metric_model(crfs: np.ndarray[float], quantisers: np.ndarray[float]) -> Call
 # default, the quality we get from test encodes will be lower than that
 # of the final encode using slower presets. You should account for this
 # when setting the number.
-metric_target = 0.615
+metric_target = 0.612
 # ---------------------------------------------------------------------
 # ---------------------------------------------------------------------
 
