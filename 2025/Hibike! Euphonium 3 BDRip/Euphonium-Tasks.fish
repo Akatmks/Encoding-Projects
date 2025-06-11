@@ -38,7 +38,7 @@ $start $prefix/BDMV/STREAM/00006.m2ts "Making & Unused Scenes" "Unused Scenes Vo
 $start $prefix/BDMV/STREAM/00007.m2ts "Making & Unused Scenes" "Making Episode 05 Cut 331" Fast Low
 $start $prefix/BDMV/STREAM/00016.m2ts "Previews" "Episode 06 Preview" Fast Standard
 $start $prefix/BDMV/STREAM/00017.m2ts "Making & Unused Scenes" "Making Episode 04 Cut 310 311B 312" Fast Low
-$start $prefix/BDMV/STREAM/00018.m2ts "PV & CM" "April Fools Day PV" Standard Standard
+$start $prefix/BDMV/STREAM/00018.m2ts "PV & CM" "April Fools Day PV" Fast Standard
 $start $prefix/BDMV/STREAM/00033.m2ts "Menus" "Menu Vol 2 01" Fast Standard
 $start $prefix/BDMV/STREAM/00034.m2ts "Menus" "Menu Vol 2 02" Fast Standard
 
