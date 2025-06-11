@@ -29,35 +29,16 @@ function prepare
     set scenes_file "Temps/$name.scenes.json"
     set temp_dir_boost "Temps/$name.boost.tmp"
     if not test -e $scenes_file
-        set_color -o magenta ; echo "[prepare] Starting dispatch server..." ; set_color normal
-        python Server.py &
-
         if test $video_quality = "Standard"
             SOURCE_FILE=$source_file LWI_FILE=$lwi_file python Progression-Boost.py --input $source_file --input-lwi $lwi_file --encode-input "Euphonium-Boost.py" --output-scenes $scenes_file --temp $temp_dir_boost --resume
-            or begin set status_ $status
-                python Server-Shutdown.py
-                set_color -o magenta ; echo "[encode] Stopping dispatch server..." ; set_color normal
-                return $status_
-            end
+            or return $status
         else if test $video_quality = "Fast"
             SOURCE_FILE=$source_file LWI_FILE=$lwi_file python Progression-Boost-Fast.py --input $source_file --input-lwi $lwi_file --encode-input "Euphonium-Boost.py" --output-scenes $scenes_file --temp $temp_dir_boost --resume
-            or begin set status_ $status
-                python Server-Shutdown.py
-                set_color -o magenta ; echo "[encode] Stopping dispatch server..." ; set_color normal
-                return $status_
-            end
+            or return $status
         else if test $video_quality = "Fast-Vertical"
             SOURCE_FILE=$source_file LWI_FILE=$lwi_file python Progression-Boost-Fast-Vertical.py --input $source_file --input-lwi $lwi_file --encode-input "Euphonium-Boost.py" --output-scenes $scenes_file --temp $temp_dir_boost --resume
-            or begin set status_ $status
-                python Server-Shutdown.py
-                set_color -o magenta ; echo "[encode] Stopping dispatch server..." ; set_color normal
-                return $status_
-            end
+            or return $status
         end
-
-        python Server-Shutdown.py
-        or return $status
-        set_color -o magenta ; echo "[prepare] Stopping dispatch server..." ; set_color normal
     end
     if not test -e $scenes_file
         set_color red ; echo "[prepare] Generated scenes file missing. Exiting..." ; set_color normal
@@ -239,7 +220,7 @@ function mux
     set_color -o white ; echo "[mux] Muxing Euphonium - $name..." ; set_color normal
 
     set chapters_file "Chapters/$name.txt"
-    if test -e chapters_file
+    if test -e $chapters_file
         set -a mkv_output_arguments --chapters
         set -a mkv_output_arguments $chapters_file
     end
