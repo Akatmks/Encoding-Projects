@@ -250,8 +250,7 @@ function mux
         end
     end
     if begin test -e $subtitle_file_CHS ; or test -e $subtitle_file_CHT ; or test -e $subtitle_file_ENG ; end
-        set subtitle_fonts_dirname (string replace --regex "[0-9][0-9]" "Fonts" $name)
-        for f in (find "Subtitles/$subtitle_fonts_dirname" -type f)
+        for f in (find "Subtitles/Fonts" -type f)
             set -a mkv_input_arguments --attach-file $f
         end
     end
