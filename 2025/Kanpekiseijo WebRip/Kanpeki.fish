@@ -135,7 +135,7 @@ function mux
         return 126
     end
 
-    set erai_raws_release (find $prefix -regex "$prefix/\[Erai-raws\] Kanpekiseijo - $episode \[1080p CR WEBRip HEVC EAC3\]\[MultiSub\]\[[0-9A-F]+\].mkv")
+    set erai_raws_release (find $prefix -regex "$prefix/\[Erai-raws\] Kanpekiseijo - $episode \[1080p CR WEBRip HEVC [EAC3]+\]\[MultiSub\]\[[0-9A-F]+\].mkv")
     if begin test -z $erai_raws_release ; or not test -e $erai_raws_release ; end
         set_color red ; echo "[mux] Erai-raws release not found." ; set_color normal
         return 126
