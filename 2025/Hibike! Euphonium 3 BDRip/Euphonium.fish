@@ -243,7 +243,11 @@ function mux
     end
     if test -e $subtitle_file_ENG
         set output_filename "$output_filename ENG"
-        set -a mkv_input_arguments --language 0:en --track-name 0:"Virtuality / TakaNishi" $subtitle_file_ENG
+        if not string match --regex "Extra Episode [0-9][0-9]" $name
+            set -a mkv_input_arguments --language 0:en --track-name 0:"KanadeBestGirl / Virtuality / TakaNishi" $subtitle_file_ENG
+        else
+            set -a mkv_input_arguments --language 0:en --track-name 0:"Maoam" $subtitle_file_ENG
+        end
     end
     if begin test -e $subtitle_file_CHS ; or test -e $subtitle_file_CHT ; or test -e $subtitle_file_ENG ; end
         set subtitle_fonts_dirname (string replace --regex "[0-9][0-9]" "Fonts" $name)
