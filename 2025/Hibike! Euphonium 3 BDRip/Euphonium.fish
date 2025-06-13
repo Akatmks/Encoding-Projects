@@ -187,20 +187,13 @@ function mux
         return 126
     end
     set output_filename "$output_filename AV1"
+    set -a mkv_input_arguments --language 0:ja $video_file
 
     set audio_quality $argv[5]
     if begin not test $audio_quality = "Standard" ; and not test $audio_quality = "Lossless" ; and not test $audio_quality = "Low" ; end
         set_color red ; echo "[encode_audio] Invalid audio quality." ; set_color normal
         return 126
     end
-
-    set video_file "Video/$name.mkv"
-    if not test -e $video_file
-        set_color red ; echo "[mux] Video file not found." ; set_color normal
-        return 126
-    end
-    set -a mkv_input_arguments --language 0:ja $video_file
-
     if test $audio_quality = "Standard"
         set audio_file "Audio/$name.opus"
     else if test $audio_quality = "Lossless"
