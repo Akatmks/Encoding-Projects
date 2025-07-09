@@ -215,8 +215,8 @@ def final_dynamic_crf(crf: float) -> float:
 # commenting the others, or picking your own value by entering into any
 # of the lines.
     # crf = (crf / 24.00) ** 0.92 * 24.00
-    # crf = (crf / 24.00) ** 0.88 * 24.00
-    crf = (crf / 24.00) ** 0.83 * 24.00
+    crf = (crf / 24.00) ** 0.855 * 24.00
+    # crf = (crf / 24.00) ** 0.82 * 24.00
 
 # Do you want a real constant quality, or do you just want a small
 # boost, not wishing to throw a lot of bitrates on the most demanding
@@ -257,7 +257,7 @@ def final_dynamic_parameters(crf: float) -> str:
 # You should also set `testing_parameters` above with the same           # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # parameters you use here. Read the guide above for                      # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # `testing_parameters` for the details.                                  # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-final_parameters = "--lp 3 --keyint -1 --input-depth 10 --preset 0 --tune 3 --qm-min 8 --chroma-qm-min 10 --frame-luma-bias 10 --qp-scale-compress-strength 6 --variance-boost-strength 3 --variance-octile 3 --scm 0 --complex-hvs 1 --psy-rd 1.5 --spy-rd 2 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
+final_parameters = "--lp 3 --keyint -1 --input-depth 10 --preset 1 --tune 3 --qm-min 8 --chroma-qm-min 10 --frame-luma-bias 10 --qp-scale-compress-strength 6 --variance-boost-strength 3 --variance-octile 3 --scm 0 --complex-hvs 1 --psy-rd 1.5 --spy-rd 2 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
 # If you put all your parameters here, you can also enable this option   # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # to use the reset flag in the zones file. This only affects             # <<<<  The next variable that you have to adjust is quite low  <<<<<<
 # `--output-zones` and not `--output-scenes`.                            # <<<<  down the script at somewhere around line 700 to 900.  <<<<<<<<
@@ -777,7 +777,7 @@ def metric_model(crfs: np.ndarray[float], quantisers: np.ndarray[float]) -> Call
 # better result in your final encode using a slower `--preset`. You      # <<<<  all the other settings once you become familiar with the <<<<<
 # should account for this difference when setting the number below.      # <<<<  script. There's still a lot of improvements, timewise or  <<<<
 # Maybe set it a little bit lower than your actual target.               # <<<<  qualitywise, you can have with all the other options.  <<<<<<<
-metric_target = 0.665
+metric_target = 0.650
 #
 # You can also have a look at `final_dynamic_crf` section, where we
 # perform a flat readjustment to make the result more suitable for the
