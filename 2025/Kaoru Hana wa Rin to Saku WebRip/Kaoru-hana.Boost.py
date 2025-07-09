@@ -1,5 +1,5 @@
 import os
-from vstools import core
+from vstools import core, SPath
 
 
 source_file = SPath(os.environ["SOURCE_FILE"])
