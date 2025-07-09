@@ -167,11 +167,11 @@ function encode
     if test -e $video_file
         set_color -o yellow ; echo "[encode] Target video file already exists. Continuing..." ; set_color normal
     end
-    set temp_dir = "Temps/$episode.tmp"
+    set temp_dir "Temp/$episode.tmp"
     if test -e $temp_dir
         set_color -o yellow ; echo "[encode] Temp dir already exists. Continuing..." ; set_color normal
     end
-    SOURCE_FILE=$intermediate_file LWI_FILE=$intermediate_lwi_file av1an -y --max-tries 5 --temp $temp_dir --resume --keep --verbose --log-level debug -i Kaoru-hana.Encode.py -o $video_file --scenes $scenes_file --chunk-order random --chunk-method lsmash --workers 10 --encoder svt-av1 --no-defaults --video-params "[1;5m:hanasaku:[0m" --pix-format yuv420p10le --concat mkvmerge
+    SOURCE_FILE=$intermediate_file SOURCE_LWI_FILE=$intermediate_lwi_file av1an -y --max-tries 5 --temp $temp_dir --resume --keep --verbose --log-level debug -i Kaoru-hana.Encode.py -o $video_file --scenes $scenes_file --chunk-order random --chunk-method lsmash --workers 10 --encoder svt-av1 --no-defaults --video-params "[1;5m:hanasaku:[0m" --pix-format yuv420p10le --concat mkvmerge
     or begin set status_ $status
         python Server-Shutdown.py
         set_color -o magenta ; echo "[encode] Stopping dispatch server..." ; set_color normal
@@ -188,15 +188,8 @@ function encode
     end
 end
 
-# $argv[1]: Episode number "01"
 function shutdown
-    set episode $argv[1]
-    if test -z $episode
-        set_color red ; echo "[shutdown] Episode number not provided." ; set_color normal
-        return 126
-    end
-
-    EPISODE=$episode python Kanpeki-Server-Shutdown.py
+    python Server-Shutdown.py
     or return $status
 end
 
@@ -305,7 +298,7 @@ function clean
         return 126
     end
 
-    rm -rf "logs" "__pycache__" "Temp/$episode.source.lwi" "Temp/$episode.boost.tmp" "Temps/$name.tmp"
+    rm -rf "logs" "__pycache__" "Temp/$episode.source.lwi" "Temp/$episode.boost.tmp" "Temp/$name.tmp"
 end
 
 # $argv[1]: Episode number "01"

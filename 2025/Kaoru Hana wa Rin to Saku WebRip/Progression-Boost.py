@@ -777,7 +777,7 @@ def metric_model(crfs: np.ndarray[float], quantisers: np.ndarray[float]) -> Call
 # better result in your final encode using a slower `--preset`. You      # <<<<  all the other settings once you become familiar with the <<<<<
 # should account for this difference when setting the number below.      # <<<<  script. There's still a lot of improvements, timewise or  <<<<
 # Maybe set it a little bit lower than your actual target.               # <<<<  qualitywise, you can have with all the other options.  <<<<<<<
-metric_target = 0.630
+metric_target = 0.665
 #
 # You can also have a look at `final_dynamic_crf` section, where we
 # perform a flat readjustment to make the result more suitable for the
@@ -795,7 +795,7 @@ metric_target = 0.630
 # Enable character boosting by setting the line below to True.
 character_enable = True
 # Set how aggressive character boosting should be.
-character_sigma = 8.00
+character_sigma = 6.00
 # ---------------------------------------------------------------------
 if character_enable:
     import vsmlrt
@@ -1072,7 +1072,7 @@ if zones_file:
 
 # Ding
 metric_iterate_crfs = np.append(testing_crfs, [final_max_crf, final_min_crf])
-metric_reporting_crf = final_min_crf + 9.00
+metric_reporting_crf = final_min_crf + 6.00
 
 metric_scene_rjust_digits = math.floor(np.log10(len(scenes["scenes"]))) + 1
 metric_scene_rjust = lambda scene: str(scene).rjust(metric_scene_rjust_digits, "0")
@@ -1247,7 +1247,7 @@ for i, scene in enumerate(scenes["scenes"]):
 
     if character_enable:
         clip = character_clip[scene["start_frame"]]
-        for fter in range(1, (scene["end_frame"] - scene["start_frame"]) // 8 + 1):
+        for fter in range(1, (scene["end_frame"] - scene["start_frame"]) // 8):
             clip += (character_clip[scene["start_frame"] + fter * 8])
 
         roi_map = []
