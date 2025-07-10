@@ -298,16 +298,5 @@ function clean
         return 126
     end
 
-    rm -rf "logs" "__pycache__" "Temp/$episode.source.lwi" "Temp/$episode.boost.tmp" "Temp/$name.tmp"
-end
-
-# $argv[1]: Episode number "01"
-function clean_intermediate
-    set episode $argv[1]
-    if test -z $episode
-        set_color red ; echo "[clean_intermediate] Episode number not provided." ; set_color normal
-        return 126
-    end
-
-    rm -rf "Video/$episode.intermediate.mp4" "Temp/$episode.intermediate.lwi" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps"
+    rm -rf "logs" "__pycache__" "Temp/$episode.source.lwi" "Video/$episode.intermediate.mp4" "Temp/$episode.intermediate.lwi" "Temp/$episode.boost.tmp" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps" "Temp/$name.tmp"
 end

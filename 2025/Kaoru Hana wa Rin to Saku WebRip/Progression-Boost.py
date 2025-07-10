@@ -170,7 +170,7 @@ def testing_dynamic_parameters(crf: float) -> str:
 # preset. You need to specify everything other than `--input`,           # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # `--output`, `--crf` and the parameters you've set to generate          # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # dynamically.                                                           # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-testing_parameters = "--lp 3 --keyint -1 --input-depth 10 --preset 6 --fast-decode 1 --tune 3 --qm-min 8 --chroma-qm-min 10 --frame-luma-bias 10 --qp-scale-compress-strength 6 --variance-boost-strength 3 --variance-octile 3 --scm 0 --psy-rd 1.5 --spy-rd 2 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
+testing_parameters = "--lp 3 --keyint -1 --input-depth 10 --preset 6 --fast-decode 1 --tune 3 --qm-min 8 --chroma-qm-min 10 --frame-luma-bias 16 --qp-scale-compress-strength 6 --variance-boost-strength 3 --variance-octile 3 --scm 0 --psy-rd 1.5 --spy-rd 2 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
 # ---------------------------------------------------------------------
 # ---------------------------------------------------------------------
 # Config for the target quality to generate the final `--crf` comes
@@ -215,7 +215,7 @@ def final_dynamic_crf(crf: float) -> float:
 # commenting the others, or picking your own value by entering into any
 # of the lines.
     # crf = (crf / 24.00) ** 0.92 * 24.00
-    crf = (crf / 24.00) ** 0.855 * 24.00
+    crf = (crf / 24.00) ** 0.87 * 24.00
     # crf = (crf / 24.00) ** 0.82 * 24.00
 
 # Do you want a real constant quality, or do you just want a small
@@ -257,7 +257,7 @@ def final_dynamic_parameters(crf: float) -> str:
 # You should also set `testing_parameters` above with the same           # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # parameters you use here. Read the guide above for                      # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # `testing_parameters` for the details.                                  # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-final_parameters = "--lp 3 --keyint -1 --input-depth 10 --preset 1 --tune 3 --qm-min 8 --chroma-qm-min 10 --frame-luma-bias 10 --qp-scale-compress-strength 6 --variance-boost-strength 3 --variance-octile 3 --scm 0 --complex-hvs 1 --psy-rd 1.5 --spy-rd 2 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
+final_parameters = "--lp 3 --keyint -1 --input-depth 10 --preset 1 --tune 3 --qm-min 8 --chroma-qm-min 10 --frame-luma-bias 16 --qp-scale-compress-strength 6 --variance-boost-strength 3 --variance-octile 3 --scm 0 --complex-hvs 1 --psy-rd 1.5 --spy-rd 2 --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0"
 # If you put all your parameters here, you can also enable this option   # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # to use the reset flag in the zones file. This only affects             # <<<<  The next variable that you have to adjust is quite low  <<<<<<
 # `--output-zones` and not `--output-scenes`.                            # <<<<  down the script at somewhere around line 700 to 900.  <<<<<<<<
@@ -307,7 +307,7 @@ scene_detection_min_scene_len = 12
 # flag any scenechanges, the scene detection mechanism will only
 # attempt to divide a scene if it is longer than
 # `scene_detection_extra_split`, and this setting has no effects.
-scene_detection_target_split = 48
+scene_detection_target_split = 36
 # ---------------------------------------------------------------------
 # In the grand scheme of scene detection, av1an is the more universal
 # option for scene detection. It works well in most conditions.
@@ -777,7 +777,7 @@ def metric_model(crfs: np.ndarray[float], quantisers: np.ndarray[float]) -> Call
 # better result in your final encode using a slower `--preset`. You      # <<<<  all the other settings once you become familiar with the <<<<<
 # should account for this difference when setting the number below.      # <<<<  script. There's still a lot of improvements, timewise or  <<<<
 # Maybe set it a little bit lower than your actual target.               # <<<<  qualitywise, you can have with all the other options.  <<<<<<<
-metric_target = 0.650
+metric_target = 0.665
 #
 # You can also have a look at `final_dynamic_crf` section, where we
 # perform a flat readjustment to make the result more suitable for the
