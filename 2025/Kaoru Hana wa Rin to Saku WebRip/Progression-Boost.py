@@ -795,7 +795,7 @@ metric_target = 0.664
 # Enable character boosting by setting the line below to True.
 character_enable = True
 # Set how aggressive character boosting should be.
-character_sigma = 5.554
+character_sigma = 4.664
 # ---------------------------------------------------------------------
 if character_enable:
     import vsmlrt
