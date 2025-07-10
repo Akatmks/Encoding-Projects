@@ -475,7 +475,7 @@ metric_highest_diff_min_separation = 4
 # power and you want to be relatively safe, use maybe 10 and 5. If you
 # want to speed up metric calculation, you can try 4 and 2 for these
 # while also reducing `metric_highest_diff_frames` to 2.
-metric_upper_diff_bracket_frames = 18
+metric_upper_diff_bracket_frames = 14
 metric_lower_diff_bracket_frames = 0
 # We select frames from the two brackets randomly, but we want to avoid
 # picking a frame in the lower bracket right after a frame from the
@@ -487,7 +487,7 @@ metric_lower_diff_bracket_min_separation = 2
 # of frames selected in the upper diff bracket is smaller than this
 # number, we will select additional frames in the lower bracket until
 # this number is reached.
-metric_upper_diff_bracket_fallback_frames = 10
+metric_upper_diff_bracket_fallback_frames = 8
 #
 # All these diff sorting and selection excludes the first frame of the
 # scene since the diff data of the first frame is compared against the
@@ -795,7 +795,7 @@ metric_target = 0.664
 # Enable character boosting by setting the line below to True.
 character_enable = True
 # Set how aggressive character boosting should be.
-character_sigma = 5.000
+character_sigma = 5.554
 # ---------------------------------------------------------------------
 if character_enable:
     import vsmlrt
