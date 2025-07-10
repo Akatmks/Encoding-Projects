@@ -307,7 +307,7 @@ scene_detection_min_scene_len = 12
 # flag any scenechanges, the scene detection mechanism will only
 # attempt to divide a scene if it is longer than
 # `scene_detection_extra_split`, and this setting has no effects.
-scene_detection_target_split = 36
+scene_detection_target_split = 48
 # ---------------------------------------------------------------------
 # In the grand scheme of scene detection, av1an is the more universal
 # option for scene detection. It works well in most conditions.
