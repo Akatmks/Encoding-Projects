@@ -258,7 +258,7 @@ function mux
 
     set subtitle_file_ES "Subtitles/[DantalianSubs] $episode.ass"
     if test -e $subtitle_file_ES
-        set -a mkv_command --language 0:es --track-name 0:"DantalianSubs" $subtitle_file_ES
+        set -a mkv_command --language 0:es-419 --track-name 0:"DantalianSubs" $subtitle_file_ES
     end
 
     set subtitle_file_JA "Subtitles/[NF] $episode.ass"
