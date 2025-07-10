@@ -31,8 +31,8 @@ function extract
         set group "拨雪寻春・简日双语"
         set group2 "撥雪尋春・繁日雙語"
     else if test $group = "Erai-raws"
-        set group "NF"
-        set group2 "NF (CC)"
+        set group "HanaEncode"
+        set group2 "HanaEncode (CC)"
     end
 
     if test -z "$episode"
@@ -59,13 +59,27 @@ function extract
     end
 
     set fonts_dir "Subtitles/$episode.Fonts"
-    mkdir $fonts_dir
-    begin cd $fonts_dir
-        ffmpeg -hide_banner -y -dump_attachment:t "" -i $source_file
-        prevd
+    if not test -e $fonts_dir
+        mkdir $fonts_dir
+    end
+    if test $group != "HanaEncode"
+        begin cd $fonts_dir
+            ffmpeg -hide_banner -y -dump_attachment:t "" -i $source_file
+            prevd
+        end
+    else
+        cp "Subtitles/HiraMaruPro-W4.otf" "$fonts_dir/"
+
+        for group_it in $group $group2
+            string replace --regex "Title: .*" "Title: HanaEncode" (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
+            string replace --regex "PlayResX: .*" "PlayResX: 1920" (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
+            string replace --regex "PlayResY: .*" "PlayResY: 1080" (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
+            string replace --regex "Style: Default,.*" "Style: Default,Hiragino Maru Gothic Pro W4,64,&H00F0F2F5,&H000000FF,&H003D363A,&H00000000,-1,0,0,0,100,100,0,0,1,3.2,0,1,615,200,40,1" (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
+            string replace --regex ",\{.*?\}" "," (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
+        end
     end
 
-    if test $group = "Erai-raws"
+    if test $group = "HanaEncode"
         set_color -o white ; echo "[extract] Extracting audio for Kaoru Hana - $episode..." ; set_color normal
 
         set audio_file "Audio/$episode.aac"
@@ -261,18 +275,18 @@ function mux
         set -a mkv_command --language 0:es-419 --track-name 0:"DantalianSubs" $subtitle_file_ES
     end
 
-    set subtitle_file_JA "Subtitles/[NF] $episode.ass"
+    set subtitle_file_JA "Subtitles/[HanaEncode] $episode.ass"
     if test -e $subtitle_file_JA
-        set -a mkv_command --language 0:ja --track-name 0:"NF" $subtitle_file_JA
+        set -a mkv_command --language 0:ja --track-name 0:"HanaEncode" $subtitle_file_JA
     else
-        set_color red ; echo "[mux] NF subtitle not found. Continuing..." ; set_color normal
+        set_color red ; echo "[mux] HanaEncode subtitle not found. Continuing..." ; set_color normal
     end
 
-    set subtitle_file_JA_CC "Subtitles/[NF (CC)] $episode.ass"
+    set subtitle_file_JA_CC "Subtitles/[HanaEncode (CC)] $episode.ass"
     if test -e $subtitle_file_JA_CC
-        set -a mkv_command --language 0:ja --track-name 0:"NF (CC)" --hearing-impaired-flag 0:1 $subtitle_file_JA_CC
+        set -a mkv_command --language 0:ja --track-name 0:"HanaEncode (CC)" --hearing-impaired-flag 0:1 $subtitle_file_JA_CC
     else
-        set_color red ; echo "[mux] NF (CC) subtitle not found. Continuing..." ; set_color normal
+        set_color red ; echo "[mux] HanaEncode (CC) subtitle not found. Continuing..." ; set_color normal
     end
 
     for f in (find "Subtitles/$episode.Fonts" -type f)
