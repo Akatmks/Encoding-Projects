@@ -777,7 +777,7 @@ def metric_model(crfs: np.ndarray[float], quantisers: np.ndarray[float]) -> Call
 # better result in your final encode using a slower `--preset`. You      # <<<<  all the other settings once you become familiar with the <<<<<
 # should account for this difference when setting the number below.      # <<<<  script. There's still a lot of improvements, timewise or  <<<<
 # Maybe set it a little bit lower than your actual target.               # <<<<  qualitywise, you can have with all the other options.  <<<<<<<
-metric_target = 0.662
+metric_target = 0.664
 #
 # You can also have a look at `final_dynamic_crf` section, where we
 # perform a flat readjustment to make the result more suitable for the
@@ -795,7 +795,7 @@ metric_target = 0.662
 # Enable character boosting by setting the line below to True.
 character_enable = True
 # Set how aggressive character boosting should be.
-character_sigma = 6.00
+character_sigma = 5.000
 # ---------------------------------------------------------------------
 if character_enable:
     import vsmlrt
