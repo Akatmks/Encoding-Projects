@@ -215,7 +215,7 @@ def final_dynamic_crf(crf: float) -> float:
 # commenting the others, or picking your own value by entering into any
 # of the lines.
     # crf = (crf / 24.00) ** 0.92 * 24.00
-    crf = (crf / 24.00) ** 0.87 * 24.00
+    crf = (crf / 24.00) ** 0.867 * 24.00
     # crf = (crf / 24.00) ** 0.82 * 24.00
 
 # Do you want a real constant quality, or do you just want a small
