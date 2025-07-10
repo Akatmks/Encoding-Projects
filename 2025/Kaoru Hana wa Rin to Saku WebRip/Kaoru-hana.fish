@@ -221,12 +221,19 @@ function mux
     end
     set -a mkv_command --language 0:ja $video_file
 
-    set video_file "Audio/$episode.aac"
+    set audio_file "Audio/$episode.aac"
     if not test -e $audio_file
         set_color red ; echo "[mux] Audio file not found." ; set_color normal
         return 126
     end
     set -a mkv_command --language 0:ja $audio_file
+
+    set subtitle_file_PT_BR "Subtitles/[SubVision] $episode.ass"
+    if test -e $subtitle_file_PT_BR
+        set -a mkv_command --language 0:pt-BR --track-name 0:"SubVision" $subtitle_file_PT_BR
+    else
+        set_color red ; echo "[mux] SubVision subtitle not found. Continuing..." ; set_color normal
+    end
 
     set subtitle_file_FR "Subtitles/[KHFR] $episode.ass"
     if test -e $subtitle_file_FR
@@ -247,13 +254,6 @@ function mux
         set -a mkv_command --language 0:zh-TW --track-name 0:"撥雪尋春・繁日雙語" $subtitle_file_ZH_TW
     else
         set_color red ; echo "[mux] 撥雪尋春・繁日雙語 subtitle not found. Continuing..." ; set_color normal
-    end
-
-    set subtitle_file_PT_BR "Subtitles/[SubVision] $episode.ass"
-    if test -e $subtitle_file_PT_BR
-        set -a mkv_command --language 0:pt-BR --track-name 0:"SubVision" $subtitle_file_PT_BR
-    else
-        set_color red ; echo "[mux] SubVision subtitle not found. Continuing..." ; set_color normal
     end
 
     set subtitle_file_ES "Subtitles/[DantalianSubs] $episode.ass"
@@ -304,7 +304,7 @@ function clean
         return 126
     end
 
-    rm -rf "logs" "__pycache__" "Temp/$episode.source.lwi" "Temp/$episode.intermediate.lwi" "Temp/$episode.boost.tmp" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps" "Temp/$name.tmp"
+    rm -rf "logs" "__pycache__" "Temp/$episode.source.lwi" "Temp/$episode.intermediate.lwi" "Temp/$episode.boost.tmp" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps" "Temp/$episode.tmp"
 
     if test -n "$clean_intermediate"
         rm "Video/$episode.intermediate.mp4"
