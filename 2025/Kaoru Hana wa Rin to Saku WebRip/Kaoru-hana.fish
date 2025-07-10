@@ -292,11 +292,21 @@ end
 
 # $argv[1]: Episode number "01"
 function clean
-    set episode $argv[1]
+    set --erase clean_intermediate
+    if test $argv[1] = "intermediate"
+        set episode $argv[2]
+        set clean_intermediate "Yes"
+    else
+        set episode $argv[1]
+    end
     if test -z $episode
         set_color red ; echo "[clean] Episode number not provided." ; set_color normal
         return 126
     end
 
-    rm -rf "logs" "__pycache__" "Temp/$episode.source.lwi" "Video/$episode.intermediate.mp4" "Temp/$episode.intermediate.lwi" "Temp/$episode.boost.tmp" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps" "Temp/$name.tmp"
+    rm -rf "logs" "__pycache__" "Temp/$episode.source.lwi" "Temp/$episode.intermediate.lwi" "Temp/$episode.boost.tmp" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps" "Temp/$name.tmp"
+
+    if test -n "$clean_intermediate"
+        rm "Video/$episode.intermediate.mp4"
+    end
 end
