@@ -71,10 +71,10 @@ function extract
         cp "Subtitles/HiraMaruPro-W4.otf" "$fonts_dir/"
 
         for group_it in $group $group2
-            string replace --regex "Title: .*" "Title: HanaEncode" (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
-            string replace --regex "PlayResX: .*" "PlayResX: 1920" (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
-            string replace --regex "PlayResY: .*" "PlayResY: 1080" (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
-            string replace --regex "Style: Default,.*" "Style: Default,Hiragino Maru Gothic Pro W4,64,&H00F0F2F5,&H000000FF,&H003D363A,&H00000000,-1,0,0,0,100,100,0,0,1,3.2,0,1,615,200,40,1" (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
+            string replace --regex "^Title: .*" "Title: HanaEncode" (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
+            string replace --regex "^PlayResX: .*" "PlayResX: 1920" (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
+            string replace --regex "^PlayResY: .*" "PlayResY: 1080" (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
+            string replace --regex "^Style: Default,.*" "Style: Default,Hiragino Maru Gothic Pro W4,64,&H00F0F2F5,&H000000FF,&H003D363A,&H00000000,-1,0,0,0,100,100,0,0,1,3.2,0,1,615,200,40,1" (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
             string replace --regex ",\{.*?\}" "," (cat "Subtitles/[$group_it] 01.ass") > "Subtitles/[$group_it] 01.ass"
         end
     end
@@ -142,7 +142,7 @@ function boost
 end
 
 # $argv[1]: Episode number "01"
-# $argv[2]: CPU Usage "80" (Default)
+# $argv[2]: CPU Usage "83.333" (Default)
 function encode
     set episode $argv[1]
     if test -z $episode
@@ -151,7 +151,7 @@ function encode
     end
     set usage $argv[2]
     if test -z $usage
-        set usage 80
+        set usage 83.333
     end
 
     set intermediate_file "Video/$episode.intermediate.mp4"
