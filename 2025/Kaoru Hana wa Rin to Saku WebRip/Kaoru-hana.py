@@ -55,7 +55,7 @@ c_dn_y = bm3d(src_y, sigma=3.1, profile=BM3D.Profile.LOW_COMPLEXITY)
 
 dn_y = core.std.MaskedMerge(b_dn_y, c_dn_y, cclip)
 
-dn_uv = nl_means(src, h=0.44, tr=2, planes=[1, 2])
+dn_uv = nl_means(src, h=0.40, tr=2, planes=[1, 2])
 
 
 aa_y = private_aa(dn_y, strength=0.95)
@@ -86,7 +86,7 @@ c_dh = edge_cleaner(combine, strength=7, edgemask=Kayyali())
 
 c_dh_refine_1 = edge_cleaner(c_dh, strength=15, edgemask=Scharr())
 
-c_dh_refine_2 = dehalo_sigma(c_dh_refine_1, sigma=1.2)
+c_dh_refine_2 = dehalo_sigma(c_dh_refine_1, sigma=1.1)
 c_dh_mask = fine_dehalo.mask(c_dh_refine_1, rx=2.4, ry=2.4, edgemask=FreyChen(), thmi=100, thma=140, edgeproc=1.0, exclude=False)
 c_dh_refine_2 = core.std.MaskedMerge(c_dh_refine_1, c_dh_refine_2, c_dh_mask)
 
