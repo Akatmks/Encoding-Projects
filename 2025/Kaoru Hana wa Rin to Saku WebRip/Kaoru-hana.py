@@ -55,7 +55,7 @@ c_dn_y = bm3d(src_y, sigma=3.1, profile=BM3D.Profile.LOW_COMPLEXITY)
 
 dn_y = core.std.MaskedMerge(b_dn_y, c_dn_y, cclip)
 
-dn_uv = nl_means(src, h=0.40, tr=2, planes=[1, 2])
+dn_uv = nl_means(src, h=0.41, tr=2, planes=[1, 2])
 
 
 aa_y = private_aa(dn_y, strength=0.95)
