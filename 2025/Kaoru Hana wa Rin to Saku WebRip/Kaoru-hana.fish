@@ -103,13 +103,12 @@ function filter
 
     set_color -o white ; echo "[filter] Filtering Kaoru Hana - $episode..." ; set_color normal
 
-    set source_lwi_file "Temp/$episode.source.lwi"
     set intermediate_file "Video/$episode.intermediate.mp4"
     if test -e $intermediate_file
         set_color red ; echo "[filter] Intermediate file already exists. Exiting..." ; set_color normal
         return 126
     end
-    SOURCE_FILE=$source_file SOURCE_LWI_FILE=$source_lwi_file VSPipe Kaoru-hana.py -c y4m - | x264_x64 --threads 12 --demuxer y4m --output-csp i420 --output-depth 10 --qp 0 --preset slow --colorprim bt709 --transfer bt709 --colormatrix bt709 --output $intermediate_file -
+    SOURCE_FILE=$source_file VSPipe Kaoru-hana.py -c y4m - | x264_x64 --threads 12 --demuxer y4m --output-csp i420 --output-depth 10 --qp 0 --preset slow --colorprim bt709 --transfer bt709 --colormatrix bt709 --output $intermediate_file -
     or return $status
 end
 
