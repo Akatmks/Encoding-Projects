@@ -156,19 +156,19 @@ function encode
 
     set intermediate_file "Video/$episode.intermediate.mp4"
     if begin test -z $intermediate_file ; or not test -e $intermediate_file ; end
-        set_color red ; echo "[boost] Intermediate file not found." ; set_color normal
+        set_color red ; echo "[encode] Intermediate file not found." ; set_color normal
         return 126
     end
     set intermediate_lwi_file "Temp/$episode.intermediate.lwi"
 
     set scenes_file "Temp/$episode.scenes.json"
     if begin test -z $scenes_file ; or not test -e $scenes_file ; end
-        set_color red ; echo "[boost] Scenes file not found." ; set_color normal
+        set_color red ; echo "[encode] Scenes file not found." ; set_color normal
         return 126
     end
     set roi_maps_dir "Temp/$episode.roi.maps"
     if begin test -z $roi_maps_dir ; or not test -e $roi_maps_dir ; end
-        set_color red ; echo "[boost] ROI map directory not exists." ; set_color normal
+        set_color red ; echo "[encode] ROI map directory not exists." ; set_color normal
         return 126
     end
 
@@ -211,7 +211,7 @@ end
 function mux
     set episode $argv[1]
     if test -z $episode
-        set_color red ; echo "[encode] Episode number not provided." ; set_color normal
+        set_color red ; echo "[mux] Episode number not provided." ; set_color normal
         return 126
     end
 
