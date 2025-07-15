@@ -18,6 +18,12 @@ function extract
         set group "KHFR"
         set episode $french
     end
+
+    set french (string match --regex --groups-only "The\\.Fragrant\\.Flower\\.Blooms\\.With\\.Dignity\\.S01E(\\d+)\\.VOSTFR" $source_file)
+    if test -n "$french"
+        set group "KHFR"
+        set episode $french
+    end
     
     if test -z "$group"
         set group (string match --regex --groups-only "^\[(.*?)\]" (path basename $source_file))
@@ -272,6 +278,8 @@ function mux
     set subtitle_file_ES "Subtitles/[DantalianSubs] $episode.ass"
     if test -e $subtitle_file_ES
         set -a mkv_command --language 0:es-419 --track-name 0:"DantalianSubs" $subtitle_file_ES
+    else
+        set_color red ; echo "[mux] DantalianSubs subtitle not found. Continuing..." ; set_color normal
     end
 
     set subtitle_file_JA "Subtitles/[HanaEncode] $episode.ass"
