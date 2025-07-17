@@ -86,7 +86,7 @@ c_dh = edge_cleaner(combine, strength=7, edgemask=Kayyali())
 c_dh_refine_1 = edge_cleaner(c_dh, strength=15, edgemask=Scharr())
 
 c_dh_refine_2 = dehalo_sigma(c_dh_refine_1, sigma=1.1)
-c_dh_mask = fine_dehalo.mask(c_dh_refine_1, rx=2.4, ry=2.4, edgemask=FreyChen(), thmi=100, thma=140, edgeproc=1.0, exclude=False)
+c_dh_mask = fine_dehalo.mask(c_dh_refine_1, rx=2.4, ry=2.4, edgemask=FreyChen(), thmi=98, thma=143, edgeproc=1.0, exclude=False)
 c_dh_refine_2 = core.std.MaskedMerge(c_dh_refine_1, c_dh_refine_2, c_dh_mask)
 
 final = core.std.MaskedMerge(b_dh_filtered, c_dh_refine_2, cclip)
