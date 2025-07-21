@@ -91,6 +91,14 @@ function extract
         set audio_file "Audio/$episode.aac"
         mkvextract $source_file tracks 1:$audio_file
     end
+
+    set delay_warning (string match --regex ".*Delay.*" (MediaInfo $source_file))
+    if test -n "$delay_warning"
+        set_color -o red
+        echo "[extract] Delay detected in the source:"
+        echo $delay_warning
+        set_color normal
+    end
 end
 
 # $argv[1]: Input file
