@@ -243,9 +243,9 @@ function mux
         set group (string match --regex --groups-only "^[A-Z] \\[(.*?)\\]" (path basename $subtitle_file))
         set language (string match --regex --groups-only "$episode\\.(.*?)\\." $subtitle_file)
 
-        if test $group = "Commie"
+        if string match --quiet --regex "Commie" $group
             set -a mkv_command --language 0:$language --track-name 0:$group $subtitle_file
-        else if test $group = "Erai-raws ADN"
+        else if string match --quiet --regex "Erai-raws" $group
             set -a mkv_command --language 0:$language --track-name 0:$group --sync 0:-5005 $subtitle_file
         else
             set -a mkv_command --language 0:$language --track-name 0:$group --sync 0:-6006 $subtitle_file
