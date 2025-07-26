@@ -11,10 +11,17 @@ function extract
     set --erase group
     set --erase episode
 
-    set group (string match --regex --groups-only "Call\\.of\\.the\\.Night\\.S02E(\\d+).*REPACK.*NF.*VARYG" $source_file)
+    set group (string match --regex --groups-only "Call\\.of\\.the\\.Night\\.S02E(\\d+).*REPACK\\..*NF.*VARYG" $source_file)
     if test -n "$group"
         set episode $group
-        set group "VARYG"
+        set group "VARYG REPACK"
+    end
+    if test -z "$group"
+        set group (string match --regex --groups-only "Call\\.of\\.the\\.Night\\.S02E(\\d+).*NF.*VARYG" $source_file)
+        if test -n "$group"
+            set episode $group
+            set group "VARYG NONREPACK"
+        end
     end
     if test -z "$group"
         set group (string match --regex --groups-only "^\[(.*?)\]" (path basename $source_file))
@@ -26,6 +33,9 @@ function extract
 
     if test -z "$episode"
         set episode (string match --regex --groups-only "Call of the Night Season 2 - (\\d+)" $source_file)
+    end
+    if test -z "$episode"
+        set episode (string match --regex --groups-only "Yofukashi no Uta Season 2 - (\\d+)" $source_file)
     end
     if test -z "$episode"
         set episode (string match --regex --groups-only "Yofukashi no Uta - S02E(\\d+)" $source_file)
@@ -43,14 +53,23 @@ function extract
         mkvextract $source_file tracks 2:"Subtitles/B [$group] $episode.en.ass"
         mkvextract $source_file chapters "Chapters/$episode.xml"
         string replace --regex "00:00:00\\.033000000" "00:00:00.000000000" (cat "Chapters/$episode.xml") > "Chapters/$episode.xml"
-    else if test $group = "VARYG"
-        mkvextract $source_file tracks 4:"Subtitles/C [$group] $episode.de.ass"
-        mkvextract $source_file tracks 5:"Subtitles/C [$group] $episode.fr.ass"
-        mkvextract $source_file tracks 6:"Subtitles/C [$group] $episode.id.srt"
-        mkvextract $source_file tracks 7:"Subtitles/C [$group] $episode.ms.srt"
-        mkvextract $source_file tracks 8:"Subtitles/C [$group] $episode.th.srt"
-        mkvextract $source_file tracks 9:"Subtitles/C [$group] $episode.vi.srt"
-        mkvextract $source_file tracks 10:"Subtitles/C [$group] $episode.zh-Hant.srt"
+    else if test $group = "VARYG REPACK"
+        mkvextract $source_file tracks 4:"Subtitles/C [VARYG ADN] $episode.de.ass"
+        mkvextract $source_file tracks 5:"Subtitles/C [VARYG ADN] $episode.fr.ass"
+        mkvextract $source_file tracks 6:"Subtitles/D [VARYG NF] $episode.id.srt"
+        mkvextract $source_file tracks 7:"Subtitles/D [VARYG NF] $episode.ms.srt"
+        mkvextract $source_file tracks 8:"Subtitles/D [VARYG NF] $episode.th.srt"
+        mkvextract $source_file tracks 9:"Subtitles/D [VARYG NF] $episode.vi.srt"
+        mkvextract $source_file tracks 10:"Subtitles/D [VARYG NF] $episode.zh-Hant.srt"
+    else if test $group = "VARYG NONREPACK"
+        mkvextract $source_file tracks 3:"Subtitles/D [VARYG NF] $episode.id.srt"
+        mkvextract $source_file tracks 4:"Subtitles/D [VARYG NF] $episode.ms.srt"
+        mkvextract $source_file tracks 5:"Subtitles/D [VARYG NF] $episode.th.srt"
+        mkvextract $source_file tracks 6:"Subtitles/D [VARYG NF] $episode.vi.srt"
+        mkvextract $source_file tracks 7:"Subtitles/D [VARYG NF] $episode.zh-Hant.srt"
+    else if test $group = "Erai-raws"
+        mkvextract $source_file tracks 3:"Subtitles/C [Erai-raws ADN] $episode.fr.ass"
+        mkvextract $source_file tracks 4:"Subtitles/C [Erai-raws ADN] $episode.de.ass"
     else
         set_color red ; echo "[extract] Unrecognised group [$group]..." ; set_color normal
         return 126
@@ -65,11 +84,19 @@ function extract
         prevd
     end
 
-    if test $group = "VARYG"
+    if test $group = "VARYG REPACK"
         set_color -o white ; echo "[extract] Extracting audio for Yofukashi no Uta Season 2 Episode $episode..." ; set_color normal
 
         set audio_file "Audio/$episode.aac"
         mkvextract $source_file tracks 1:$audio_file
+    else if test $group = "Erai-raws"
+        set_color -o white ; echo "[extract] Extracting audio for Yofukashi no Uta Season 2 Episode $episode..." ; set_color normal
+
+        set audio_file "Audio/$episode.aac"
+        mkvextract $source_file tracks 1:$audio_file
+
+        set audio_sync_file "Audio/$episode.aac.sync"
+        echo "1001" > $audio_sync_file
     end
 
     set delay_warning (string match --regex ".*Delay.*" (MediaInfo $source_file))
@@ -218,6 +245,8 @@ function mux
 
         if test $group = "Commie"
             set -a mkv_command --language 0:$language --track-name 0:$group $subtitle_file
+        else if test $group = "Erai-raws ADN"
+            set -a mkv_command --language 0:$language --track-name 0:$group --sync 0:-5005 $subtitle_file
         else
             set -a mkv_command --language 0:$language --track-name 0:$group --sync 0:-6006 $subtitle_file
         end
