@@ -11,7 +11,7 @@ function extract
     set --erase group
     set --erase episode
 
-    set group (string match --regex --groups-only "Call\\.of\\.the\\.Night\\.S02E(\\d+).*NF.*VARYG" $source_file)
+    set group (string match --regex --groups-only "Call\\.of\\.the\\.Night\\.S02E(\\d+).*REPACK.*NF.*VARYG" $source_file)
     if test -n "$group"
         set episode $group
         set group "VARYG"
