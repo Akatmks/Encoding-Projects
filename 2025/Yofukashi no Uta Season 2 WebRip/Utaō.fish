@@ -239,13 +239,17 @@ function mux
         set -a mkv_command --language 0:ja --sync 0:(math -6006 + (cat $audio_sync_file)) $audio_file
     end
 
+    set subtitle_en_default 1
     for subtitle_file in (find "Subtitles" -regex ".*\\[.*?\\] $episode.*" -type f)
         set group (string match --regex --groups-only "^[A-Z] \\[(.*?)\\]" (path basename $subtitle_file))
         set language (string match --regex --groups-only "$episode\\.(.*?)\\." $subtitle_file)
 
         if string match --quiet --regex "Commie" $group
-            set -a mkv_command --language 0:$language --track-name 0:$group $subtitle_file
-        else if string match --quiet --regex "Erai-raws" $group
+            set -a mkv_command --language 0:$language --track-name 0:$group --default-track-flag 0:$subtitle_en_default $subtitle_file
+            if test $subtitle_en_default = 1
+                set subtitle_en_default 0
+            end
+        else if test $group = "Erai-raws ADN"
             set -a mkv_command --language 0:$language --track-name 0:$group --sync 0:-5005 $subtitle_file
         else
             set -a mkv_command --language 0:$language --track-name 0:$group --sync 0:-6006 $subtitle_file
