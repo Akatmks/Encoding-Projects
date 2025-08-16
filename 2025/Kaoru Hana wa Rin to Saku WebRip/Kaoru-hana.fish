@@ -48,6 +48,9 @@ function extract
         set episode (string match --regex --groups-only "Kaoru Hana wa Rin to Saku - S01E(\\d+)" $source_file)
     end
     if test -z "$episode"
+        set episode (string match --regex --groups-only "The Fragrant Flower Blooms with Dignity - S01E(\\d+)" $source_file)
+    end
+    if test -z "$episode"
         set_color red ; echo "[extract] Unable to match episode number from filename..." ; set_color normal
         return 126
     end
@@ -288,6 +291,11 @@ function mux
         set -a mkv_command --language 0:es-419 --track-name 0:"DantalianSubs" $subtitle_file_ES
     else
         set_color red ; echo "[mux] DantalianSubs subtitle not found. Continuing..." ; set_color normal
+    end
+
+    set subtitle_file_EN "Subtitles/[FLE] $episode.ass"
+    if test -e $subtitle_file_EN
+        set -a mkv_command --language 0:en --track-name 0:"FLE" $subtitle_file_EN
     end
 
     set subtitle_file_JA "Subtitles/[HanaEncode] $episode.ass"
