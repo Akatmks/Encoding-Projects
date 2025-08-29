@@ -36,6 +36,9 @@ function extract
     if test $group = "Haruhana"
         set group "拨雪寻春・简日双语"
         set group2 "撥雪尋春・繁日雙語"
+    else if test $group = "KitaujiSub"
+        set group "北宇治字幕组・简日双语"
+        set group2 "北宇治字幕組・繁日雙語"
     else if test $group = "Erai-raws"
         set group "HanaEncode"
         set group2 "HanaEncode (CC)"
@@ -46,6 +49,9 @@ function extract
     end
     if test -z "$episode"
         set episode (string match --regex --groups-only "Kaoru Hana wa Rin to Saku - S01E(\\d+)" $source_file)
+    end
+    if test -z "$episode"
+        set episode (string match --regex --groups-only "Kaoru Hana wa Rin to Saku \[(\\d+)\]" $source_file)
     end
     if test -z "$episode"
         set episode (string match --regex --groups-only "The Fragrant Flower Blooms with Dignity - S01E(\\d+)" $source_file)
@@ -62,29 +68,71 @@ function extract
     end
     echo "[extract] Episode:" $episode
 
-    mkvextract $source_file tracks 2:"Subtitles/[$group] $episode.ass"
-    if test -n "$group2"
-        mkvextract $source_file tracks 3:"Subtitles/[$group2] $episode.ass"
-    end
+    if begin test $group = "FLE"; or test $group = "NVN"; or test $group = "HanaEncode"; end
+        set fonts_dir "Temp/[$group] $episode/Fonts"
+        set subtitle_file "Temp/[$group] $episode/[$group] $episode.ass"
+        set subtitle_file_2 "Temp/[$group] $episode/[$group2] $episode.ass"
+        set output_fonts_dir "Temp/[$group] $episode/Output"
+        set output_subtitle_file "Temp/[$group] $episode/Output/[$group] $episode.ass"
+        set output_subtitle_file_2 "Temp/[$group] $episode/Output/[$group2] $episode.ass"
+        set output_subtitle_file_moved "Temp/[$group] $episode/[$group] $episode.Output.ass"
+        set output_subtitle_file_moved_2 "Temp/[$group] $episode/[$group2] $episode.Output.ass"
 
-    set fonts_dir "Subtitles/$episode.Fonts"
-    if not test -e $fonts_dir
+        mkvextract $source_file tracks 2:$subtitle_file
+        if test -n "$group2"
+            mkvextract $source_file tracks 3:$subtitle_file_2
+        end
+
+        if test -e $fonts_dir
+            rm -r $fonts_dir
+        end
         mkdir $fonts_dir
-    end
-    if test $group != "HanaEncode"
+        if test $group != "HanaEncode"
+            begin cd $fonts_dir
+                ffmpeg -hide_banner -y -dump_attachment:t "" -i $source_file
+                prevd
+            end
+        else
+            cp "Subtitles/HiraMaruPro-W4.otf" $fonts_dir/
+            
+            for subtitle_file_it in $subtitle_file $subtitle_file_2
+                string replace --regex "^Title: .*" "Title: HanaEncode" (cat $subtitle_file_it) > $subtitle_file_it
+                string replace --regex "^PlayResX: .*" "PlayResX: 1920" (cat $subtitle_file_it) > $subtitle_file_it
+                string replace --regex "^PlayResY: .*" "PlayResY: 1080" (cat $subtitle_file_it) > $subtitle_file_it
+                string replace --regex "^Style: Default,.*" "Style: Default,Hiragino Maru Gothic Pro W4,64,&H00F0F2F5,&H000000FF,&H003D363A,&H00000000,-1,0,0,0,100,100,0,0,1,3.2,0,1,615,200,40,1" (cat $subtitle_file_it) > $subtitle_file_it
+                string replace --regex ",\{.*?\}" "," (cat $subtitle_file_it) > $subtitle_file_it
+            end
+        end
+
+        if test -e $output_fonts_dir
+            rm -r $output_fonts_dir
+        end
+        if test -z "$group2"
+            ASSFontSubset.Console $subtitle_file --fonts $fonts_dir --output $output_fonts_dir | cat
+        else
+            ASSFontSubset.Console $subtitle_file $subtitle_file_2 --fonts $fonts_dir --output $output_fonts_dir | cat
+        end
+
+        mv $output_subtitle_file $output_subtitle_file_moved
+        cp $output_subtitle_file_moved "Subtitles/[$group] $episode.ass"
+        if test -n "$group2"
+            mv $output_subtitle_file_2 $output_subtitle_file_moved_2
+            cp $output_subtitle_file_moved_2 "Subtitles/[$group2] $episode.ass"
+        end
+        cp -r $output_fonts_dir/. "Subtitles/$episode.Fonts"
+    else
+        mkvextract $source_file tracks 2:"Subtitles/[$group] $episode.ass"
+        if test -n "$group2"
+            mkvextract $source_file tracks 3:"Subtitles/[$group2] $episode.ass"
+        end
+
+        set fonts_dir "Subtitles/$episode.Fonts"
+        if not test -e $fonts_dir
+            mkdir $fonts_dir
+        end
         begin cd $fonts_dir
             ffmpeg -hide_banner -y -dump_attachment:t "" -i $source_file
             prevd
-        end
-    else
-        cp "Subtitles/HiraMaruPro-W4.otf" "$fonts_dir/"
-
-        for group_it in $group $group2
-            string replace --regex "^Title: .*" "Title: HanaEncode" (cat "Subtitles/[$group_it] $episode.ass") > "Subtitles/[$group_it] $episode.ass"
-            string replace --regex "^PlayResX: .*" "PlayResX: 1920" (cat "Subtitles/[$group_it] $episode.ass") > "Subtitles/[$group_it] $episode.ass"
-            string replace --regex "^PlayResY: .*" "PlayResY: 1080" (cat "Subtitles/[$group_it] $episode.ass") > "Subtitles/[$group_it] $episode.ass"
-            string replace --regex "^Style: Default,.*" "Style: Default,Hiragino Maru Gothic Pro W4,64,&H00F0F2F5,&H000000FF,&H003D363A,&H00000000,-1,0,0,0,100,100,0,0,1,3.2,0,1,615,200,40,1" (cat "Subtitles/[$group_it] $episode.ass") > "Subtitles/[$group_it] $episode.ass"
-            string replace --regex ",\{.*?\}" "," (cat "Subtitles/[$group_it] $episode.ass") > "Subtitles/[$group_it] $episode.ass"
         end
     end
 
@@ -286,6 +334,21 @@ function mux
         set_color red ; echo "[mux] 撥雪尋春・繁日雙語 subtitle not found. Continuing..." ; set_color normal
     end
 
+    set subtitle_file_ZH_CN "Subtitles/[北宇治字幕组・简日双语] $episode.ass"
+    if test -e $subtitle_file_ZH_CN
+        set -a mkv_command --language 0:zh-CN --track-name 0:"北宇治字幕组・简日双语" $subtitle_file_ZH_CN
+    end
+
+    set subtitle_file_ZH_TW "Subtitles/[北宇治字幕組・繁日雙語] $episode.ass"
+    if test -e $subtitle_file_ZH_TW
+        set -a mkv_command --language 0:zh-TW --track-name 0:"北宇治字幕組・繁日雙語" $subtitle_file_ZH_TW
+    end
+
+    set subtitle_file_ES "Subtitles/[NVN] $episode.ass"
+    if test -e $subtitle_file_ES
+        set -a mkv_command --language 0:es-419 --track-name 0:"NVN" --compression 0:zlib --sync 0:1001 $subtitle_file_ES
+    end
+
     set subtitle_file_ES "Subtitles/[DantalianSubs] $episode.ass"
     if test -e $subtitle_file_ES
         set -a mkv_command --language 0:es-419 --track-name 0:"DantalianSubs" $subtitle_file_ES
@@ -295,7 +358,7 @@ function mux
 
     set subtitle_file_EN "Subtitles/[FLE] $episode.ass"
     if test -e $subtitle_file_EN
-        set -a mkv_command --language 0:en --track-name 0:"FLE" $subtitle_file_EN
+        set -a mkv_command --language 0:en --track-name 0:"FLE" --compression 0:zlib $subtitle_file_EN
     end
 
     set subtitle_file_JA "Subtitles/[HanaEncode] $episode.ass"
@@ -341,7 +404,7 @@ function clean
         return 126
     end
 
-    rm -rf "logs" "__pycache__" "Temp/$episode.source.lwi" "Temp/$episode.intermediate.lwi" "Temp/$episode.boost.tmp" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps" "Temp/$episode.tmp"
+    rm -rf "logs" "__pycache__" "Temp/$episode.source.lwi" "Temp/$episode.intermediate.lwi" "Temp/$episode.boost.tmp" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps" "Temp/$episode.tmp" "Temp/[FLE] $episode" "Temp/[NVN] $episode" "Temp/[HanaEncode] $episode"
 
     if test -n "$clean_intermediate"
         rm "Video/$episode.intermediate.mp4"
