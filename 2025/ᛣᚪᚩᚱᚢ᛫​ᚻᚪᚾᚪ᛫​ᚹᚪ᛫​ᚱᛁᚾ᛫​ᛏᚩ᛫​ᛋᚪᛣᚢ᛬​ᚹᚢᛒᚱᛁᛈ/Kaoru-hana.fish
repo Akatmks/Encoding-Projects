@@ -108,9 +108,20 @@ function extract
             rm -r $output_fonts_dir
         end
         if test -z "$group2"
-            ASSFontSubset.Console $subtitle_file --fonts $fonts_dir --output $output_fonts_dir | cat
+            set ass_font_subset_output (ASSFontSubset.Console $subtitle_file --fonts $fonts_dir --output $output_fonts_dir 2>&1)
         else
-            ASSFontSubset.Console $subtitle_file $subtitle_file_2 --fonts $fonts_dir --output $output_fonts_dir | cat
+            set ass_font_subset_output (ASSFontSubset.Console $subtitle_file $subtitle_file_2 --fonts $fonts_dir --output $output_fonts_dir 2>&1)
+        end
+        for line in $ass_font_subset_output
+            if begin string match -q -r "Invalid value" $line
+                or string match -q -r "Useless tag" $line
+                or string match -q -r "Useless transformation" $line
+                or string match -q -r "Normalization" $line
+                or string match -q -r "faux bold" $line
+                end
+                continue
+            end
+            echo $line
         end
 
         mv $output_subtitle_file $output_subtitle_file_moved
