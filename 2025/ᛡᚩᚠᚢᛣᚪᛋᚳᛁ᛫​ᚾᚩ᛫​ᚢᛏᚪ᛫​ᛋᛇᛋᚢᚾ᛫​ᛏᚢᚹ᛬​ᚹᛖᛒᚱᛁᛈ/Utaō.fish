@@ -240,9 +240,11 @@ function mux
     end
 
     set subtitle_en_default 1
-    for subtitle_file in (find "Subtitles" -regex ".*\\[.*?\\] $episode.*" -type f)
+    for subtitle_file in (find "Subtitles" -regex ".*\\[.*?\\] $episode.*\.[as][sr][st]" -type f)
         set group (string match --regex --groups-only "^[A-Z] \\[(.*?)\\]" (path basename $subtitle_file))
         set language (string match --regex --groups-only "$episode\\.(.*?)\\." $subtitle_file)
+        
+        set subtitle_sync_file (path change-extension (path extension $subtitle_file).sync $subtitle_file)
 
         if string match --quiet --regex "Commie" $group
             set -a mkv_command --language 0:$language --track-name 0:$group --default-track-flag 0:$subtitle_en_default $subtitle_file
@@ -252,7 +254,11 @@ function mux
         else if test $group = "Erai-raws ADN"
             set -a mkv_command --language 0:$language --track-name 0:$group --sync 0:-5005 $subtitle_file
         else
-            set -a mkv_command --language 0:$language --track-name 0:$group --sync 0:-6006 $subtitle_file
+            if not test -e $subtitle_sync_file
+                set -a mkv_command --language 0:$language --track-name 0:$group --sync 0:-6006 $subtitle_file
+            else
+                set -a mkv_command --language 0:$language --track-name 0:$group --sync 0:(cat $subtitle_sync_file) $subtitle_file
+            end
         end
     end
 
