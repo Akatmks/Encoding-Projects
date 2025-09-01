@@ -5,6 +5,7 @@ from functools import partial
 from vskernels import BSpline, Hermite
 from vsmasktools import FreyChen, Morpho
 from rekt import rektlvls
+from vsrgtools import limit_filter
 from vsscale import descale_error_mask, Rescale
 import vsTAAmbk
 from vstools import core, depth, DitherType, initialize_clip, get_y, join, SPath, split
@@ -105,6 +106,8 @@ final_y = get_y(com)
 
 final_dn_ref = mc_degrain(final_y, tr=2, thsad=360, prefilter=Prefilter.DFTTEST)
 final_dn_y = bm3d(final_y, ref=final_dn_ref, sigma=0.5, profile=bm3d.Profile.LOW_COMPLEXITY)
+
+final_dn_y = limit_filter(final_dn_y, final_y, dark_thr=0.35, bright_thr=1.5, elast=3.5)
 
 final_dn = join(final_dn_y, com)
 

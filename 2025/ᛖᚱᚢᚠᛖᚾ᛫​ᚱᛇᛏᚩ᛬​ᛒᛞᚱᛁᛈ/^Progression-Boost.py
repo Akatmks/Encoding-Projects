@@ -559,7 +559,7 @@ class DefaultZone:
 # clamp this one last time.
 # This clamp is applied after both Progression Boost and Character
 # Boost has finished.
-    final_min_crf = 6.50
+    final_min_crf = 8.00
 
 # `--resume` information: If you changed parameters for probing, you
 # need to delete everything in `progression-boost` folder inside the
@@ -664,28 +664,29 @@ class DefaultZone:
     def probing_dynamic_parameters(self, crf: float, luma_average: np.ndarray[np.float32], luma_min: np.ndarray[np.float32], luma_max: np.ndarray[np.float32], luma_diff: np.ndarray[np.float32]) -> list[str]:
         return """--lp 3 --keyint -1 --input-depth 10 --hbd-mds 1
                   --tune 3 --max-32-tx-size 1
-                  --luminance-qp-bias 10 --qp-scale-compress-strength 3 --variance-boost-strength 3 --variance-octile 3
+                  --luminance-qp-bias 10 --qp-scale-compress-strength 3 --variance-boost-strength 3 --variance-octile 3 --enable-alt-curve 1
                   --key-frame-chroma-qindex-offset -20 --chroma-qindex-offsets [-8,-5,-5,-5,-5,-5]
                   --qm-min 9 --chroma-qm-min 12
                   --noise-norm-strength 3 --psy-rd 2.0 --spy-rd 2
                   --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0""".split()
     def final_dynamic_parameters(self, crf: float, luma_average: np.ndarray[np.float32], luma_min: np.ndarray[np.float32], luma_max: np.ndarray[np.float32], luma_diff: np.ndarray[np.float32]) -> list[str]:
+        parameters = """--keyint -1 --input-depth 10 --hbd-mds 1
+                        --tune 3 --max-32-tx-size 1
+                        --luminance-qp-bias 10 --qp-scale-compress-strength 3 --variance-boost-strength 3 --variance-octile 3 --enable-alt-curve 1
+                        --qindex-offsets [-16,-12,-12,-10,0,0] --key-frame-chroma-qindex-offset -20 --chroma-qindex-offsets [-8,-5,-5,-5,-5,-5]
+                        --qm-min 9 --chroma-qm-min 12
+                        --noise-norm-strength 3 --psy-rd 2.0
+                        --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0""".split()
         if luma_average.shape[0] >= 96:
-            return """--lp 6 --keyint -1 --input-depth 10 --hbd-mds 1
-                      --tune 3 --max-32-tx-size 1
-                      --luminance-qp-bias 10 --qp-scale-compress-strength 3 --variance-boost-strength 3 --variance-octile 3
-                      --key-frame-chroma-qindex-offset -20 --chroma-qindex-offsets [-8,-5,-5,-5,-5,-5]
-                      --qm-min 9 --chroma-qm-min 12
-                      --noise-norm-strength 3 --psy-rd 2.0 --spy-rd 2
-                      --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0""".split()
+            parameters += "--lp 6".split()
         else:
-            return """--lp 3 --keyint -1 --input-depth 10 --hbd-mds 1
-                      --tune 3 --max-32-tx-size 1
-                      --luminance-qp-bias 10 --qp-scale-compress-strength 3 --variance-boost-strength 3 --variance-octile 3
-                      --key-frame-chroma-qindex-offset -20 --chroma-qindex-offsets [-8,-5,-5,-5,-5,-5]
-                      --qm-min 9 --chroma-qm-min 12
-                      --noise-norm-strength 3 --psy-rd 2.0 --spy-rd 2
-                      --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0""".split()
+            parameters += "--lp 3".split()
+        if crf <= 11.50:
+            parameters += "--spy-rd 1".split()
+        else:
+            parameters += "--spy-rd 2".split()
+
+        return parameters
 
 # `--resume` information: If you changed parameters for probing, you
 # need to delete everything in `progression-boost` folder inside the
@@ -1072,7 +1073,7 @@ class DefaultZone:
 # better result in your final encode using a slower `--preset`. You      # <<<<  all the other settings once you become familiar with the <<<<<
 # should account for this difference when setting the number below.      # <<<<  script. There's still a lot of improvements, timewise or  <<<<
 # Maybe set it a little bit lower than your actual target.               # <<<<  qualitywise, you can have with all the other options.  <<<<<<<
-    metric_target = 0.672
+    metric_target = 0.600
 
 # `--resume` information: If you changed `metric_target`, just rerun
 # the script and it will work. Unlike some other options, you don't
