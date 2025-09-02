@@ -393,7 +393,7 @@ class DefaultZone:
 # this scene detection will be used both for test encodes and the final
 # encodes.
     scene_detection_extra_split = 193
-    scene_detection_min_scene_len = 17
+    scene_detection_min_scene_len = 9
 # The next setting is only used if VapourSynth based scene detection
 # method is selected.
 #
@@ -681,8 +681,10 @@ class DefaultZone:
             parameters += "--lp 6".split()
         else:
             parameters += "--lp 3".split()
-        if crf <= 12.00:
-            parameters += "--qindex-offsets [-16,-12,-12,-10,0,0] --spy-rd 1".split()
+        if crf <= 11.00:
+            parameters += "--spy-rd 1 --qindex-offsets [-16,-12,-12,-10,0,0]".split()
+        elif crf <= 15.00:
+            parameters += "--spy-rd 1".split()
         else:
             parameters += "--spy-rd 2".split()
 
