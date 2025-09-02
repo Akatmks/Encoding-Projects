@@ -723,7 +723,7 @@ class DefaultZone:
 # `None` instead of `0`, and the result for `photon_noise` `0` is
 # undefined.
     def final_dynamic_photon_noise(self, luma_average: np.ndarray[np.float32], luma_min: np.ndarray[np.float32], luma_max: np.ndarray[np.float32], luma_diff: np.ndarray[np.float32]) -> Optional[int]:
-        return round(np.interp(luma_average, [0.28, 0.55], [8.0, 5.0]))
+        return round(np.interp(np.percentile(luma_average, 30), [0.28, 0.55], [8.0, 5.0]))
     final_photon_noise_height = None
     final_photon_noise_width = None
     final_chroma_noise = False
