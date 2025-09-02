@@ -673,7 +673,7 @@ class DefaultZone:
         parameters = """--keyint -1 --input-depth 10 --hbd-mds 1
                         --tune 3 --max-32-tx-size 1
                         --luminance-qp-bias 10 --qp-scale-compress-strength 3 --variance-boost-strength 3 --variance-octile 3 --enable-alt-curve 1
-                        --qindex-offsets [-16,-12,-12,-10,0,0] --key-frame-chroma-qindex-offset -20 --chroma-qindex-offsets [-8,-5,-5,-5,-5,-5]
+                        --key-frame-chroma-qindex-offset -20 --chroma-qindex-offsets [-8,-5,-5,-5,-5,-5]
                         --qm-min 9 --chroma-qm-min 12
                         --noise-norm-strength 3 --psy-rd 2.0
                         --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0""".split()
@@ -681,8 +681,8 @@ class DefaultZone:
             parameters += "--lp 6".split()
         else:
             parameters += "--lp 3".split()
-        if crf <= 11.50:
-            parameters += "--spy-rd 1".split()
+        if crf <= 12.00:
+            parameters += "--qindex-offsets [-16,-12,-12,-10,0,0] --spy-rd 1".split()
         else:
             parameters += "--spy-rd 2".split()
 
@@ -723,7 +723,7 @@ class DefaultZone:
 # `None` instead of `0`, and the result for `photon_noise` `0` is
 # undefined.
     def final_dynamic_photon_noise(self, luma_average: np.ndarray[np.float32], luma_min: np.ndarray[np.float32], luma_max: np.ndarray[np.float32], luma_diff: np.ndarray[np.float32]) -> Optional[int]:
-        return 8
+        return round(np.interp(luma_average, [0.28, 0.55], [8.0, 5.0]))
     final_photon_noise_height = None
     final_photon_noise_width = None
     final_chroma_noise = False
@@ -1073,7 +1073,7 @@ class DefaultZone:
 # better result in your final encode using a slower `--preset`. You      # <<<<  all the other settings once you become familiar with the <<<<<
 # should account for this difference when setting the number below.      # <<<<  script. There's still a lot of improvements, timewise or  <<<<
 # Maybe set it a little bit lower than your actual target.               # <<<<  qualitywise, you can have with all the other options.  <<<<<<<
-    metric_target = 0.600
+    metric_target = 0.575
 
 # `--resume` information: If you changed `metric_target`, just rerun
 # the script and it will work. Unlike some other options, you don't
@@ -1134,7 +1134,7 @@ class DefaultZone:
 # depending on how the hierarchial structure is commonly constructed.
 #
 # The number here should be positive.
-    character_roi_boost_max = 5.50
+    character_roi_boost_max = 3.00
 
 # This second is a `--crf` based character boosting based on how much
 # character occupies the screen.
@@ -1160,7 +1160,7 @@ class DefaultZone:
 # `character_crf_boost_alt_curve` to `1`.
 #
 # The number here should be positive.
-    character_crf_boost_max = 4.00
+    character_crf_boost_max = 2.50
     character_crf_boost_alt_curve = 0
 
 # The third is also a `--crf` based boosting method, but based on how
@@ -1174,7 +1174,7 @@ class DefaultZone:
 # and the maximum recommended value for this would be 6.00 ~ 9.00.
 #
 # The number here should be positive.
-    character_motion_crf_boost_max = 5.00
+    character_motion_crf_boost_max = 4.00
 
 # `--resume` information: If you changed any character boosting related
 # settings, just rerun the script and it will work. Unlike some other
