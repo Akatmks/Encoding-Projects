@@ -506,7 +506,7 @@ class DefaultZone:
 # scene, you really don't want it that low.
 # That's said, if you are aiming for the highest quality, fell free to
 # lower this further to `--crf 6.00`.
-    metric_min_crf = 8.00
+    metric_min_crf = 8.50
 # Our first probe will be happening at `--crf 24.00`. If the quality of
 # the scene is worse than `metric_target`, we will perform our second
 # probe at a better `--crf`. In very rare and strange scenarios, this
@@ -559,7 +559,7 @@ class DefaultZone:
 # clamp this one last time.
 # This clamp is applied after both Progression Boost and Character
 # Boost has finished.
-    final_min_crf = 8.00
+    final_min_crf = 8.50
 
 # `--resume` information: If you changed parameters for probing, you
 # need to delete everything in `progression-boost` folder inside the
@@ -681,7 +681,7 @@ class DefaultZone:
             parameters += "--lp 6".split()
         else:
             parameters += "--lp 3".split()
-        if crf <= 11.00:
+        if crf <= 12.00:
             parameters += "--spy-rd 1 --qindex-offsets [-16,-12,-12,-10,0,0]".split()
         elif crf <= 15.00:
             parameters += "--spy-rd 1".split()
@@ -1075,7 +1075,7 @@ class DefaultZone:
 # better result in your final encode using a slower `--preset`. You      # <<<<  all the other settings once you become familiar with the <<<<<
 # should account for this difference when setting the number below.      # <<<<  script. There's still a lot of improvements, timewise or  <<<<
 # Maybe set it a little bit lower than your actual target.               # <<<<  qualitywise, you can have with all the other options.  <<<<<<<
-    metric_target = 0.575
+    metric_target = 0.500
 
 # `--resume` information: If you changed `metric_target`, just rerun
 # the script and it will work. Unlike some other options, you don't
