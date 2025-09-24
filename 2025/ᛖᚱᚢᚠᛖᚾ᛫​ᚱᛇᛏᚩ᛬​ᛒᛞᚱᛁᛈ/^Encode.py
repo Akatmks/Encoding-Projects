@@ -22,7 +22,7 @@ temp_dir.mkdir(exist_ok=True)
 output_dir.mkdir(exist_ok=True)
 
 for main_file in main_dir.iterdir():
-    if (match := re.match(r"\[izu\] Elfen Lied - ([\w\(\) ]+) \[\w\wBD-Remux\] \[\w+\].mkv", main_file.name)):
+    if (match := re.match(r"\[izu\] Elfen Lied - ([\w\.\(\) ]+) \[\w\wBD-Remux\] \[\w+\].mkv", main_file.name)):
         name = match.group(1)
         output_file = output_dir / (name + ".mkv")
         if not output_file.exists():
@@ -58,8 +58,7 @@ for main_file in main_dir.iterdir():
                        ]
             subprocess.run(commands, env=env, text=True)
 
-            if not (temp_dir / (name + ".scenes.json")).exists() or \
-               not (temp_dir / (name + ".roi-maps")).exists():
+            if not (temp_dir / (name + ".scenes.json")).exists():
                 print(f"Boosting exited unexpectedly for \"{main_file.name}\".")
                 print(f"Skipping encoding for the file.")
 
