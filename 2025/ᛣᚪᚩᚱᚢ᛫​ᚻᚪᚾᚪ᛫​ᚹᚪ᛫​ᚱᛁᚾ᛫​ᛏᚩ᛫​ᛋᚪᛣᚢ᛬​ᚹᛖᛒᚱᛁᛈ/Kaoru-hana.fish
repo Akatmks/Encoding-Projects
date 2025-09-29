@@ -112,6 +112,7 @@ function extract
         else
             set ass_font_subset_output (ASSFontSubset.Console $subtitle_file $subtitle_file_2 --fonts $fonts_dir --output $output_fonts_dir 2>&1)
         end
+        set ass_font_subset_status $status
         for line in $ass_font_subset_output
             if begin string match -q -r "Invalid value" $line
                 or string match -q -r "Useless tag" $line
@@ -124,13 +125,15 @@ function extract
             echo $line
         end
 
-        mv $output_subtitle_file $output_subtitle_file_moved
-        cp $output_subtitle_file_moved "Subtitles/[$group] $episode.ass"
-        if test -n "$group2"
-            mv $output_subtitle_file_2 $output_subtitle_file_moved_2
-            cp $output_subtitle_file_moved_2 "Subtitles/[$group2] $episode.ass"
+        if test $ass_font_subset_status -eq 0
+            mv $output_subtitle_file $output_subtitle_file_moved
+            cp $output_subtitle_file_moved "Subtitles/[$group] $episode.ass"
+            if test -n "$group2"
+                mv $output_subtitle_file_2 $output_subtitle_file_moved_2
+                cp $output_subtitle_file_moved_2 "Subtitles/[$group2] $episode.ass"
+            end
+            cp -r $output_fonts_dir/. "Subtitles/$episode.Fonts"
         end
-        cp -r $output_fonts_dir/. "Subtitles/$episode.Fonts"
     else
         mkvextract $source_file tracks 2:"Subtitles/[$group] $episode.ass"
         if test -n "$group2"
@@ -319,40 +322,40 @@ function mux
 
     set subtitle_file_PT_BR "Subtitles/[SubVision] $episode.ass"
     if test -e $subtitle_file_PT_BR
-        set -a mkv_command --language 0:pt-BR --track-name 0:"SubVision" $subtitle_file_PT_BR
+        set -a mkv_command --language 0:pt-BR --track-name 0:"SubVision" --compression 0:zlib $subtitle_file_PT_BR
     else
         set_color red ; echo "[mux] SubVision subtitle not found. Continuing..." ; set_color normal
     end
 
     set subtitle_file_FR "Subtitles/[KHFR] $episode.ass"
     if test -e $subtitle_file_FR
-        set -a mkv_command --language 0:fr --track-name 0:"KHFR" $subtitle_file_FR
+        set -a mkv_command --language 0:fr --track-name 0:"KHFR" --compression 0:zlib $subtitle_file_FR
     else
         set_color red ; echo "[mux] KHFR subtitle not found. Continuing..." ; set_color normal
     end
 
     set subtitle_file_ZH_CN "Subtitles/[拨雪寻春・简日双语] $episode.ass"
     if test -e $subtitle_file_ZH_CN
-        set -a mkv_command --language 0:zh-CN --track-name 0:"拨雪寻春・简日双语" $subtitle_file_ZH_CN
+        set -a mkv_command --language 0:zh-CN --track-name 0:"拨雪寻春・简日双语" --compression 0:zlib $subtitle_file_ZH_CN
     else
         set_color red ; echo "[mux] 拨雪寻春・简日双语 subtitle not found. Continuing..." ; set_color normal
     end
 
     set subtitle_file_ZH_TW "Subtitles/[撥雪尋春・繁日雙語] $episode.ass"
     if test -e $subtitle_file_ZH_TW
-        set -a mkv_command --language 0:zh-TW --track-name 0:"撥雪尋春・繁日雙語" $subtitle_file_ZH_TW
+        set -a mkv_command --language 0:zh-TW --track-name 0:"撥雪尋春・繁日雙語" --compression 0:zlib $subtitle_file_ZH_TW
     else
         set_color red ; echo "[mux] 撥雪尋春・繁日雙語 subtitle not found. Continuing..." ; set_color normal
     end
 
     set subtitle_file_ZH_CN "Subtitles/[北宇治字幕组・简日双语] $episode.ass"
     if test -e $subtitle_file_ZH_CN
-        set -a mkv_command --language 0:zh-CN --track-name 0:"北宇治字幕组・简日双语" $subtitle_file_ZH_CN
+        set -a mkv_command --language 0:zh-CN --track-name 0:"北宇治字幕组・简日双语" --compression 0:zlib $subtitle_file_ZH_CN
     end
 
     set subtitle_file_ZH_TW "Subtitles/[北宇治字幕組・繁日雙語] $episode.ass"
     if test -e $subtitle_file_ZH_TW
-        set -a mkv_command --language 0:zh-TW --track-name 0:"北宇治字幕組・繁日雙語" $subtitle_file_ZH_TW
+        set -a mkv_command --language 0:zh-TW --track-name 0:"北宇治字幕組・繁日雙語" --compression 0:zlib $subtitle_file_ZH_TW
     end
 
     set subtitle_file_ES "Subtitles/[NVN] $episode.ass"
@@ -362,7 +365,7 @@ function mux
 
     set subtitle_file_ES "Subtitles/[DantalianSubs] $episode.ass"
     if test -e $subtitle_file_ES
-        set -a mkv_command --language 0:es-419 --track-name 0:"DantalianSubs" $subtitle_file_ES
+        set -a mkv_command --language 0:es-419 --track-name 0:"DantalianSubs" --compression 0:zlib $subtitle_file_ES
     else
         set_color red ; echo "[mux] DantalianSubs subtitle not found. Continuing..." ; set_color normal
     end
@@ -374,14 +377,14 @@ function mux
 
     set subtitle_file_JA "Subtitles/[HanaEncode] $episode.ass"
     if test -e $subtitle_file_JA
-        set -a mkv_command --language 0:ja --track-name 0:"HanaEncode" $subtitle_file_JA
+        set -a mkv_command --language 0:ja --track-name 0:"HanaEncode" --compression 0:zlib $subtitle_file_JA
     else
         set_color red ; echo "[mux] HanaEncode subtitle not found. Continuing..." ; set_color normal
     end
 
     set subtitle_file_JA_CC "Subtitles/[HanaEncode (CC)] $episode.ass"
     if test -e $subtitle_file_JA_CC
-        set -a mkv_command --language 0:ja --track-name 0:"HanaEncode (CC)" --hearing-impaired-flag 0:1 $subtitle_file_JA_CC
+        set -a mkv_command --language 0:ja --track-name 0:"HanaEncode (CC)" --hearing-impaired-flag 0:1 --compression 0:zlib $subtitle_file_JA_CC
     else
         set_color red ; echo "[mux] HanaEncode (CC) subtitle not found. Continuing..." ; set_color normal
     end
