@@ -1,6 +1,7 @@
 #!/usr/bin/env fish
 
 # $argv[1]: Input file
+# $argv[2]: `no-subset` or `no-extract`
 function extract
     set source_file $argv[1]
     if not test -e $source_file
@@ -68,7 +69,9 @@ function extract
     end
     echo "[extract] Episode:" $episode
 
-    if begin test $group = "FLE"; or test $group = "NVN"; or test $group = "HanaEncode"; end
+    if begin test "$argv[2]" != "no-subset"
+        and begin test $group = "FLE"; or test $group = "NVN"; or test $group = "HanaEncode"; end
+    end
         set fonts_dir "Temp/[$group] $episode/Fonts"
         set subtitle_file "Temp/[$group] $episode/[$group] $episode.ass"
         set subtitle_file_2 "Temp/[$group] $episode/[$group2] $episode.ass"
@@ -78,9 +81,11 @@ function extract
         set output_subtitle_file_moved "Temp/[$group] $episode/[$group] $episode.Output.ass"
         set output_subtitle_file_moved_2 "Temp/[$group] $episode/[$group2] $episode.Output.ass"
 
-        mkvextract $source_file tracks 2:$subtitle_file
-        if test -n "$group2"
-            mkvextract $source_file tracks 3:$subtitle_file_2
+        if test "$argv[2]" != "no-extract"
+            mkvextract $source_file tracks 2:$subtitle_file
+            if test -n "$group2"
+                mkvextract $source_file tracks 3:$subtitle_file_2
+            end
         end
 
         if test -e $fonts_dir
