@@ -42,10 +42,12 @@ def filterchain(source: Source) -> FilterchainResult:
     
     cclip = vsmlrt.inference(cclip, SPath(vsmlrt.models_path) / "anime-segmentation" / "isnet_is.onnx", backend=vsmlrt.Backend.TRT(fp16=True))
     cclip = cclip.akarin.Expr("""
+                     x[0,-2]
             x[-1,-1] x[0,-1] x[1,-1]
     x[-2,0] x[-1,0]  x[0,0]  x[1,0]  x[2,0]
             x[-1,1]  x[0,1]  x[1,1]
-    sort11 drop8 high! drop2
+                     x[0,2]
+    sort13 drop10 high! drop2
     high@ 0.90 > x 0.85 > and x x 9 pow ? continue!
     continue@ 0.15 > continue@ 0 ?
     """)
@@ -67,7 +69,28 @@ def filterchain(source: Source) -> FilterchainResult:
     aa_mask = core.akarin.Expr([cclip, uniform_mask], "x y min")
 
     aa = based_aa(doubled, supersampler=False, antialiaser=EEDI3(alpha=0.4), mask_thr=25)
-    aa = core.akarin.Expr([aa, doubled], "x y - diff! diff@ 0 > y diff@ 0.333333 * + x ?")
+    aa_diff = core.akarin.Expr([aa, doubled], "x y - 32768 +")
+    aa = core.akarin.Expr([aa_diff, doubled], """
+    x 32768 - diff!
+    diff@ 0 >
+               x[-3,-4] x[-2,-4] x[-1,-4] x[0,-4] x[1,-4] x[2,-4] x[3,-4]
+      x[-4,-3] x[-3,-3] x[-2,-3] x[-1,-3] x[0,-3] x[1,-3] x[2,-3] x[3,-3] x[4,-3]
+      x[-4,-2] x[-3,-2] x[-2,-2] x[-1,-2] x[0,-2] x[1,-2] x[2,-2] x[3,-2] x[4,-2]
+      x[-4,-1] x[-3,-1] x[-2,-1] x[-1,-1] x[0,-1] x[1,-1] x[2,-1] x[3,-1] x[4,-1]
+      x[-4,0]  x[-3,0]  x[-2,0]  x[-1,0]          x[1,0]  x[2,0]  x[3,0]  x[4,0]
+      x[-4,1]  x[-3,1]  x[-2,1]  x[-1,1]  x[0,1]  x[1,1]  x[2,1]  x[3,1]  x[4,1]
+      x[-4,2]  x[-3,2]  x[-2,2]  x[-1,2]  x[0,2]  x[1,2]  x[2,2]  x[3,2]  x[4,2]
+      x[-4,3]  x[-3,3]  x[-2,3]  x[-1,3]  x[0,3]  x[1,3]  x[2,3]  x[3,3]  x[4,3]
+               x[-3,4]  x[-2,4]  x[-1,4]  x[0,4]  x[1,4]  x[2,4]  x[3,4]
+      min min min min min  min min min min min  min min min min min
+      min min min min min  min min min min min  min min min min min
+      min min min min min  min min min min min  min min min min min
+      min min min min min  min min min min min  min min min min min
+      min min min min min  min min min min min  min min min min min darken!
+      diff@ 32768 darken@ - min
+      diff@ ?
+    y +
+    """)
 
     aa = core.std.MaskedMerge(doubled, aa, aa_mask)
     rs.doubled = aa
