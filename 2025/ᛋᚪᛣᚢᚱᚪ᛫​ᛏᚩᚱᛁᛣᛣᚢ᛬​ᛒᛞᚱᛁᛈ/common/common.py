@@ -66,9 +66,9 @@ def filterchain(source: Source) -> FilterchainResult:
 
     aa_mask = core.akarin.Expr([cclip, uniform_mask], "x y min")
 
-    aa = based_aa(doubled, supersampler=False, antialiaser=EEDI3(alpha=0.125), mask_thr=25)
+    aa = based_aa(doubled, supersampler=False, antialiaser=EEDI3(alpha=0.4), mask_thr=25)
     aa = core.akarin.Expr([aa, doubled], "x y - diff! diff@ 0 > y diff@ 0.333333 * + x ?")
-    
+
     aa = core.std.MaskedMerge(doubled, aa, aa_mask)
     rs.doubled = aa
 
