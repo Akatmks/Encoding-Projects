@@ -29,11 +29,11 @@ def filterchain(source: Source) -> FilterchainResult:
 
 
 
-    rs = Rescale(src, width=1552-23/120, height=873-23/120, base_width=1552, base_height=873, kernel=Lanczos(2), upscaler=Waifu2x())
+    rs = Rescale(src, width=1920*(1552-1)/(1920-1), height=1080*(873-1)/(1080-1), base_width=1552, base_height=873, kernel=Lanczos(2), upscaler=Waifu2x())
 
     descale = rs.descale
     cclip = src.resize.Bicubic(filter_param_a=0, filter_param_b=0.5,
-                               width=1552, height=873, src_width=1920+(120/97-1), src_height=1080+(120/97-1), src_left=-(120/97-1)/2, src_top=-(120/97-1)/2,
+                               width=1552, height=873, src_width=1920+((1920-1)/(1552-1)-1), src_height=1080+((1080-1)/(873-1)-1), src_left=-((1920-1)/(1552-1)-1)/2, src_top=-((1080-1)/(873-1)-1)/2,
                                format=vs.YUV444P16)
     cclip = join(descale, cclip)
     cclip = cclip.resize.Bicubic(filter_param_a=0, filter_param_b=0.5,
