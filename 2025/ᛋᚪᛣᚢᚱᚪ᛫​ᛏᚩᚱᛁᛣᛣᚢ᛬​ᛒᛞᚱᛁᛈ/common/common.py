@@ -5,7 +5,7 @@ import vsmlrt
 from vsmuxtools import SourceFilter, src_file
 from vskernels import Bilinear, Lanczos
 from vsrgtools import gauss_blur, remove_grain
-from vsscale import Rescale, Waifu2x
+from vsscale import replace_ranges, Rescale, Waifu2x
 from vstools import depth, DitherType, insert_clip, SPath, vs
 
 from .sources import Source, sources
@@ -24,8 +24,17 @@ def filterchain(episode: str) -> FilterchainResult:
         op = op_file.init_cut()
 
     if sources[episode].ed is not None:
-        ed_file = src_file(sources["NCED"].source, trim=sources["NCED"].trim, preview_sourcefilter=SourceFilter.BESTSOURCE)
+        assert sources[episode].ed_type in [1, 2]
+        if sources[episode].ed_type == 1:
+            ed_file = src_file(sources["NCED01"].source, trim=sources["NCED01"].trim, preview_sourcefilter=SourceFilter.BESTSOURCE)
+        else:
+            ed_file = src_file(sources["NCED02"].source, trim=sources["NCED02"].trim, preview_sourcefilter=SourceFilter.BESTSOURCE)
         ed = ed_file.init_cut()
+
+    if len(sources[episode].preview_cards) > 0:
+        preview_card_mask = core.bs.VideoSource(SPath(__file__) / "preview_card_mask.png", fpsnum=24000, fpsden=1001)
+        preview_card_mask = depth(preview_card_mask, 16)
+        preview_card_mask = preview_card_mask.std.Loop()
 
 
 
@@ -33,7 +42,6 @@ def filterchain(episode: str) -> FilterchainResult:
 
 
     descale = rs.descale
-    rs.descale = descale    
     cclip = src.resize.Bicubic(filter_param_a=0, filter_param_b=0.5,
                                width=1552, height=873, src_width=1920+((1920-1)/(1552-1)-1), src_height=1080+((1080-1)/(873-1)-1), src_left=-((1920-1)/(1552-1)-1)/2, src_top=-((1080-1)/(873-1)-1)/2,
                                format=vs.YUV444P16)
@@ -133,16 +141,27 @@ def filterchain(episode: str) -> FilterchainResult:
     if sources[episode].ed is not None:
         assert sources[episode].ed[1] - sources[episode].ed[0] <= ed.num_frames
 
-        ed_mask = diff_creditless(src[sources[episode].ed[0]:sources[episode].ed[1]], ed,
-                                  thr=0.18, expand=-2, prefilter=True)
+        if sources[episode].ed_type == 1:
+            ed_mask = diff_creditless(src[sources[episode].ed[0]:sources[episode].ed[1]], ed,
+                                      thr=0.18, expand=-2, prefilter=True)
+        else:
+            ed_mask = diff_creditless(src[sources[episode].ed[0]:sources[episode].ed[1]], ed,
+                                      thr=0.36, expand=-2, prefilter=True)
 
         ed_mask = process_oped_mask(ed_mask)
         
         descale_mask = insert_clip(descale_mask, ed_mask, start_frame=sources[episode].ed[0])
 
-    # XXX title card mask
+    title_card_mask = descale_mask.std.BlankClip(format=vs.GRAY16, color=[65535])
+
+    descale_mask = replace_ranges(descale_mask, title_card_mask, sources[episode].title_cards, exclusive=True)
+
+    descale_mask = replace_ranges(descale_mask, preview_card_mask, sources[episode].preview_cards, exclusive=True)
 
     rs.credit_mask = descale_mask
 
 
     ds = rs.upscale
+
+
+    return ds
