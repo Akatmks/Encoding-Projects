@@ -127,15 +127,12 @@ def filterchain(episode: str) -> FilterchainResult:
         oped_mask = Morpho.expand(oped_mask, sw=1)
         oped_mask = Morpho.inflate(oped_mask, radius=3, iterations=2)
         oped_mask = Morpho.closing(oped_mask, radius=3)
-
         return oped_mask
 
     if sources[episode].op is not None:
         op_mask = diff_creditless(src[sources[episode].op[0]+534:sources[episode].op[0]+609], op[534:609],
                                   thr=0.36, expand=-2, prefilter=True)
-
         op_mask = process_oped_mask(op_mask)
-
         descale_mask = insert_clip(descale_mask, op_mask, start_frame=sources[episode].op[0]+534)
 
     if sources[episode].ed is not None:
@@ -147,13 +144,10 @@ def filterchain(episode: str) -> FilterchainResult:
         else:
             ed_mask = diff_creditless(src[sources[episode].ed[0]:sources[episode].ed[1]], ed,
                                       thr=0.36, expand=-2, prefilter=True)
-
         ed_mask = process_oped_mask(ed_mask)
-        
         descale_mask = insert_clip(descale_mask, ed_mask, start_frame=sources[episode].ed[0])
 
     title_card_mask = descale_mask.std.BlankClip(format=vs.GRAY16, color=[65535])
-
     descale_mask = replace_ranges(descale_mask, title_card_mask, sources[episode].title_cards, exclusive=True)
 
     descale_mask = replace_ranges(descale_mask, preview_card_mask, sources[episode].preview_cards, exclusive=True)
