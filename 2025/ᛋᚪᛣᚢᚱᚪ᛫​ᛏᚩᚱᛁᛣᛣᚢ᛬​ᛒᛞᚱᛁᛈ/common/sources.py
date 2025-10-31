@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from muxtools import Trim
 import os
 from vstools import FrameRangeN, FrameRangesN, SPath
@@ -27,8 +27,8 @@ class Source:
     op: FrameRangeN = None # Exclusive
     ed: FrameRangeN = None # Exclusive
     ed_type: Literal[1, 2] | None = None
-    title_cards: FrameRangesN = [] # Exclusive
-    preview_cards: FrameRangesN = [] # Exclusive
+    title_cards: FrameRangesN = field(default_factory=list) # Exclusive
+    preview_cards: FrameRangesN = field(default_factory=list) # Exclusive
 
 
 sources = {

@@ -5,8 +5,8 @@ import vsmlrt
 from vsmuxtools import SourceFilter, src_file
 from vskernels import Bilinear, Lanczos
 from vsrgtools import gauss_blur, remove_grain
-from vsscale import replace_ranges, Rescale, Waifu2x
-from vstools import depth, DitherType, insert_clip, SPath, vs
+from vsscale import Rescale, Waifu2x
+from vstools import core, depth, DitherType, insert_clip, join, replace_ranges, SPath, vs
 
 from .sources import Source, sources
 
@@ -32,7 +32,7 @@ def filterchain(episode: str) -> FilterchainResult:
         ed = ed_file.init_cut()
 
     if len(sources[episode].preview_cards) > 0:
-        preview_card_mask = core.bs.VideoSource(SPath(__file__) / "preview_card_mask.png", fpsnum=24000, fpsden=1001)
+        preview_card_mask = core.bs.VideoSource(SPath(__file__) / ".." / "preview_card_mask.png", fpsnum=24000, fpsden=1001)
         preview_card_mask = depth(preview_card_mask, 16)
         preview_card_mask = preview_card_mask.std.Loop()
 
