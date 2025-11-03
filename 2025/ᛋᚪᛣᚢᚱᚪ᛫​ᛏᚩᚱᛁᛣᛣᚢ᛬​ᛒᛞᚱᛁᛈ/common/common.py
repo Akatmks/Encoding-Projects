@@ -1,6 +1,7 @@
 from vsaa import based_aa, EEDI3
 from dataclasses import dataclass
-from vsmasktools import diff_creditless, Morpho
+from vsdenoise import bm3d, mc_clamp, mc_degrain, nl_means, Prefilter
+from vsmasktools import diff_creditless, Morpho, RScharr
 import vsmlrt
 from vsmuxtools import SourceFilter, src_file
 from vskernels import Bilinear, Lanczos
@@ -165,6 +166,12 @@ def filterchain(episode: str) -> FilterchainResult:
 
 
     ds = rs.upscale
+
+
+    ref, mv = mc_degrain(ds, prefilter=Prefilter.DFTTEST(sloc={0.0:0.2, 0.4:0.6, 0.6:6.0, 1.0:10.0}), thsad=120, tr=1, export_globals=True)
+    dn = bm3d(ds, ref=ref, sigma=0.80, profile=bm3d.Profile.LOW_COMPLEXITY, tr=0, planes=[0])
+    dn = nl_means(dn, ref=ref, h=0.28, tr=2, planes=[1, 2])
+    dn = mc_clamp(dn, ds, mv)
 
 
     return ds
