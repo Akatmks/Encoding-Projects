@@ -6,7 +6,7 @@ from vsmuxtools import SourceFilter, src_file
 from vskernels import Bilinear, Lanczos
 from vsrgtools import gauss_blur, remove_grain
 from vsscale import Rescale, Waifu2x
-from vstools import core, depth, DitherType, insert_clip, join, replace_ranges, SPath, vs
+from vstools import core, depth, DitherType, get_y, insert_clip, join, replace_ranges, SPath, vs
 
 from .sources import Source, sources
 
@@ -153,6 +153,15 @@ def filterchain(episode: str) -> FilterchainResult:
     descale_mask = replace_ranges(descale_mask, preview_card_mask, sources[episode].preview_cards, exclusive=True)
 
     rs.credit_mask = descale_mask
+
+
+    src_y = get_y(src)
+    line_mask = RScharr().edgemask(src_y)
+    line_mask = Morpho.maximum(line_mask)
+    line_mask = line_mask.akarin.Expr("x 4800 > x 2 * 0 ? cont! cont@ 14400 > cont@ 14400 - 6 * 14400 + cont@ ?")
+    line_mask = Morpho.inflate(line_mask, radius=1)
+    
+    rs.line_mask = line_mask
 
 
     ds = rs.upscale
