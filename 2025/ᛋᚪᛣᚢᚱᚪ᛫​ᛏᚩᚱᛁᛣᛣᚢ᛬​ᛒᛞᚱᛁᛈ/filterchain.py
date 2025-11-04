@@ -1,5 +1,6 @@
 from vsaa import based_aa, EEDI3
 from dataclasses import dataclass
+from vsdeband import pfdeband, placebo_deband
 from vsdenoise import bm3d, mc_degrain, nl_means, Prefilter
 from vsmasktools import diff_creditless, Morpho, RScharr
 import vsmlrt
@@ -10,7 +11,7 @@ from vsscale import Rescale, Waifu2x
 from vstools import core, depth, DitherType, get_y, insert_clip, join, replace_ranges, SPath, vs
 
 from .sources import Source, sources
-from .vodesfuncNoiseMod import adaptive_grain
+from .vodesfuncNoiseMod import adaptive_grain, ntype4
 
 
 
@@ -197,4 +198,8 @@ def filterchain(episode: str) -> FilterchainResult:
 
 
 def main_filterchain():
-    rg = adaptive_grain(db, strength=[4.0, 4.0], size=[2*(1552-1)/(1920-1), 2*(873-1)/(1080-1)], temporal_radius=5, temporal_average=50, seed=274810, **ntype4)
+    rg = adaptive_grain(db, strength=[4.0, 4.0], size=[2*(1552-1)/(1920-1), 2*(873-1)/(1080-1)], luma_scaling=15, temporal_radius=5, temporal_average=50, seed=274810, **ntype4)
+
+
+def mini_filterchain():
+    pass # DFTTest (?)
