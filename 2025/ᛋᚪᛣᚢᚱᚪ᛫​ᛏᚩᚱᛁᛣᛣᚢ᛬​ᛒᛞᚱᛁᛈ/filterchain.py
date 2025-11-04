@@ -176,11 +176,11 @@ def filterchain(episode: str) -> FilterchainResult:
     db_cclip = cclip.resize.Bilinear(width=1920, height=1080, src_width=2*1920*(1552-1)/(1920-1), src_height=2*1080*(873-1)/(1080-1), src_left=(1552-1)/(1920-1)-1, src_top=(873-1)/(1080-1)-1)
     db_cclip = Morpho.inflate(db_cclip, radius=1)
     
-    dn_cclip = db_cclip.akarin.Expr("x 0.60 * 65535 0.40 * +")
+    dn_cclip = db_cclip.akarin.Expr("x 0.65 * 65535 0.35 * +")
     dn_cclip = Morpho.maximum(dn_cclip, iterations=1)
     
-    ref, mv = mc_degrain(ds, prefilter=Prefilter.DFTTEST(sloc={0.0:0.4, 0.4:0.6, 0.6:8.0, 1.0:10.0}), thsad=120, tr=1, export_globals=True)
-    dn = bm3d(ds, ref=ref, sigma=1.10, tr=0, refine=2, profile=bm3d.Profile.LOW_COMPLEXITY, planes=[0])
+    ref, mv = mc_degrain(ds, prefilter=Prefilter.DFTTEST(sloc={0.0:0.4, 0.4:0.6, 0.6:8.0, 1.0:10.0}), thsad=120, tr=2, export_globals=True)
+    dn = bm3d(ds, ref=ref, sigma=1.00, tr=0, refine=2, profile=bm3d.Profile.LOW_COMPLEXITY, planes=[0])
     dn = core.std.MaskedMerge(ds, dn, dn_cclip, planes=[0])
     dn = nl_means(dn, ref=ref, h=0.27, tr=2, planes=[1, 2])
     dn = mc_clamp(dn, ds, mv)
