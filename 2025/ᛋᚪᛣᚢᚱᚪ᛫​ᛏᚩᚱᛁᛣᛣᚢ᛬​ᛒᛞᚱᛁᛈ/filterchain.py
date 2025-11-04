@@ -1,6 +1,6 @@
 from vsaa import based_aa, EEDI3
 from dataclasses import dataclass
-from vsdenoise import bm3d, mc_clamp, mc_degrain, nl_means, Prefilter
+from vsdenoise import bm3d, mc_degrain, nl_means, Prefilter
 from vsmasktools import diff_creditless, Morpho, RScharr
 import vsmlrt
 from vsmuxtools import SourceFilter, src_file
@@ -179,11 +179,10 @@ def filterchain(episode: str) -> FilterchainResult:
     dn_cclip = db_cclip.akarin.Expr("x 0.65 * 65535 0.35 * +")
     dn_cclip = Morpho.maximum(dn_cclip, iterations=1)
     
-    ref, mv = mc_degrain(ds, prefilter=Prefilter.DFTTEST(sloc={0.0:0.4, 0.4:0.6, 0.6:8.0, 1.0:10.0}), thsad=120, tr=2, export_globals=True)
-    dn = bm3d(ds, ref=ref, sigma=1.00, tr=0, refine=2, profile=bm3d.Profile.LOW_COMPLEXITY, planes=[0])
+    ref = mc_degrain(ds, prefilter=Prefilter.DFTTEST(sloc={0.0:0.4, 0.4:0.6, 0.6:8.0, 1.0:10.0}), thsad=120, tr=1)
+    dn = bm3d(ds, ref=ref, sigma=0.87, tr=0, refine=2, profile=bm3d.Profile.LOW_COMPLEXITY, planes=[0])
     dn = core.std.MaskedMerge(ds, dn, dn_cclip, planes=[0])
     dn = nl_means(dn, ref=ref, h=0.27, tr=2, planes=[1, 2])
-    dn = mc_clamp(dn, ds, mv)
 
     db = pfdeband(dn, debander=placebo_deband, thr=1.8, radius=12.0, dark_thr=0.4, bright_thr=0.4, elast=2.0)
     db = core.std.MaskedMerge(dn, db, db_cclip)
@@ -196,5 +195,4 @@ def filterchain(episode: str) -> FilterchainResult:
 
 
 def main_filterchain():
-    rg = adaptive_grain(db, strength=[3.5, 0], size=[(1552-1)/(1920-1), (873-1)/(1080-1)], temporal_radius=5, temporal_average=50, seed=274810, **ntype4)
-    rg = adaptive_grain(rg, strength=[0, 3.5], size=[2*(1552-1)/(1920-1), 2*(873-1)/(1080-1)], temporal_radius=5, temporal_average=50, seed=274810, **ntype4)
+    rg = adaptive_grain(db, strength=[4.0, 4.0], size=[2*(1552-1)/(1920-1), 2*(873-1)/(1080-1)], temporal_radius=5, temporal_average=50, seed=274810, **ntype4)
