@@ -176,8 +176,10 @@ def filterchain(episode: str) -> FilterchainResult:
     db_cclip = cclip.resize.Bilinear(width=1920, height=1080, src_width=2*1920*(1552-1)/(1920-1), src_height=2*1080*(873-1)/(1080-1), src_left=(1552-1)/(1920-1)-1, src_top=(873-1)/(1080-1)-1)
     db_cclip = Morpho.inflate(db_cclip, radius=1)
     
-    dn_cclip = db_cclip.akarin.Expr("x 0.6 * 65535 0.4 * +")
-    dn_cclip = Morpho.maximum(dn_cclip, iterations=1)
+    dn_cclip = db_cclip.resize.Bicubic(filter_param_a=0, filter_param_b=0.5, width=240, height=135)
+    dn_cclip = Morpho.inflate(dn_cclip, radius=1)
+    dn_cclip = dn_cclip.akarin.Expr("x 2.5 * 65535 0.4 * max")
+    dn_cclip = dn_cclip.resize.Point(width=1920, height=1080)
     
     ref = mc_degrain(ds, prefilter=Prefilter.DFTTEST(sloc={0.0:0.4, 0.4:0.6, 0.6:8.0, 1.0:10.0}), thsad=120, tr=1)
     dn = bm3d(ds, ref=ref, sigma=0.87, tr=0, refine=2, profile=bm3d.Profile.LOW_COMPLEXITY, planes=[0])
