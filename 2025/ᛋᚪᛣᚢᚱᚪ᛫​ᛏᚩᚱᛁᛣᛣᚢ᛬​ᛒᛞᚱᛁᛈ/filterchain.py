@@ -15,7 +15,7 @@ from vsscale import Rescale, Waifu2x
 from vstools import core, depth, DitherType, get_y, insert_clip, join, replace_ranges, SPath, vs
 
 from sources import Source, sources
-from vodesfuncNoiseMod import adaptive_grain, ntype4
+from vodesfunc_noise_mod import adaptive_grain, ntype4
 
 
 
