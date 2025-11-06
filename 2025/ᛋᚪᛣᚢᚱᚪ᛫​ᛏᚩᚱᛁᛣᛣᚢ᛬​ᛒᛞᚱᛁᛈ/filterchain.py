@@ -11,7 +11,7 @@ from vsmuxtools import SourceFilter, src_file
 from vskernels import Bilinear, Lanczos
 from vsrgtools import gauss_blur, remove_grain
 from vsscale import Rescale, Waifu2x
-from vstools import core, depth, DitherType, get_y, insert_clip, join, replace_ranges, SPath, vs
+from vstools import core, depth, DitherType, finalize_clip, get_y, initialize_clip, insert_clip, join, replace_ranges, SPath, vs
 
 from sources import sources
 from vodesfunc_noise_mod import adaptive_grain, ntype4
@@ -187,15 +187,17 @@ def filterchain(episode):
     db = core.std.MaskedMerge(dn, db, db_cclip)
 
 
-    final = depth(db, 10, dither_type=DitherType.NONE)
-
+    final = finalize_clip(db)
     return final
 
 
 
-def main_filterchain():
-    rg = adaptive_grain(db, strength=[3.0, 3.0], size=[4*(1552-1)/(1920-1), 4*(873-1)/(1080-1)], luma_scaling=12, temporal_radius=5, temporal_average=50, seed=274810, **ntype4)
+def main_filterchain(episode):
+    src = core.ffms2.Source(SPath("Intermediate") / f"{episode}.mkv",
+                            cachefile=SPath("Intermediate") / f"{episode}.mkv.ffms2")
+    src = initialize_clip(src)
 
+    rg = adaptive_grain(src, strength=[3.0, 3.0], size=[4*(1552-1)/(1920-1), 4*(873-1)/(1080-1)], luma_scaling=12, temporal_radius=5, temporal_average=50, seed=274810, **ntype4)
 
-def mini_filterchain():
-    pass # DFTTest (?)
+    final = finalize_clip(rg, dither_type=DitherType.NONE)
+    return final

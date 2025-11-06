@@ -46,7 +46,50 @@ function filter
     EPISODE=$episode python intermediate.py
     or return $status
     if not test -e $intermediate_file
-        set_color red ; echo "[encode] Intermediate file missing. Exiting..." ; set_color normal
+        set_color red ; echo "[filter] Intermediate file missing. Exiting..." ; set_color normal
         return 126
+    end
+end
+
+# $argv[1]: Episode number "01"
+function encode
+    set episode $argv[1]
+    if test -z $episode
+        set_color red ; echo "[encode] Episode number not provided." ; set_color normal
+        return 126
+    end
+
+    set_color -o white ; echo "[encode] Filtering $episode..." ; set_color normal
+
+    set intermediate_file "Intermediate/$episode.mkv"
+    if not test -e $intermediate_file
+        set_color red ; echo "[encode] Intermediate file not found." ; set_color normal
+        return 126
+    end
+    set intermediate_file_ffindex "Intermediate/$episode.mkv.ffindex"
+
+    set_color -o white ; echo "[filter] Encoding $episode..." ; set_color normal
+
+end
+
+
+# $argv[1]: Episode number "01"
+function clean
+    set --erase clean_intermediate
+    if test $argv[1] = "intermediate"
+        set episode $argv[2]
+        set clean_intermediate "1"
+    else
+        set episode $argv[1]
+    end
+    if test -z $episode
+        set_color red ; echo "[clean] Episode number not provided." ; set_color normal
+        return 126
+    end
+
+    rm -rf "logs" "__pycache__" "Temp/$episode.boost.tmp" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps" "Temp/$episode.tmp"
+
+    if test -n "$clean_intermediate"
+        rm "Intermediate/$episode.mkv" "Intermediate/$episode.mkv.ffindex"
     end
 end
