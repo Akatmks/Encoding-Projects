@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import sys
 sys.path.insert(0, os.getcwd())
@@ -5,10 +7,10 @@ sys.path.insert(0, os.getcwd())
 import __main__
 
 from argparse import ArgumentParser
-from vstools import SPath
 
-from intermediate import encode_intermediate
-from filterchain import filterchain
+from encode import main
+from filterchain import main_filterchain
+from sources import sources
 
 
 parser = ArgumentParser()
@@ -18,12 +20,13 @@ if args.episode is not None:
     episode = args.episode
 else:
     assert "EPISODE" in os.environ, "You need to pass the episode to encode via commandline parameters, or via environmental variable \"EPISODE\""
-    episode = SPath(os.environ["EPISODE"])
+    episode = os.environ["EPISODE"]
+assert episode in sources
 
 
-filterchain_results = filterchain(episode)
+final = main_filterchain(episode)
 
 if "__main__" in dir(__main__): 
-    encode_intermediate(episode, filterchain_results)
+    main(episode, final)
 else:
-    filterchain_results.final.set_output()
+    final.set_output()

@@ -3,7 +3,6 @@ import sys
 sys.path.insert(0, os.getcwd())
 
 from vsaa import based_aa, EEDI3
-from dataclasses import dataclass
 from vsdeband import pfdeband, placebo_deband
 from vsdenoise import bm3d, mc_degrain, nl_means, Prefilter
 from vsmasktools import diff_creditless, Morpho, RScharr
@@ -14,19 +13,12 @@ from vsrgtools import gauss_blur, remove_grain
 from vsscale import Rescale, Waifu2x
 from vstools import core, depth, DitherType, get_y, insert_clip, join, replace_ranges, SPath, vs
 
-from sources import Source, sources
+from sources import sources
 from vodesfunc_noise_mod import adaptive_grain, ntype4
 
 
 
-@dataclass
-class FilterchainResult:
-    final: vs.VideoNode
-    audio: src_file
-
-
-
-def filterchain(episode: str) -> FilterchainResult:
+def filterchain(episode):
     source_file = src_file(sources[episode].source, trim=sources[episode].trim, preview_sourcefilter=SourceFilter.BESTSOURCE)
     src = source_file.init_cut()
 
