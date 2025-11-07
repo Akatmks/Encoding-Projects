@@ -32,7 +32,7 @@
 # if you're low on RAM. In that case, just use higher `--lp`. During
 # our testing, the Dispatch Server can deliver encoding speed just as
 # fast using higher `--lp`s compared to `--lp 2` or `--lp 3`.
-necessary_cpu = 16
+necessary_cpu = 20
 # ---------------------------------------------------------------------
 # This `required_vram` parameter denotes the maximum amount of VRAM
 # used for each worker in bytes.
