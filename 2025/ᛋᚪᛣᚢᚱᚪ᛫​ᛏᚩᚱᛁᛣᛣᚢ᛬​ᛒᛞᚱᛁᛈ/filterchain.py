@@ -181,7 +181,7 @@ def filterchain(episode):
     dn_cclip = dn_cclip.akarin.Expr("x 3.5 * 65535 0.35 * max")
     dn_cclip = dn_cclip.resize.Point(width=1920, height=1080)
     
-    db_cclip = os_cclip.akarin.Expr("x 65535 0.13 * max")
+    db_cclip = os_cclip.akarin.Expr("x 65535 0.1 * max")
     
     ref = mc_degrain(ds, prefilter=Prefilter.DFTTEST(sloc={0.0:0.4, 0.4:0.6, 0.6:5.0, 1.0:8.0}), refine=2, thsad=160, tr=1)
     dn = bm3d(ds, ref=ref, sigma=1.07, tr=0, refine=2, profile=bm3d.Profile.LOW_COMPLEXITY, planes=[0])
@@ -206,7 +206,7 @@ def main_filterchain(episode):
     rg = adaptive_grain(src, strength=[1.5, 0.0], size=[2*(1552-1)/(1920-1), 2*(873-1)/(1080-1)],
                              luma_scaling=13.2, temporal_radius=5, temporal_average=50, seed=274810,
                              **ntype4)
-    rg = adaptive_grain(rg, strength=[0.0, 3.0], size=[4*(1552-1)/(1920-1), 4*(873-1)/(1080-1)],
+    rg = adaptive_grain(rg, strength=[0.0, 1.0], size=[4*(1552-1)/(1920-1), 4*(873-1)/(1080-1)],
                             luma_scaling=13.2, temporal_radius=5, temporal_average=50, seed=274810,
                             **ntype4)
 
