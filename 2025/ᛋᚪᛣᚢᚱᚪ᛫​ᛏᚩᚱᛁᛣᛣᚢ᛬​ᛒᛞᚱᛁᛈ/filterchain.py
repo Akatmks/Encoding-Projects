@@ -11,7 +11,7 @@ from vsmuxtools import SourceFilter, src_file
 from vskernels import Lanczos
 from vsrgtools import gauss_blur, remove_grain
 from vsscale import Rescale, Waifu2x
-from vstools import core, depth, DitherType, finalize_clip, get_y, initialize_clip, insert_clip, join, replace_ranges, SPath, vs
+from vstools import core, depth, DitherType, finalize_clip, get_y, initialize_clip, insert_clip, join, replace_ranges, Sar, SPath, vs
 
 from sources import sources
 from vodesfunc_noise_mod import adaptive_grain, ntype4
@@ -168,6 +168,8 @@ def filterchain(episode):
 
 
     ds = rs.upscale
+
+    ds = Sar.from_clip(src).apply(ds)
 
 
     db_cclip = cclip.resize.Bilinear(width=1920, height=1080, src_width=2*1920*(1552-1)/(1920-1), src_height=2*1080*(873-1)/(1080-1), src_left=(1552-1)/(1920-1)-1, src_top=(873-1)/(1080-1)-1)

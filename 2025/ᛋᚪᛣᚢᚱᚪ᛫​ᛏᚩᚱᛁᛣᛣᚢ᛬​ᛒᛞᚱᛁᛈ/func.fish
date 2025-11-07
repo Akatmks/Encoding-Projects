@@ -75,10 +75,10 @@ end
 
 # $argv[1]: Episode number "01"
 function clean
-    set --erase clean_intermediate
-    if test $argv[1] = "intermediate"
+    set --erase clean_ia
+    if test $argv[1] = "ia"
         set episode $argv[2]
-        set clean_intermediate "1"
+        set clean_ia "1"
     else
         set episode $argv[1]
     end
@@ -87,9 +87,9 @@ function clean
         return 126
     end
 
-    rm -rf "logs" "__pycache__" "Temp/$episode.boost.tmp" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps" "Temp/$episode.tmp"
+    rm -rf "logs" "__pycache__" "_binaries" "Temp/$episode.muxtools.tmp" "Temp/$episode.boost.tmp" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps" "Temp/$episode.av1an.tmp"
 
-    if test -n "$clean_intermediate"
-        rm "Intermediate/$episode.mkv" "Intermediate/$episode.mkv.ffindex"
+    if test -n "$clean_ia"
+        rm -f "Intermediate/$episode.mkv" "Intermediate/$episode.mkv.ffindex" "Main/$episode.flac" "Mini/$episode.opus"
     end
 end
