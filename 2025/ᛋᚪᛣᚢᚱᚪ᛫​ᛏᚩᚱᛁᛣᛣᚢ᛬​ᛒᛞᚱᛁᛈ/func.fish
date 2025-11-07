@@ -87,7 +87,7 @@ function clean
         return 126
     end
 
-    rm -rf "logs" "__pycache__" "_binaries" "Temp/$episode.muxtools.tmp" "Temp/$episode.boost.tmp" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps" "Temp/$episode.av1an.tmp"
+    rm -rf "logs" "__pycache__" "Temp/$episode.x265_log.tmp" "Temp/$episode.boost.tmp" "Temp/$episode.scenes.json" "Temp/$episode.roi.maps" "Temp/$episode.av1an.tmp"
 
     if test -n "$clean_ia"
         rm -f "Intermediate/$episode.mkv" "Intermediate/$episode.mkv.ffindex" "Main/$episode.flac" "Mini/$episode.opus"

@@ -172,6 +172,7 @@ def filterchain(episode):
     ds = Sar.from_clip(src).apply(ds)
 
 
+
     db_cclip = cclip.resize.Bilinear(width=1920, height=1080, src_width=2*1920*(1552-1)/(1920-1), src_height=2*1080*(873-1)/(1080-1), src_left=(1552-1)/(1920-1)-1, src_top=(873-1)/(1080-1)-1)
     db_cclip = Morpho.inflate(db_cclip, radius=1)
     
@@ -187,6 +188,7 @@ def filterchain(episode):
 
     db = pfdeband(dn, debander=placebo_deband, thr=1.8, radius=12.0, dark_thr=0.4, bright_thr=0.4, elast=2.0)
     db = core.std.MaskedMerge(dn, db, db_cclip)
+
 
 
     final = finalize_clip(db)

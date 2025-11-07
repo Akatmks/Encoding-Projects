@@ -1,4 +1,4 @@
-from muxtools import PathLike, VideoFile, make_output
+from muxtools import make_output, PathLike, VideoFile
 from muxtools.utils.dataclass import allow_extra, dataclass
 from vsmuxtools import settings_builder_x265, VideoEncoder, x264, x265
 import shlex
@@ -27,8 +27,7 @@ def intermediate(episode, final):
 
 def main(episode, final):
     output = SPath("Main") / f"{episode}.265"
-    setup = Setup(episode, work_dir=SPath("Temp") / f"{episode}.muxtools.tmp")
 
     settings = settings_builder_x265(hist_scenecut="", frames=final.num_frames,
                                      crf=13.50, qcomp=0.80, aq_strength=0.66, chroma_qpoffsets=-3)
-    return x265(settings, resumable=False, csv=SPath(setup.work_dir) / "x265_log.csv").encode(final, outfile=output)
+    return x265(settings, resumable=False, csv=SPath("Temp") / f"{episode}.x265_log.csv").encode(final, outfile=output)
