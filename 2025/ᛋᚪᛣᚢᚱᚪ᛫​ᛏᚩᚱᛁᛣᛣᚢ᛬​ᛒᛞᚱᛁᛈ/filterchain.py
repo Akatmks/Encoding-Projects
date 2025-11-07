@@ -198,7 +198,7 @@ def filterchain(episode):
 
 def main_filterchain(episode):
     src = core.ffms2.Source(SPath("Intermediate") / f"{episode}.mkv",
-                            cachefile=SPath("Intermediate") / f"{episode}.mkv.ffms2")
+                            cachefile=SPath("Intermediate") / f"{episode}.mkv.ffindex")
     src = initialize_clip(src)
 
     rg = adaptive_grain(src, strength=[1.5, 0.0], size=[2*(1552-1)/(1920-1), 2*(873-1)/(1080-1)],

@@ -12,7 +12,7 @@ episode = os.environ["EPISODE"]
 
 
 src = core.ffms2.Source(SPath("Intermediate") / f"{episode}.mkv",
-                        cachefile=SPath("Intermediate") / f"{episode}.mkv.ffms2")
+                        cachefile=SPath("Intermediate") / f"{episode}.mkv.ffindex")
 src = initialize_clip(src)
 
 final_dn = DFTTest().denoise(src, {0.0:0.52, 0.4:0.36, 0.5:0.24, 0.7:0.20, 1.0:0.12}, tr=1)
