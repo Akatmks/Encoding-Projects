@@ -4,7 +4,7 @@ import os
 import sys
 sys.path.insert(0, os.getcwd())
 
-from vstools import core, DitherType, finalize_clip, initialize_clip
+from vstools import core, DitherType, finalize_clip, initialize_clip, SPath
 from vsdenoise import DFTTest
 
 assert "EPISODE" in os.environ, "You need to pass the episode to encode via commandline parameters, or via environmental variable \"EPISODE\""

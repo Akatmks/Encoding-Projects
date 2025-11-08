@@ -29,5 +29,5 @@ def main(episode, final):
     output = SPath("Main") / f"{episode}.265"
 
     settings = settings_builder_x265(hist_scenecut="", frames=final.num_frames,
-                                     crf=13.33, qcomp=0.72, aq_strength=0.85, chroma_qpoffsets=-2)
+                                     crf=13.33, qcomp=0.72, aq_strength=0.85)
     return x265(settings, resumable=False, csv=SPath("Temp") / f"{episode}.x265_log.csv").encode(final, outfile=output)
