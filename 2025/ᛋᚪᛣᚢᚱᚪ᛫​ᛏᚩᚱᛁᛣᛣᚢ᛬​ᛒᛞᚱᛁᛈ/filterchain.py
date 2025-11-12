@@ -173,23 +173,37 @@ def filterchain(episode):
 
 
 
-    os_cclip = cclip.resize.Bilinear(width=1920, height=1080, src_width=2*1920*(1552-1)/(1920-1), src_height=2*1080*(873-1)/(1080-1), src_left=(1552-1)/(1920-1)-1, src_top=(873-1)/(1080-1)-1)
-    os_cclip = Morpho.inflate(os_cclip, radius=1)
-    
-    dn_cclip = os_cclip.resize.Bilinear(width=240, height=135)
+    dn_cclip = cclip.resize.Bilinear(width=1920, height=1080, src_width=2*1920*(1552-1)/(1920-1), src_height=2*1080*(873-1)/(1080-1), src_left=(1552-1)/(1920-1)-1, src_top=(873-1)/(1080-1)-1)
+    dn_cclip = Morpho.inflate(dn_cclip, radius=1)
+    dn_cclip = dn_cclip.resize.Bilinear(width=240, height=135)
     dn_cclip = remove_grain(dn_cclip, mode=remove_grain.Mode.BINOMIAL_BLUR)
     dn_cclip = dn_cclip.akarin.Expr("x 3.5 * 65535 0.35 * max")
     dn_cclip = dn_cclip.resize.Point(width=1920, height=1080)
-    
-    db_cclip = os_cclip.akarin.Expr("x 65535 0.1 * max")
     
     ref = mc_degrain(ds, prefilter=Prefilter.DFTTEST(sloc={0.0:0.4, 0.4:0.6, 0.6:5.0, 1.0:8.0}), refine=2, thsad=160, tr=1)
     dn = bm3d(ds, ref=ref, sigma=1.07, tr=0, refine=2, profile=bm3d.Profile.LOW_COMPLEXITY, planes=[0])
     dn = core.std.MaskedMerge(ds, dn, dn_cclip, planes=[0])
     dn = nl_means(dn, ref=ref, h=0.21, tr=2, planes=[1, 2])
 
-    db = pfdeband(dn, debander=placebo_deband, thr=1.8, radius=12.0, dark_thr=0.4, bright_thr=0.4, elast=2.0)
-    db = core.std.MaskedMerge(dn, db, db_cclip)
+
+
+    db = placebo_deband(dn, thr=2.1, radius=22)
+
+    dn_y = get_y(dn)
+    db_y = get_y(db)
+    diff = core.akarin.Expr([db_y, dn_y], ["x y - 64 * 32768 +"])
+    diff_dct = diff.dctf.DCTFilter(factors=[0.9375, 0.85, 0.5,  0.3,  0.3,  0.3,  0.4,  0.6,
+                                            0.85,   0.98, 0.85, 0.75, 0.75, 0.75, 0.85, 0.95,
+                                            0.5,    0.85, 0.95, 0.95, 0.95, 0.95, 1,    1,
+                                            0.3,    0.75, 0.95, 1,    0.98, 1,    1,    1,
+                                            0.3,    0.75, 0.95, 0.98, 0.95, 0.98, 1,    1,
+                                            0.3,    0.75, 0.95, 1,    0.98, 1,    1,    1,
+                                            0.4,    0.85, 1,    1,    1,    1,    1,    1,
+                                            0.6,    0.95, 1,    1,    1,    1,    1,    1])
+    db_dct = core.akarin.Expr([dn_y, diff_dct], ["y 30720 - 64 / x +"])
+
+    db = join(db_dct, db)
+    db = core.vszip.LimitFilter(db, dn, dark_thr=0.6, bright_thr=0.6, elast=1.6)
 
 
 
