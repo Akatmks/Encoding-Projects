@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0, os.getcwd())
 
 from vsaa import based_aa, EEDI3
-from vsdeband import pfdeband, placebo_deband
+from vsdeband import placebo_deband
 from vsdenoise import bm3d, mc_degrain, nl_means, Prefilter
 from vsmasktools import diff_creditless, Morpho, RScharr
 import vsmlrt
