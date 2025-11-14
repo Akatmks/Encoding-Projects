@@ -188,7 +188,7 @@ def filterchain(episode):
     dn_cclip = core.akarin.Expr([dn_cclip, dn_line_mask], """
     x 3.5 * 65535 min
         y 65535 / 3.5 * 0.65 max 1 min *
-            65535 0.3 * max
+    65535 0.3 * max
     """)
     dn_cclip = dn_cclip.resize.Point(width=1920, height=1080)
 
