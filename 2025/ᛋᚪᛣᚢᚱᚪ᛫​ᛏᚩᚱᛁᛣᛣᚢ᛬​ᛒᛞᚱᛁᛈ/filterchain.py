@@ -4,14 +4,14 @@ sys.path.insert(0, os.getcwd())
 
 from vsaa import based_aa, EEDI3
 from vsdeband import placebo_deband
-from vsdenoise import bm3d, mc_degrain, nl_means, Prefilter
+from vsdenoise import bm3d, mc_degrain, Prefilter, wnnm
 from vsmasktools import diff_creditless, Morpho, RScharr
 import vsmlrt
 from vsmuxtools import SourceFilter, src_file
 from vskernels import Lanczos
 from vsrgtools import gauss_blur, remove_grain
 from vsscale import Rescale, Waifu2x
-from vstools import core, depth, DitherType, finalize_clip, get_y, initialize_clip, insert_clip, join, replace_ranges, Sar, SPath, vs
+from vstools import core, depth, DitherType, finalize_clip, get_y, initialize_clip, insert_clip, join, replace_ranges, Sar, SPath, split, vs
 
 from sources import sources
 from vodesfunc_noise_mod import adaptive_grain, ntype4
@@ -52,6 +52,7 @@ def filterchain(episode):
     cclip = cclip.resize.Bicubic(filter_param_a=0, filter_param_b=0.5,
                                  width=1600, height=896, src_width=1600, src_height=896, src_left=-24, src_top=-11,
                                  format=vs.RGBS, range=1)
+    cclip = cclip.akarin.Expr(["", "1.0 x - 0.75 * 1.0 swap -", "1.0 x - 0.9 * 1.0 swap -"])
     
     cclip = vsmlrt.inference(cclip, SPath(vsmlrt.models_path) / "anime-segmentation" / "isnet_is.onnx", backend=vsmlrt.Backend.TRT(fp16=True))
     cclip = cclip.akarin.Expr("""
@@ -71,10 +72,11 @@ def filterchain(episode):
     cclip = depth(cclip, 16, dither_type=DitherType.NONE)
 
     doubled = rs.doubled
-    uniform_mask = doubled.std.PlaneStats(prop="Brightness")
-    uniform_mask = uniform_mask.akarin.PropExpr(dict=lambda: dict(BrightnessThr="x.BrightnessAverage 65535 *"))
-    uniform_mask = uniform_mask.akarin.PropExpr(dict=lambda: dict(BrightnessMultipler="65535 x.BrightnessThr 4096 - 0.1 max 0.51 * /"))
-    uniform_mask = uniform_mask.akarin.Expr("""x.BrightnessThr x - x.BrightnessMultipler *""")
+    uniform_mask = core.akarin.Expr([doubled, cclip], "y x 0 ?")
+    uniform_mask = uniform_mask.vszip.PlaneAverage(prop="Brightness", exclude=[0])
+    uniform_mask = uniform_mask.akarin.PropExpr(dict=lambda: dict(BrightnessThr="x.BrightnessAvg 65535 *"))
+    uniform_mask = uniform_mask.akarin.PropExpr(dict=lambda: dict(BrightnessMultipler="65535 x.BrightnessThr 4096 - 0.1 max 0.4 * /"))
+    uniform_mask = uniform_mask.akarin.Expr("""x x.BrightnessThr x - x.BrightnessMultipler * 0 ?""")
     uniform_mask = Morpho.opening(uniform_mask, radius=5)
     uniform_mask = gauss_blur(uniform_mask, sigma=0.8)
     uniform_mask = Morpho.erosion(uniform_mask, radius=1)
@@ -158,10 +160,15 @@ def filterchain(episode):
     rs.credit_mask = descale_mask
 
 
-    src_y = get_y(src)
-    line_mask = RScharr().edgemask(src_y)
-    line_mask = Morpho.maximum(line_mask)
-    line_mask = line_mask.akarin.Expr("x 4800 > x 2 * 0 ? cont! cont@ 14400 > cont@ 14400 - 6 * 14400 + cont@ ?")
+    line_mask = RScharr().edgemask(src)
+    line_mask = Morpho.maximum(line_mask, planes=[0])
+    line_mask = remove_grain(line_mask, mode=remove_grain.Mode.SMART_RGC, planes=[1, 2])
+    line_mask = line_mask.resize.Bilinear(width=1920, height=1080, format=vs.YUV444P16, range_in_s="full", range_s="full")
+    line_mask = core.akarin.Expr(split(line_mask), """
+    x cont!       cont@ 6400 > cont@ 2 * 0 ? cont! cont@ 17600 > cont@ 17600 - 6 * 17600 + cont@ ? xcont!
+    y z max cont! cont@ 4800 > cont@ 2 * 0 ? cont! cont@ 14400 > cont@ 14400 - 6 * 14400 + cont@ ? yzcont!
+    xcont@ yzcont@ 65535 min 0.8 * max
+    """)
     line_mask = Morpho.inflate(line_mask, radius=1)
     
     rs.line_mask = line_mask
@@ -177,13 +184,18 @@ def filterchain(episode):
     dn_cclip = Morpho.inflate(dn_cclip, radius=1)
     dn_cclip = dn_cclip.resize.Bilinear(width=240, height=135)
     dn_cclip = remove_grain(dn_cclip, mode=remove_grain.Mode.BINOMIAL_BLUR)
-    dn_cclip = dn_cclip.akarin.Expr("x 3.5 * 65535 0.35 * max")
+    dn_line_mask = line_mask.resize.Bicubic(filter_param_a=0.0, filter_param_b=0.0, width=240, height=135)
+    dn_cclip = core.akarin.Expr([dn_cclip, dn_line_mask], """
+    x 3.5 * 65535 min
+        y 65535 / 3.5 * 0.65 max 1 min *
+            65535 0.3 * max
+    """)
     dn_cclip = dn_cclip.resize.Point(width=1920, height=1080)
-    
+
     ref = mc_degrain(ds, prefilter=Prefilter.DFTTEST(sloc={0.0:0.4, 0.4:0.6, 0.6:5.0, 1.0:8.0}), refine=2, thsad=160, tr=1)
-    dn = bm3d(ds, ref=ref, sigma=1.07, tr=0, refine=2, profile=bm3d.Profile.LOW_COMPLEXITY, planes=[0])
+    dn = bm3d(ds, ref=ref, sigma=1.33, tr=0, refine=2, profile=bm3d.Profile.LOW_COMPLEXITY, planes=[0])
     dn = core.std.MaskedMerge(ds, dn, dn_cclip, planes=[0])
-    dn = nl_means(dn, ref=ref, h=0.21, tr=2, planes=[1, 2])
+    dn = wnnm(dn, ref=ref, sigma=1.33, tr=1, planes=[1, 2])
 
 
 
