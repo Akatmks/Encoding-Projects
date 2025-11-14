@@ -232,7 +232,7 @@ def main_filterchain(episode):
     rg = adaptive_grain(src, strength=[1.8, 0.0], size=[2*(1552-1)/(1920-1), 2*(873-1)/(1080-1)],
                              luma_scaling=13.2, temporal_radius=5, temporal_average=50, seed=274810,
                              **ntype4)
-    rg = adaptive_grain(rg, strength=[0.0, 1.0], size=[4*(1552-1)/(1920-1), 4*(873-1)/(1080-1)],
+    rg = adaptive_grain(rg, strength=[0.0, 0.8], size=[4*(1552-1)/(1920-1), 4*(873-1)/(1080-1)],
                             luma_scaling=13.2, temporal_radius=5, temporal_average=50, seed=274810,
                             **ntype4)
 
