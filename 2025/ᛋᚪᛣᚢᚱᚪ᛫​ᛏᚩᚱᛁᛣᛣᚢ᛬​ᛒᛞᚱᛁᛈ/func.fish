@@ -76,7 +76,7 @@ function encode
     set mini_boost_dir "Temp/$episode.boost.tmp"
     set mini_scenes_file "Temp/$episode.scenes.json"
     set mini_roi_maps_dir "Temp/$episode.roi.maps"
-    EPISODE=$episode python progression_boost.py --temp $mini_boost_dir --resume --episode $episode --encode-input mini_boost.py --output-scenes $mini_scenes_file --output-roi-maps $mini_roi_maps_dir
+    EPISODE=$episode python progression_boost.py --temp $mini_boost_dir --resume --encode-input mini_boost.py --output-scenes $mini_scenes_file --output-roi-maps $mini_roi_maps_dir
     or return $status
     if begin not test -e $mini_scenes_file; or not test -e $mini_roi_maps_dir; end
         set_color red ; echo "[encode] Boosting result missing. Exiting..." ; set_color normal

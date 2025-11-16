@@ -4,7 +4,8 @@ import os
 import sys
 sys.path.insert(0, os.getcwd())
 
-from vstools import core, DitherType, finalize_clip, initialize_clip
+from vstools import core, DitherType, finalize_clip, initialize_clip, SPath
+from vsdeband import pfdeband, placebo_deband
 from vsdenoise import DFTTest
 
 assert "EPISODE" in os.environ, "You need to pass the episode to encode via commandline parameters, or via environmental variable \"EPISODE\""
@@ -15,9 +16,11 @@ src = core.ffms2.Source(SPath("Intermediate") / f"{episode}.mkv",
                         cachefile=SPath("Intermediate") / f"{episode}.mkv.ffindex")
 src = initialize_clip(src)
 
-final_dn = DFTTest().denoise(src, {0.0:0.52, 0.4:0.36, 0.5:0.24, 0.7:0.20, 1.0:0.12}, tr=1)
+final_dn = DFTTest().denoise(src, {0.0:0.54, 0.4:0.48, 0.5:0.24, 0.6:0.48, 0.8:0.48, 0.9:0.24, 1.0:0.24}, tr=1)
 
-final = finalize_clip(final_dn, dither_type=DitherType.NONE)
+final_db = pfdeband(final_dn, thr=2.1, radius=22, debander=placebo_deband)
+
+final = finalize_clip(final_db, dither_type=DitherType.ATKINSON)
 
 
 # ---------------------------------------------------------------------
