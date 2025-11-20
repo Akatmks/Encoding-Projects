@@ -20,7 +20,7 @@ final_dn = DFTTest().denoise(src, {0.0:0.54, 0.4:0.48, 0.5:0.24, 0.6:0.48, 0.8:0
 
 final_db = pfdeband(final_dn, thr=2.1, radius=22, debander=placebo_deband)
 
-final = finalize_clip(final_db, dither_type=DitherType.ATKINSON)
+final = finalize_clip(final_db, dither_type=DitherType.NONE)
 
 
 # ---------------------------------------------------------------------

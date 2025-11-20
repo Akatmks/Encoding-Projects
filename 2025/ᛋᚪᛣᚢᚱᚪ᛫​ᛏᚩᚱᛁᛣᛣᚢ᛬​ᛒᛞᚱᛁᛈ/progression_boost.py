@@ -597,6 +597,8 @@ class DefaultZone:
     def metric_dynamic_crf(self, start_frame: int, end_frame: int,
                                  crf: float,
                                  luma_average: np.ndarray[np.float32], luma_min: np.ndarray[np.float32], luma_max: np.ndarray[np.float32], luma_diff: np.ndarray[np.float32]) -> float:
+        crf += np.interp(np.percentile(luma_average, 15), [ 0.0,  0.3, 0.5, 1.0],
+                                                          [-1.5, -1.5, 0.0, 0.0])
 # For example, one common usage is for encodes targeting lower filesize
 # targets to dampen the boost. We willingly allow some scenes to have a
 # worse quality than the target we set, in order to save space for all
@@ -626,7 +628,7 @@ class DefaultZone:
 # clamp this one last time.
 # This clamp is applied after both Progression Boost and Character
 # Boost has finished.
-    final_min_crf = 11.00
+    final_min_crf = 10.00
 
 # `--resume` information: If you changed parameters for probing, you
 # need to delete everything in `progression-boost` folder inside the
@@ -682,7 +684,7 @@ class DefaultZone:
     def metric_dynamic_preset(self, start_frame: int, end_frame: int,
                                     crf: float,
                                     luma_average: np.ndarray[np.float32], luma_min: np.ndarray[np.float32], luma_max: np.ndarray[np.float32], luma_diff: np.ndarray[np.float32]) -> int:
-        return 2
+        return 1
 
 # `--resume` information: If you changed parameters for probing, you
 # need to delete everything in `progression-boost` folder inside the
@@ -739,16 +741,34 @@ class DefaultZone:
                                          crf: float,
                                          luma_average: np.ndarray[np.float32], luma_min: np.ndarray[np.float32], luma_max: np.ndarray[np.float32], luma_diff: np.ndarray[np.float32]) -> list[str]:
         return """--lp 3 --keyint -1 --input-depth 10 --scm 0
-                  --tune 3 --qp-scale-compress-strength 3 --luminance-qp-bias 10 --qm-min 8 --chroma-qm-min 10
+                  --tune 0 --variance-octile 3 --qp-scale-compress-strength 3.5 --luminance-qp-bias 5
+                  --max-32-tx-size 1 --chroma-distortion-taper 1 --skip-taper 1 --qm-min 8 --chroma-qm-min 10
                   --psy-rd 2.0 --spy-rd 2 --complex-hvs 0
                   --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0""".split()
     def final_dynamic_parameters(self, start_frame: int, end_frame: int,
                                        crf: float,
                                        luma_average: np.ndarray[np.float32], luma_min: np.ndarray[np.float32], luma_max: np.ndarray[np.float32], luma_diff: np.ndarray[np.float32]) -> list[str]:
         return """--lp 3 --keyint -1 --input-depth 10 --scm 0
-                  --tune 3 --qp-scale-compress-strength 3 --luminance-qp-bias 10 --qm-min 8 --chroma-qm-min 10
+                  --tune 0 --variance-octile 3 --qp-scale-compress-strength 3.5 --luminance-qp-bias 5
+                  --max-32-tx-size 1 --chroma-distortion-taper 1 --skip-taper 1 --qm-min 8 --chroma-qm-min 10
                   --psy-rd 2.0 --spy-rd 2 --complex-hvs 1
                   --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0""".split()
+
+# A trick in this whole chain of dynamic `--crf`, dynamic `--preset`,
+# and dynamic parameters is that you can actually specify flags to
+# pass along from for example `metric_dynamic_preset` to
+# `final_dynamic_parameters`. In `metric_` functions, you can write:
+# ```py
+# global my_flag
+# my_flag = True
+# ```
+# and then in `final_` functions you can write:
+# ```py
+# if my_flag in globals() and my_flag:
+# ```
+# Do note the execution order of `metric_dynamic_preset`, then
+# `metric_dynamic_crf` (but only if `metric_enable`), and then
+# Character Boost, and at last the `final_` functions.
 
 # `--resume` information: If you changed parameters for probing, you
 # need to delete everything in `progression-boost` folder inside the
@@ -786,7 +806,7 @@ class DefaultZone:
 # undefined.
     def final_dynamic_photon_noise(self, start_frame: int, end_frame: int,
                                          luma_average: np.ndarray[np.float32], luma_min: np.ndarray[np.float32], luma_max: np.ndarray[np.float32], luma_diff: np.ndarray[np.float32]) -> Optional[int]:
-        return None
+        # TODO return None
     final_photon_noise_height = None
     final_photon_noise_width = None
     final_chroma_noise = False
