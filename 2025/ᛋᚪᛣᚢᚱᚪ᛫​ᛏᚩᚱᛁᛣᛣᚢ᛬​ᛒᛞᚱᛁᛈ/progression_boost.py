@@ -742,7 +742,7 @@ class DefaultZone:
                                          luma_average: np.ndarray[np.float32], luma_min: np.ndarray[np.float32], luma_max: np.ndarray[np.float32], luma_diff: np.ndarray[np.float32]) -> list[str]:
         return """--lp 3 --keyint -1 --input-depth 10 --scm 0
                   --tune 0 --variance-octile 3 --qp-scale-compress-strength 3.5 --luminance-qp-bias 5
-                  --max-32-tx-size 1 --chroma-distortion-taper 1 --skip-taper 1 --qm-min 8 --chroma-qm-min 10
+                  --max-32-tx-size 1 --chroma-distortion-taper 1 --skip-taper 1 --qm-min 9 --chroma-qm-min 12
                   --psy-rd 2.0 --spy-rd 2 --complex-hvs 0
                   --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0""".split()
     def final_dynamic_parameters(self, start_frame: int, end_frame: int,
@@ -750,7 +750,7 @@ class DefaultZone:
                                        luma_average: np.ndarray[np.float32], luma_min: np.ndarray[np.float32], luma_max: np.ndarray[np.float32], luma_diff: np.ndarray[np.float32]) -> list[str]:
         return """--lp 3 --keyint -1 --input-depth 10 --scm 0
                   --tune 0 --variance-octile 3 --qp-scale-compress-strength 3.5 --luminance-qp-bias 5
-                  --max-32-tx-size 1 --chroma-distortion-taper 1 --skip-taper 1 --qm-min 8 --chroma-qm-min 10
+                  --max-32-tx-size 1 --chroma-distortion-taper 1 --skip-taper 1 --qm-min 9 --chroma-qm-min 12
                   --psy-rd 2.0 --spy-rd 2 --complex-hvs 1
                   --color-primaries 1 --transfer-characteristics 1 --matrix-coefficients 1 --color-range 0""".split()
 
