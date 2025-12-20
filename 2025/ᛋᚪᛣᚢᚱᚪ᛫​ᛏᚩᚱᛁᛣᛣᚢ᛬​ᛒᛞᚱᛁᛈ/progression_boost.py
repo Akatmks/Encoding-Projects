@@ -793,7 +793,7 @@ class DefaultZone:
 #   16 threads: --lp 3 --workers 4
 #   12 threads: --lp 3 --workers 3
     def probing_av1an_parameters(self, message: str) -> list[str]:
-        return (f"--workers 8 --pix-format yuv420p10le"
+        return (f"--workers 6 --pix-format yuv420p10le"
 # Below are the parameters that should always be used. Regular users
 # would not need to modify these.
               + f" --chunk-method {self.source_provider_av1an} --encoder svt-av1 --audio-params -an --concat mkvmerge --force --video-params").split() + \
