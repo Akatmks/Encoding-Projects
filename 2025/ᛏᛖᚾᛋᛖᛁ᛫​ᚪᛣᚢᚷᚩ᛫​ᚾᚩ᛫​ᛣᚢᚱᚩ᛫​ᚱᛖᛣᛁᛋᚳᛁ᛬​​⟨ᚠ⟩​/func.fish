@@ -150,7 +150,7 @@ function mux
     set_color -o white ; echo "[mux] Muxing $episode..." ; set_color normal
 
     set output_file "Publish/$title (WebRip 1080p AV1 Multi-Subs Alicia).mkv"
-    mkvmerge --title $title --output $output_file --language 0:jpn $video_file --no-video --no-chapters --no-global-tags $soruce_s --no-video --no-audio --subtitle-tracks !2 --no-chapters --no-attachments --no-global-tags $source_e
+    mkvmerge --title $title --output $output_file --language 0:jpn $video_file --no-video --no-audio --no-chapters --no-global-tags $source_s --no-video --subtitle-tracks !2 --no-chapters --no-attachments --no-global-tags $source_e
     or return $status
     if not test -e $output_file
         set_color red ; echo "[mux] Output file missing. Exiting..." ; set_color normal
