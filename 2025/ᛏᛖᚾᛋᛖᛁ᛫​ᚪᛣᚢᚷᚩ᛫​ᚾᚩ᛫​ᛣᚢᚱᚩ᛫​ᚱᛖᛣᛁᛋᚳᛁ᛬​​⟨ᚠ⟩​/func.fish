@@ -147,10 +147,35 @@ function mux
         return 126
     end
 
+    set fonts_dir "Temp/$episode.fonts"
+    if test -e $fonts_dir
+        rm -r $fonts_dir
+    end
+    mkdir $fonts_dir
+    begin cd $fonts_dir
+        ffmpeg -hide_banner -y -dump_attachment:t "" -i $source_e
+        ffmpeg -hide_banner -y -dump_attachment:t "" -i $source_s
+        for f in (find . -type f)
+            set match (string match --regex --groups-only "^(.*)_\\d(\\.\\w+?)\$" $f)
+            and begin if test -e $match[1]$match[2]
+                    rm $f
+                else
+                    mv $f $match[1]$match[2]
+                end
+            end
+        end
+        prevd
+    end
+
     set_color -o white ; echo "[mux] Muxing $episode..." ; set_color normal
 
     set output_file "Publish/$title (WebRip 1080p AV1 Multi-Subs Alicia).mkv"
-    mkvmerge --title $title --output $output_file --language 0:jpn $video_file --no-video --no-audio --no-chapters --no-global-tags $source_s --no-video --subtitle-tracks !2 --no-chapters --no-global-tags $source_e
+    set attach_fonts
+    for f in (find $fonts_dir -type f)
+        set -a attach_fonts --attach-file
+        set -a attach_fonts $f
+    end
+    mkvmerge --title $title --output $output_file --language 0:jpn --track-name 0:"Kekkan" $video_file --no-video --no-audio --no-chapters --no-attachments --no-global-tags $source_s --no-video --subtitle-tracks !2 --no-chapters --no-attachments --no-global-tags $source_e $attach_fonts
     or return $status
     if not test -e $output_file
         set_color red ; echo "[mux] Output file missing. Exiting..." ; set_color normal
