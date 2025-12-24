@@ -180,13 +180,13 @@ function mux_restyle_subtitle
     for style in "BottomRight"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),3,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "Italics" "Italic" "Main_Italic" "Gen_Italics" "Italique" "TiretsItalique" "Flashback Italics" "Flashback - Italics"
+    for style in "Italics" "Italic" "Main_Italic" "Gen_Italics" "Italique" "TiretsItalique" "Flashback Italics" "Flashback - Italics" "Main_Flashback_Italic"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,-1,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),2,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "TopLeft"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),7,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "TopCenter" "Top" "Main_Top" "Gen_Main_Up" "Main - Top" "On Top" "Flashback Top"
+    for style in "TopCenter" "Top" "Main_Top" "Gen_Main_Up" "Main - Top" "On Top" "Flashback Top" "Main_Flashback_Top"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),8,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "TopRight"
