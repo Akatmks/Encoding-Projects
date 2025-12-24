@@ -133,11 +133,11 @@ function mux_restyle_subtitle
         set fs 23
         set b -1
     else if test $script = arabic
-        set fn Rubik Medium
-        set fs 25
+        set fn Bahij Nassim
+        set fs 32
         set b 0
         set shad_adjust -0.40
-        set margin_v_adjust -2
+        set margin_v_adjust -6
     else if test $script = cyrillic
         set fn Fira Sans Medium
         set fs 22
@@ -168,7 +168,10 @@ function mux_restyle_subtitle
     string replace --regex "^(PlayResY.*)" "\$1\nScript Updated By: Kekkan" (cat $subtitle_file) > $subtitle_file
     
     if test $script = arabic
+        string replace --regex "^WrapStyle: .*" "WrapStyle: 1" (cat $subtitle_file) > $subtitle_file
+        or string replace --regex "^(PlayResY.*)" "\$1\nWrapStyle: 1" (cat $subtitle_file) > $subtitle_file
         string replace --all --regex "\\{\\\\i[01]\\}" "" (cat $subtitle_file) > $subtitle_file
+        string replace --regex "(Dialogue: (?:[^,]*,){9})(.*?[^\"–])\\\\N(.*)" "\$1‪\$3 ‪\$2" (cat $subtitle_file) > $subtitle_file
     end
 
     for style in "BottomLeft"
@@ -317,7 +320,7 @@ function mux
         set subtitle_head "$subtitle_dir/ar.ass"
         mkvextract $source_e tracks $head:$subtitle_head
         set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
-        cp -v "Misc/Fonts/Rubik-Medium.ttf" "$fonts_dir/"
+        cp -v "Misc/Fonts/Bahij Nassim-Bold.ttf" "$fonts_dir/"
         mux_restyle_subtitle $subtitle_head arabic
         set -a mkv_command --language 0:ar --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
     end
