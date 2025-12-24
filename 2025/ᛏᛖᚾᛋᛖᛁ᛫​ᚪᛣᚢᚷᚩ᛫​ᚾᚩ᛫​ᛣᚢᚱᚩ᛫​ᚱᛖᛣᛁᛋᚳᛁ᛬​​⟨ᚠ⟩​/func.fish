@@ -186,7 +186,7 @@ function mux_restyle_subtitle
     for style in "TopLeft"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),7,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "TopCenter" "Top" "Main_Top" "Gen_Main_Up" "Main - Top" "Flashback Top"
+    for style in "TopCenter" "Top" "Main_Top" "Gen_Main_Up" "Main - Top" "On Top" "Flashback Top"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),8,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "TopRight"
