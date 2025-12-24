@@ -117,6 +117,7 @@ end
 
 
 # $argv[1]: Subtitle file
+# $argv[2]: Script
 function mux_restyle_subtitle
     set subtitle_file $argv[1]
     if begin test -z $subtitle_file ; or not test -e $subtitle_file ; end
@@ -124,81 +125,80 @@ function mux_restyle_subtitle
         return 126
     end
 
-    for style in "BottomLeft"
-        string replace --regex "^Style: $style,.*" "Style: $style,Lato,24,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,-1,0,0,0,100,100,0,0,1,1.15,0.45,1,20,20,20,1" (cat $subtitle_file) > $subtitle_file
-    end
-    for style in "BottomCenter" "Default" "Main" "Gen_Main" "Narration" "Narratore" "TiretsDefault" "Default overlap" "Flashback" "Main_Flashback"
-        string replace --regex "^Style: $style,.*" "Style: $style,Lato,24,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,-1,0,0,0,100,100,0,0,1,1.15,0.45,2,20,20,20,1" (cat $subtitle_file) > $subtitle_file
-    end
-    for style in "BottomRight"
-        string replace --regex "^Style: $style,.*" "Style: $style,Lato,24,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,-1,0,0,0,100,100,0,0,1,1.15,0.45,3,20,20,20,1" (cat $subtitle_file) > $subtitle_file
-    end
-    for style in "Italics" "Italic" "Main_Italic" "Gen_Italics" "Italique" "TiretsItalique" "Flashback Italics" "Flashback - Italics"
-        string replace --regex "^Style: $style,.*" "Style: $style,Lato,24,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,-1,-1,0,0,100,100,0,0,1,1.15,0.45,2,20,20,20,1" (cat $subtitle_file) > $subtitle_file
-    end
-    for style in "TopLeft"
-        string replace --regex "^Style: $style,.*" "Style: $style,Lato,24,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,-1,0,0,0,100,100,0,0,1,1.15,0.45,7,20,20,20,1" (cat $subtitle_file) > $subtitle_file
-    end
-    for style in "TopCenter" "Top" "Main_Top" "Gen_Main_Up" "Main - Top" "Flashback Top"
-        string replace --regex "^Style: $style,.*" "Style: $style,Lato,24,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,-1,0,0,0,100,100,0,0,1,1.15,0.45,8,20,20,20,1" (cat $subtitle_file) > $subtitle_file
-    end
-    for style in "TopRight"
-        string replace --regex "^Style: $style,.*" "Style: $style,Lato,24,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,-1,0,0,0,100,100,0,0,1,1.15,0.45,9,20,20,20,1" (cat $subtitle_file) > $subtitle_file
-    end
-    for style in "Italics Top" "Main_Top_Italic" "Gen_Italics_top" "DefaultItalicsTop" "Flashback Italics Top" "Italics - Top" "ItalicsTop"
-        string replace --regex "^Style: $style,.*" "Style: $style,Lato,24,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,-1,-1,0,0,100,100,0,0,1,1.15,0.45,8,20,20,20,1" (cat $subtitle_file) > $subtitle_file
-    end
-    for style in "CenterLeft"
-        string replace --regex "^Style: $style,.*" "Style: $style,Lato,24,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,-1,0,0,0,100,100,0,0,1,1.15,0.45,4,20,20,20,1" (cat $subtitle_file) > $subtitle_file
-    end
-    for style in "CenterCenter"
-        string replace --regex "^Style: $style,.*" "Style: $style,Lato,24,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,-1,0,0,0,100,100,0,0,1,1.15,0.45,5,20,20,20,1" (cat $subtitle_file) > $subtitle_file
-    end
-    for style in "CenterRight"
-        string replace --regex "^Style: $style,.*" "Style: $style,Lato,24,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,-1,0,0,0,100,100,0,0,1,1.15,0.45,6,20,20,20,1" (cat $subtitle_file) > $subtitle_file
-    end
-end
-
-# $argv[1]: Subtitle file
-function mux_restyle_subtitle_ru
-    set subtitle_file $argv[1]
-    if begin test -z $subtitle_file ; or not test -e $subtitle_file ; end
-        set_color red ; echo "[mux_restyle_subtitle_ru] Subtitle file not found." ; set_color normal
+    set script $argv[2]
+    set shad_adjust 0
+    set margin_v_adjust 0
+    if test $script = latin
+        set fn Lato
+        set fs 23
+        set b -1
+    else if test $script = arabic
+        set fn Rubik Medium
+        set fs 25
+        set b 0
+        set shad_adjust -0.40
+        set margin_v_adjust -2
+    else if test $script = cyrillic
+        set fn Fira Sans Medium
+        set fs 22
+        set b 0
+    else if test $script = thai
+        set fn Prompt SemiBold
+        set fs 25
+        set b 0
+        set shad_adjust -0.40
+        set margin_v_adjust -2
+    else if test $script = cjk-Hant
+        set fn Source Han Sans TC
+        set fs 26
+        set b -1
+        set shad_adjust -0.40
+    else if test $script = cjk-Hans
+        set fn Source Han Sans SC
+        set fs 26
+        set b -1
+        set shad_adjust -0.40
+    else
+        set_color red ; echo "[mux_restyle_subtitle] Unrecognised script." ; set_color normal
         return 126
     end
+    
+    string replace --regex "^PlayResX: .*" "PlayResX: 640" (cat $subtitle_file) > $subtitle_file
+    string replace --regex "^PlayResY: .*" "PlayResY: 360" (cat $subtitle_file) > $subtitle_file
+    string replace --regex "^(PlayResY.*)" "\$1\nScript Updated By: Kekkan" (cat $subtitle_file) > $subtitle_file
 
     for style in "BottomLeft"
-        string replace --regex "^Style: $style,.*" "Style: $style,Fira Sans Medium,23,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,0,0,0,0,100,100,0,0,1,1.15,0.45,1,20,20,20,1" (cat $subtitle_file) > $subtitle_file
+        string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),1,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "BottomCenter" "Default" "Main" "Gen_Main" "Narration" "Narratore" "TiretsDefault" "Default overlap" "Flashback" "Main_Flashback"
-        string replace --regex "^Style: $style,.*" "Style: $style,Fira Sans Medium,23,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,0,0,0,0,100,100,0,0,1,1.15,0.45,2,20,20,20,1" (cat $subtitle_file) > $subtitle_file
+        string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),2,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "BottomRight"
-        string replace --regex "^Style: $style,.*" "Style: $style,Fira Sans Medium,23,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,0,0,0,0,100,100,0,0,1,1.15,0.45,3,20,20,20,1" (cat $subtitle_file) > $subtitle_file
+        string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),3,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "Italics" "Italic" "Main_Italic" "Gen_Italics" "Italique" "TiretsItalique" "Flashback Italics" "Flashback - Italics"
-        string replace --regex "^Style: $style,.*" "Style: $style,Fira Sans Medium,23,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,0,-1,0,0,100,100,0,0,1,1.15,0.45,2,20,20,20,1" (cat $subtitle_file) > $subtitle_file
+        string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,-1,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),2,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "TopLeft"
-        string replace --regex "^Style: $style,.*" "Style: $style,Fira Sans Medium,23,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,0,0,0,0,100,100,0,0,1,1.15,0.45,7,20,20,20,1" (cat $subtitle_file) > $subtitle_file
+        string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),7,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "TopCenter" "Top" "Main_Top" "Gen_Main_Up" "Main - Top" "Flashback Top"
-        string replace --regex "^Style: $style,.*" "Style: $style,Fira Sans Medium,23,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,0,0,0,0,100,100,0,0,1,1.15,0.45,8,20,20,20,1" (cat $subtitle_file) > $subtitle_file
+        string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),8,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "TopRight"
-        string replace --regex "^Style: $style,.*" "Style: $style,Fira Sans Medium,23,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,0,0,0,0,100,100,0,0,1,1.15,0.45,9,20,20,20,1" (cat $subtitle_file) > $subtitle_file
+        string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),9,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "Italics Top" "Main_Top_Italic" "Gen_Italics_top" "DefaultItalicsTop" "Flashback Italics Top" "Italics - Top" "ItalicsTop"
-        string replace --regex "^Style: $style,.*" "Style: $style,Fira Sans Medium,23,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,0,-1,0,0,100,100,0,0,1,1.15,0.45,8,20,20,20,1" (cat $subtitle_file) > $subtitle_file
+        string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,-1,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),8,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "CenterLeft"
-        string replace --regex "^Style: $style,.*" "Style: $style,Fira Sans Medium,23,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,0,0,0,0,100,100,0,0,1,1.15,0.45,4,20,20,20,1" (cat $subtitle_file) > $subtitle_file
+        string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),4,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "CenterCenter"
-        string replace --regex "^Style: $style,.*" "Style: $style,Fira Sans Medium,23,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,0,0,0,0,100,100,0,0,1,1.15,0.45,5,20,20,20,1" (cat $subtitle_file) > $subtitle_file
+        string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),5,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "CenterRight"
-        string replace --regex "^Style: $style,.*" "Style: $style,Fira Sans Medium,23,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,0,0,0,0,100,100,0,0,1,1.15,0.45,6,20,20,20,1" (cat $subtitle_file) > $subtitle_file
+        string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),6,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
 end
 
@@ -255,13 +255,13 @@ function mux
 
     set subtitle_en "$subtitle_dir/en.ass"
     mkvextract $source_s tracks 2:$subtitle_en
-    mux_restyle_subtitle $subtitle_en
+    mux_restyle_subtitle $subtitle_en latin
     set -a mkv_command --language 0:en --track-name 0:"Kekkan · SubsPlease CR" $subtitle_en
 
     begin cd $fonts_dir
         ffmpeg -hide_banner -y -dump_attachment:t "" -i $source_s
-        rm Roboto*.ttf
-        rm CONSOLA*.TTF
+        rm -v Roboto*.ttf
+        rm -v CONSOLA*.TTF
         prevd
     end
     cp "Misc/Lato-Bold.ttf" "Misc/Lato-BoldItalic.ttf" "$fonts_dir/"
@@ -273,9 +273,9 @@ function mux
         return 126
     end
 
-    set ar_available
+    set arabic_available
     if MediaInfo $source_e | grep "Language.*Arabic" > /dev/null
-        set ar_available 1
+        set arabic_available 1
     end
     set indonesian_available
     if MediaInfo $source_e | grep "Language.*Indonesian" > /dev/null
@@ -296,97 +296,102 @@ function mux
     set subtitle_head "$subtitle_dir/pt-BR.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
-    mux_restyle_subtitle $subtitle_head
+    mux_restyle_subtitle $subtitle_head latin
     set -a mkv_command --language 0:pt-BR --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
     set head 4
     set subtitle_head "$subtitle_dir/es-419.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
-    mux_restyle_subtitle $subtitle_head
+    mux_restyle_subtitle $subtitle_head latin
     set -a mkv_command --language 0:es-419 --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
     set head 5
     set subtitle_head "$subtitle_dir/es.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
-    mux_restyle_subtitle $subtitle_head
+    mux_restyle_subtitle $subtitle_head latin
     set -a mkv_command --language 0:es --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
-    if test -n "$ar_available"
-        set head 7
-    else
+    if test -n "$arabic_available"
         set head 6
+        set subtitle_head "$subtitle_dir/ar.ass"
+        mkvextract $source_e tracks $head:$subtitle_head
+        set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
+        mux_restyle_subtitle $subtitle_head arabic
+        set -a mkv_command --language 0:ar --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+        cp -v "Misc/Rubik-Medium.ttf" "Misc/Rubik-MediumItalic.ttf" "$fonts_dir/"
     end
+
+    set head (math 6 + (count $arabic_available))
     set subtitle_head "$subtitle_dir/fr.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
-    mux_restyle_subtitle $subtitle_head
+    mux_restyle_subtitle $subtitle_head latin
     set -a mkv_command --language 0:fr --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
-    if test -n "$ar_available"
-        set head 8
-    else
-        set head 7
-    end
+    set head (math 7 + (count $arabic_available))
     set subtitle_head "$subtitle_dir/de.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
-    mux_restyle_subtitle $subtitle_head
+    mux_restyle_subtitle $subtitle_head latin
     set -a mkv_command --language 0:de --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
-    if test -n "$ar_available"
-        set head 9
-    else
-        set head 8
-    end
+    set head (math 8 + (count $arabic_available))
     set subtitle_head "$subtitle_dir/it.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
-    mux_restyle_subtitle $subtitle_head
+    mux_restyle_subtitle $subtitle_head latin
     set -a mkv_command --language 0:it --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
-    if test -n "$ar_available"
-        set head 10
-    else
-        set head 9
-    end
+    set head (math 9 + (count $arabic_available))
     set subtitle_head "$subtitle_dir/ru.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
-    mux_restyle_subtitle_ru $subtitle_head
+    mux_restyle_subtitle $subtitle_head cyrillic
     set -a mkv_command --language 0:ru --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+    cp -v "Misc/FiraSans-Medium.ttf" "Misc/FiraSans-MediumItalic.ttf" "$fonts_dir/"
 
     if test -n "$indonesian_available"
-        if test -n "$ar_available"
-            set head 11
-        else
-            set head 10
-        end
+        set head (math 10 + (count $arabic_available))
         set subtitle_head "$subtitle_dir/id.ass"
         mkvextract $source_e tracks $head:$subtitle_head
         set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
-        mux_restyle_subtitle $subtitle_head
+        mux_restyle_subtitle $subtitle_head latin
         set -a mkv_command --language 0:id --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
     end
 
-    cp "Misc/FiraSans-Medium.ttf" "Misc/FiraSans-MediumItalic.ttf" "$fonts_dir/"
-    if test -n "$ar_available"
-        cp "Misc/AdobeArabic-Bold.otf" "Misc/AdobeArabic-BoldItalic.otf" "$fonts_dir/"
-    end
     if test -n "$thai_available"
-        cp "Misc/NotoSansThai-Bold.ttf" "$fonts_dir/"
-    end
-
-    set -a mkv_command --no-video --track-name 1:"Erai-raws CR" --subtitle-tracks $subtitle_tracks_flag --track-name 6:"Erai-raws CR" --track-name 9:"Erai-raws CR" --track-name 10:"Erai-raws CR" --track-name 11:"Erai-raws CR" --track-name 12:"Erai-raws CR" --track-name 13:"Erai-raws CR" --no-chapters --no-attachments --no-global-tags $source_e
-
-    if test -z "$chinese_available"
-        set subtitle_zh "Misc/zh-Hant.$episode.srt"
-        set -a mkv_command --language 0:zh-Hant --track-name 0:"iQIYI" $subtitle_zh
+        set head (math 10 + (count $arabic_available $indonesian_available))
+        set subtitle_head "$subtitle_dir/th.ass"
+        mkvextract $source_e tracks $head:$subtitle_head
+        set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
+        mux_restyle_subtitle $subtitle_head thai
+        set -a mkv_command --language 0:th --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+        cp -v "Misc/Prompt-SemiBold.ttf" "$fonts_dir/"
     end
     
-    set subtitle_zh "Misc/zh-Hans.$episode.srt"
-    set -a mkv_command --language 0:zh-Hans --track-name 0:"iQIYI" $subtitle_zh
+    if test -n "$chinese_available"
+        set head (math 10 + (count $arabic_available $indonesian_available $thai_available))
+        set subtitle_head "$subtitle_dir/zh-Hant.ass"
+        mkvextract $source_e tracks $head:$subtitle_head
+        set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
+        mux_restyle_subtitle $subtitle_head cjk-Hant
+        set -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+    else
+        set subtitle_head "$subtitle_dir/zh-Hant.ass"
+        ffmpeg -hide_banner -i "Misc/zh-Hant.$episode.srt" -c:s ass $subtitle_head
+        mux_restyle_subtitle $subtitle_head cjk-Hant
+        set -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · iQIYI" $subtitle_head
+    end
+    
+    set subtitle_head "$subtitle_dir/zh-Hans.ass"
+    ffmpeg -hide_banner -i "Misc/zh-Hans.$episode.srt" -c:s ass $subtitle_head
+    mux_restyle_subtitle $subtitle_head cjk-Hans
+    set -a mkv_command --language 0:zh-Hans --track-name 0:"Kekkan · iQIYI" $subtitle_head
+
+
+    set -a mkv_command --no-video --track-name 1:"Erai-raws CR" --subtitle-tracks $subtitle_tracks_flag --track-name 6:"Erai-raws CR" --track-name 9:"Erai-raws CR" --track-name 10:"Erai-raws CR" --track-name 11:"Erai-raws CR" --track-name 12:"Erai-raws CR" --track-name 13:"Erai-raws CR" --no-chapters --no-attachments --no-global-tags $source_e
 
 
     set attach_fonts
@@ -397,7 +402,9 @@ function mux
 
     echo $mkv_command
     $mkv_command
-    or return $status
+    if test $status = 2
+        return $status
+    end
     if not test -e $output_file
         set_color red ; echo "[mux] Output file missing. Exiting..." ; set_color normal
         return 126
