@@ -4,6 +4,7 @@ These are source files for various encoding projects of mine. I'm not proficient
 
 Here is how much I'm satisfied with each of my projects at the time I finished them, about whether I think I've achieved what I want while causing minimum damage.  
 
+* [ᛏᛖᚾᛋᛖᛁ᛫​ᚪᛣᚢᚷᚩ᛫​ᚾᚩ᛫​ᛣᚢᚱᚩ᛫​ᚱᛖᛣᛁᛋᚳᛁ᛬​​⟨ᚠ⟩](2025/ᛏᛖᚾᛋᛖᛁ᛫​ᚪᛣᚢᚷᚩ᛫​ᚾᚩ᛫​ᛣᚢᚱᚩ᛫​ᚱᛖᛣᛁᛋᚳᛁ᛬​​⟨ᚠ⟩​) - 7 (Good)
 * [ᛏᚩᚹᚪ᛫​ᚾᚩ᛫​ᛡᚢᚹᚸᚢᚱᛖ᛬​ᚹᛖᛈᚱᛁᛈ​](../../../Encoding-Project-TY) - 6 (Fine)
 * ᚹᚪᛏᚪᛋᚳᛁ᛫​ᚹᚩ᛫​ᛏᚪᛒᛖᛏᚪᛁ᛫​ᚻᛁᛏᚩᛞᛖᚾᚪᛋᚳᛁ᛬​ᚹᛖᛈᚱᛁᛈ​ - 7 (Good)
 * [ᛖᚱᚢᚠᛖᚾ᛫​ᚱᛇᛏᚩ᛬​ᛒᛞᚱᛁᛈ](2025/ᛖᚱᚢᚠᛖᚾ᛫​ᚱᛇᛏᚩ᛬​ᛒᛞᚱᛁᛈ) - 3 (Very Bad)
