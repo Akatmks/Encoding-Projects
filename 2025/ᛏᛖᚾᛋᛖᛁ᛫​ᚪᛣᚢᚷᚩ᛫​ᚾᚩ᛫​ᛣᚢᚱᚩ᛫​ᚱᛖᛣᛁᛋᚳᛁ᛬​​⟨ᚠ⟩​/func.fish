@@ -170,7 +170,7 @@ function mux_restyle_subtitle
     if test $script = arabic
         string replace --regex "^WrapStyle: .*" "WrapStyle: 1" (cat $subtitle_file) > $subtitle_file
         or string replace --regex "^(PlayResY.*)" "\$1\nWrapStyle: 1" (cat $subtitle_file) > $subtitle_file
-        string replace --all --regex "\\{\\\\i[01]\\}" "" (cat $subtitle_file) > $subtitle_file
+        string replace --all --regex "\\\\i[01]" "" (cat $subtitle_file) > $subtitle_file
         string replace --regex "(Dialogue: (?:[^,]*,){9})([^{].*?[^\"–])\\\\N([^{].*)" "\$1‪\$3 ‪\$2" (cat $subtitle_file) > $subtitle_file
     end
 
