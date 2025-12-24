@@ -166,6 +166,10 @@ function mux_restyle_subtitle
     string replace --regex "^PlayResX: .*" "PlayResX: 640" (cat $subtitle_file) > $subtitle_file
     string replace --regex "^PlayResY: .*" "PlayResY: 360" (cat $subtitle_file) > $subtitle_file
     string replace --regex "^(PlayResY.*)" "\$1\nScript Updated By: Kekkan" (cat $subtitle_file) > $subtitle_file
+    
+    if test $script = arabic
+        string replace --all --regex "\\{\\\\i[01]\\}" "" (cat $subtitle_file) > $subtitle_file
+    end
 
     for style in "BottomLeft"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H00FFFFFF,&H000000FF,&H00000028,&HA8000000,$b,0,0,0,100,100,0,0,1,1.10,$(math 0.40 + $shad_adjust),1,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
@@ -320,7 +324,7 @@ function mux
         set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
         mux_restyle_subtitle $subtitle_head arabic
         set -a mkv_command --language 0:ar --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
-        cp -v "Misc/Rubik-Medium.ttf" "Misc/Rubik-MediumItalic.ttf" "$fonts_dir/"
+        cp -v "Misc/Rubik-Medium.ttf" "$fonts_dir/"
     end
 
     set head (math 6 + (count $arabic_available))
