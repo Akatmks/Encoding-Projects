@@ -247,6 +247,8 @@ function mux
     end
     mkdir $fonts_dir
 
+    cp -v Misc/GenericFonts/* "$fonts_dir/"
+
 
     set source_s (find $RAWS_DIRECTORY -regex ".*/\[S.* - ""$episode""v2 .*\.mkv")
     if begin test -z $source_s ; or not test -e $source_s ; end
@@ -259,16 +261,9 @@ function mux
 
     set subtitle_en "$subtitle_dir/en.ass"
     mkvextract $source_s tracks 2:$subtitle_en
+    cp -v "Misc/Fonts/Lato-Bold.ttf" "Misc/Fonts/Lato-BoldItalic.ttf" "$fonts_dir/"
     mux_restyle_subtitle $subtitle_en latin
     set -a mkv_command --language 0:en --track-name 0:"Kekkan · SubsPlease CR" $subtitle_en
-
-    begin cd $fonts_dir
-        ffmpeg -hide_banner -y -dump_attachment:t "" -i $source_s
-        rm -v Roboto*.ttf
-        rm -v CONSOLA*.TTF
-        prevd
-    end
-    cp "Misc/Lato-Bold.ttf" "Misc/Lato-BoldItalic.ttf" "$fonts_dir/"
 
 
     set source_e (find $RAWS_DIRECTORY -regex ".*/\[E.* - $episode .*\.mkv")
@@ -322,9 +317,9 @@ function mux
         set subtitle_head "$subtitle_dir/ar.ass"
         mkvextract $source_e tracks $head:$subtitle_head
         set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
+        cp -v "Misc/Fonts/Rubik-Medium.ttf" "$fonts_dir/"
         mux_restyle_subtitle $subtitle_head arabic
         set -a mkv_command --language 0:ar --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
-        cp -v "Misc/Rubik-Medium.ttf" "$fonts_dir/"
     end
 
     set head (math 6 + (count $arabic_available))
@@ -352,9 +347,9 @@ function mux
     set subtitle_head "$subtitle_dir/ru.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
+    cp -v "Misc/Fonts/FiraSans-Medium.ttf" "Misc/Fonts/FiraSans-MediumItalic.ttf" "$fonts_dir/"
     mux_restyle_subtitle $subtitle_head cyrillic
     set -a mkv_command --language 0:ru --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
-    cp -v "Misc/FiraSans-Medium.ttf" "Misc/FiraSans-MediumItalic.ttf" "$fonts_dir/"
 
     if test -n "$indonesian_available"
         set head (math 10 + (count $arabic_available))
@@ -370,9 +365,9 @@ function mux
         set subtitle_head "$subtitle_dir/th.ass"
         mkvextract $source_e tracks $head:$subtitle_head
         set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
+        cp -v "Misc/Fonts/Prompt-SemiBold.ttf" "$fonts_dir/"
         mux_restyle_subtitle $subtitle_head thai
         set -a mkv_command --language 0:th --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
-        cp -v "Misc/Prompt-SemiBold.ttf" "$fonts_dir/"
     end
     
     if test -n "$chinese_available"
@@ -384,18 +379,18 @@ function mux
         set -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
     else
         set subtitle_head "$subtitle_dir/zh-Hant.ass"
-        ffmpeg -hide_banner -i "Misc/zh-Hant.$episode.srt" -c:s ass $subtitle_head
+        ffmpeg -hide_banner -i "Misc/Subtitles/zh-Hant.$episode.srt" -c:s ass $subtitle_head
         mux_restyle_subtitle $subtitle_head cjk-Hant
         set -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · iQIYI" $subtitle_head
     end
     
     set subtitle_head "$subtitle_dir/zh-Hans.ass"
-    ffmpeg -hide_banner -i "Misc/zh-Hans.$episode.srt" -c:s ass $subtitle_head
+    ffmpeg -hide_banner -i "Misc/Subtitles/zh-Hans.$episode.srt" -c:s ass $subtitle_head
     mux_restyle_subtitle $subtitle_head cjk-Hans
     set -a mkv_command --language 0:zh-Hans --track-name 0:"Kekkan · iQIYI" $subtitle_head
 
 
-    set -a mkv_command --no-video --track-name 1:"Erai-raws CR" --subtitle-tracks $subtitle_tracks_flag --track-name 6:"Erai-raws CR" --track-name 9:"Erai-raws CR" --track-name 10:"Erai-raws CR" --track-name 11:"Erai-raws CR" --track-name 12:"Erai-raws CR" --track-name 13:"Erai-raws CR" --no-chapters --no-attachments --no-global-tags $source_e
+    set -a mkv_command --no-video --track-name 1:"Erai-raws CR" --subtitle-tracks $subtitle_tracks_flag --no-chapters --no-attachments --no-global-tags $source_e
 
 
     set attach_fonts
@@ -406,9 +401,7 @@ function mux
 
     echo $mkv_command
     $mkv_command
-    if test $status = 2
-        return $status
-    end
+    or return $status
     if not test -e $output_file
         set_color red ; echo "[mux] Output file missing. Exiting..." ; set_color normal
         return 126
