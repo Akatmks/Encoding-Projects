@@ -135,7 +135,7 @@ function mux_restyle_subtitle
     else if test $script = arabic
         set fn Bahij Nassim
         set fs 32
-        set b 0
+        set b -1
         set shad_adjust -0.40
         set margin_v_adjust -6
     else if test $script = cyrillic
