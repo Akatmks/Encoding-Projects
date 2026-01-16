@@ -46,9 +46,9 @@ function mux_restyle_subtitle
         set margin_v_adjust 2
     else if test $script = arabic
         set fn Bahij Nassim
-        set fs 27
+        set fs 32
         set b -1
-        set margin_v_adjust -2
+        set margin_v_adjust -4
     else if test $script = cyrillic
         set fn PT Serif Pro DemiBold
         set fs 23
@@ -200,6 +200,7 @@ function mux
     mkvextract $source_t tracks $head:$subtitle_head
     set subtitle_tracks_flag "$subtitle_tracks_flag,$head"
     mux_restyle_subtitle $subtitle_head arabic
+    cp -v "Misc/Fonts/Bahij Nassim-Bold.ttf" "$fonts_dir/"
     set -a mkv_command --language 0:ar --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
 
     set head 4
