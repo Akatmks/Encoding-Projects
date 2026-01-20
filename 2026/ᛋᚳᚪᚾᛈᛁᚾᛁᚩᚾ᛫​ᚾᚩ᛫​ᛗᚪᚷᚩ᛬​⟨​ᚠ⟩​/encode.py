@@ -119,7 +119,7 @@ if "__main__" in dir(__main__):
     
     settings = settings_builder_5fish_svt_av1_psy(
         preset=2,
-        crf=29.00,
+        crf=29.50,
         balancing_luminance_q_bias=6.0,
         balancing_r0_dampening_layer=-3,
         enable_variance_boost=0,
@@ -128,7 +128,6 @@ if "__main__" in dir(__main__):
         noise_norm_strength=4,
         ac_bias=3.0,
         variance_md_bias_thr=5.5,
-        dlf_bias=1,
         dlf_bias_max_dlf="6,2",
         fgs_table=str(fgs_table)
     )
