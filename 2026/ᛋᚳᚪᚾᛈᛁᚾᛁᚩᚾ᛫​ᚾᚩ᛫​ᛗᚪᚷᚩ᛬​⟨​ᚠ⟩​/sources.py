@@ -16,7 +16,7 @@ class Source:
 
 
 sources = {
-    "01": Source(op=(4531, 6690),
+    "01": Source(op=(4531, 6690), # Every episode 2159
                  ed=(34813, 36971),
                  text=[(6762, 6882), (36971, None)]),
     "02": Source(op=(0, 2159),
