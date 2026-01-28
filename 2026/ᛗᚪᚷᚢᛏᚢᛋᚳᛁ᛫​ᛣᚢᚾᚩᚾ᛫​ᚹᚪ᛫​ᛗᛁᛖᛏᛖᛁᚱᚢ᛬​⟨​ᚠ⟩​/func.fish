@@ -122,7 +122,7 @@ function mux_restyle_subtitle
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H04E3E0EB,&H000000FF,&H00262423,&HA8000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.21,0,6,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
 
-    if not string match --quiet --regex "^Style: .*" (cat $subtitle_file)
+    if string match --quiet --regex "^Dialogue: [0-9:\.,]+?,Font1," (cat $subtitle_file)
         string replace --regex "(Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding)" "\$1\nStyle: Font1,$fn,$fs,&H04E3E0EB,&H000000FF,&H00262423,&HA8000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.21,0,2,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
 end
