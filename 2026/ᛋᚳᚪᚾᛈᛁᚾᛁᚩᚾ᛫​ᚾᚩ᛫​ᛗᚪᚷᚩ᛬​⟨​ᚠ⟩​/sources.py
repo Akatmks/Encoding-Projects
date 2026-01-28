@@ -10,6 +10,7 @@ raws = SPath(os.environ["RAWS_DIRECTORY"])
 @dataclass
 class Source:
     source: SPath | None = None
+    source_t: SPath | None = None
     op: FrameRangeN | None = None
     ed: FrameRangeN | None = None
     text: FrameRangesN | None = None
@@ -34,3 +35,8 @@ for episode in sources:
     matches = list(raws.glob(f"[S* - {episode} *"))
     assert(len(matches) == 1)
     sources[episode].source = matches[0]
+
+for episode in sources:
+    matches = list(raws.glob(f"C*.S01E{episode}*b.mkv"))
+    assert(len(matches) == 1)
+    sources[episode].source_t = matches[0]
