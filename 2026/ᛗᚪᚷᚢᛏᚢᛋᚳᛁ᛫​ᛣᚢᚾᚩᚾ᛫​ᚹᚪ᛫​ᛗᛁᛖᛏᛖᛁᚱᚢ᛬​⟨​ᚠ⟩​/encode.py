@@ -23,8 +23,16 @@ episode = os.environ["EPISODE"]
 assert episode in sources
 
 
-print(f"Source: \t{sources[episode].source.name}")
+print(f"\033[1mSource:\033[0m \t{sources[episode].source.name}")
 src = src_sd = initialize_clip(core.bs.VideoSource(sources[episode].source))
+
+
+src_s = initialize_clip(core.bs.VideoSource(sources[episode].source_s))
+diff_s = src.std.PlaneStats(src_s, prop="Luma")
+for fr in diff_s[:2000].frames():
+    assert fr.props["LumaDiff"] == 0
+else:
+    print(f"\t\tSource check complete")
 
 
 if sources[episode].op:
