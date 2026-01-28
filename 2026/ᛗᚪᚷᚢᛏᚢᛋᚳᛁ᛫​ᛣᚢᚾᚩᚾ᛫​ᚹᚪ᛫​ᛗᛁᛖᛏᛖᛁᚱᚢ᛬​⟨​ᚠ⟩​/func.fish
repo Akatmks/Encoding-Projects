@@ -97,7 +97,7 @@ function mux_restyle_subtitle
     for style in "BottomRight"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H04E3E0EB,&H000000FF,&H00262423,&HA8000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.21,0,3,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "Italics" "Italic" "Main_Italic" "Gen_Italics" "Italique" "TiretsItalique" "Flashback Italics" "Flashback - Italics" "Internal" "Overlap Internal" "Flashback Internal" "Main_Flashback_Italic" "Flashback_Italics" "italic" "italics" "Narration" "Narratore" "Narrator" "main - italics"
+    for style in "Italics" "Italic" "Main_Italic" "Gen_Italics" "Italique" "TiretsItalique" "Flashback Italics" "Flashback - Italics" "Internal" "Overlap Internal" "Flashback Internal" "Main_Flashback_Italic" "Flashback_Italics" "italic" "italics" "Narration" "Narratore" "Narrator" "main - italics" "Flashback italics" "Flashback-Italics"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H04E3E0EB,&H000000FF,&H00262423,&HA8000000,$b,-1,0,0,$fscx,100,$fsp,0,1,1.18,0,2,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "TopLeft"
@@ -238,7 +238,7 @@ function mux
     mux_restyle_subtitle $subtitle_head cyrillic
     set -a mkv_command --language 0:ru --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
-    if test -n $source_t
+    if test -z $source_t
         set head 11
         set subtitle_head "$subtitle_dir/id.ass"
         mkvextract $source_e tracks $head:$subtitle_head
