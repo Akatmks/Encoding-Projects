@@ -109,7 +109,7 @@ function mux_restyle_subtitle
     for style in "TopRight"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H04E3E0EB,&H000000FF,&H00262423,&HA8000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.21,0,9,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "Italics Top" "Main_Top_Italic" "Gen_Italics_top" "DefaultItalicsTop" "Flashback Italics Top" "Italics - Top" "ItalicsTop" "Top Internal" "Italics_Top" "Internal Top"
+    for style in "Italics Top" "Main_Top_Italic" "Gen_Italics_top" "DefaultItalicsTop" "Flashback Italics Top" "Italics - Top" "ItalicsTop" "Top Internal" "Italics_Top" "Internal Top" "main - italics top" "Italics-Top"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H04E3E0EB,&H000000FF,&H00262423,&HA8000000,$b,-1,0,0,$fscx,100,$fsp,0,1,1.18,0,8,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "CenterLeft"
