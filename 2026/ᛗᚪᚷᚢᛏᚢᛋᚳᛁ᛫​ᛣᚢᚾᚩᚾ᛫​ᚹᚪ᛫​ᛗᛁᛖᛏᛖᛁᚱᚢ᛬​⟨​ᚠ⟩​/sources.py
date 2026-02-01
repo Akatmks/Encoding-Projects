@@ -20,6 +20,7 @@ sources = {
     "03": Source(op=(2734, 4891)),
     "04": Source(op=(3285, 5443)), # 2158!
     "05": Source(op=(1894, 4053)), # 2159!
+    "06": Source(op=(864, 3021)),
 }
 
 for episode in sources:
