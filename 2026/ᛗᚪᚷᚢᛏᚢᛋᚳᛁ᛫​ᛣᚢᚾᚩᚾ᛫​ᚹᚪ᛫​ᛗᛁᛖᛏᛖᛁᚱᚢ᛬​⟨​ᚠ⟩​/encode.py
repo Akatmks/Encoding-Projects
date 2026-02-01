@@ -116,6 +116,7 @@ if "__main__" in dir(__main__):
         noise_norm_strength=0,
         ac_bias=1.0,
         dlf_sharpness=7,
+        dlf_bias_max_dlf="4,2",
         fgs_table=str(fgs_table)
     )
     SVTAV1(**settings, sd_clip=src_sd).encode(final, outfile=output)
