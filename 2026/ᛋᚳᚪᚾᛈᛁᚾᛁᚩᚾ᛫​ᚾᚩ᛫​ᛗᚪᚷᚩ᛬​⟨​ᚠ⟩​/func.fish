@@ -33,9 +33,12 @@ function mux_restyle_subtitle
     if test $episode -le "04"
         set c1 "&H04D0D7EB"
         set c1_it "&H18D0D7EB"
-    else
+    else if test $episode -le "05"
         set c1 "&H04DCE4F3"
         set c1_it "&H18D9E2F1"
+    else
+        set c1 "&H04D5DFEE"
+        set c1_it "&H18D5DFEE"
     end
 
     set subtitle_file $argv[2]
@@ -182,25 +185,29 @@ function mux
     if begin test -z $source_s ; or not test -e $source_s ; end
         set source_s (find $RAWS_DIRECTORY -regex ".*/\[S.* - $episode .*\.mkv")
     end
-    if begin test -z $source_s ; or not test -e $source_s ; end
-        set_color red ; echo "[mux] Source S not found." ; set_color normal
-        return 126
-    end
-
-    set subtitle_en "$subtitle_dir/en.ass"
-    mkvextract $source_s tracks 2:$subtitle_en
-    cp -v "Misc/Fonts/PTSerifPro-DemiBold.ttf" "Misc/Fonts/PTSerifPro-DemiBoldItalic.ttf" "$fonts_dir/"
-    mux_restyle_subtitle $episode $subtitle_en latin
-    set -a mkv_command --language 0:en --track-name 0:"Kekkan · SubsPlease CR" $subtitle_en
-
-
-    set -a mkv_command --no-video --track-name 1:"SubsPlease CR" --no-subtitles --no-chapters --no-attachments --no-global-tags $source_s
-
 
     set source_t (find $RAWS_DIRECTORY -regex ".*/C.*\.S01E$episode\..*b\.mkv")
     if begin test -z $source_t ; or not test -e $source_t ; end
         set_color red ; echo "[mux] Source T not found." ; set_color normal
         return 126
+    end
+    
+    set -a mkv_command --no-video --track-name 1:"ToonsHub CR" --no-subtitles --no-chapters --no-attachments --no-global-tags $source_t
+
+    if begin test -z $source_s ; or not test -e $source_s ; end
+        set_color red ; echo "[mux] Source S not found." ; set_color normal
+
+        set subtitle_en "$subtitle_dir/en.ass"
+        mkvextract $source_t tracks 2:$subtitle_en
+        cp -v "Misc/Fonts/PTSerifPro-DemiBold.ttf" "Misc/Fonts/PTSerifPro-DemiBoldItalic.ttf" "$fonts_dir/"
+        mux_restyle_subtitle $episode $subtitle_en latin
+        set -a mkv_command --language 0:en --track-name 0:"Kekkan · ToonsHub CR" $subtitle_en
+    else
+        set subtitle_en "$subtitle_dir/en.ass"
+        mkvextract $source_s tracks 2:$subtitle_en
+        cp -v "Misc/Fonts/PTSerifPro-DemiBold.ttf" "Misc/Fonts/PTSerifPro-DemiBoldItalic.ttf" "$fonts_dir/"
+        mux_restyle_subtitle $episode $subtitle_en latin
+        set -a mkv_command --language 0:en --track-name 0:"Kekkan · SubsPlease CR" $subtitle_en
     end
 
     set subtitle_tracks_flag "!2"

@@ -20,24 +20,32 @@ episode = os.environ["EPISODE"]
 assert episode in sources
 
 
-print(f"\033[1mSource:\033[0m \t{sources[episode].source.name}")
-src = src_sd = initialize_clip(core.bs.VideoSource(sources[episode].source))
+if sources[episode].source:
+    print(f"\033[1mSource:\033[0m \t{sources[episode].source.name}")
+    src = src_sd = initialize_clip(core.bs.VideoSource(sources[episode].source))
 
-
-if sources[episode].source_t:
-    src_t = initialize_clip(core.bs.VideoSource(sources[episode].source_t))
-    diff_t = src.std.PlaneStats(src_t, prop="Luma")
-    for fr in diff_t[:2000].frames():
-        assert fr.props["LumaDiff"] == 0
-    else:
-        print(f"\t\tSource check complete")
+    if sources[episode].source_t:
+        src_t = initialize_clip(core.bs.VideoSource(sources[episode].source_t))
+        diff_t = src.std.PlaneStats(src_t, prop="Luma")
+        for fr in diff_t[:2000].frames():
+            assert fr.props["LumaDiff"] == 0
+        else:
+            print(f"\t\tSource check complete")
+else:
+    assert sources[episode].source_t
+    print(f"\033[1mSource:\033[0m \t{sources[episode].source_t.name}")
+    src = src_sd = initialize_clip(core.bs.VideoSource(sources[episode].source_t))
 
 
 if sources[episode].op:
     op_src = []
     for op_ep in sources:
         if sources[op_ep].op:
-            op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source))[sources[op_ep].op[0]:sources[op_ep].op[0]+2159])
+            if sources[op_ep].source:
+                op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source))[sources[op_ep].op[0]:sources[op_ep].op[0]+2159])
+            else:
+                assert sources[op_ep].source_t
+                op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source_t))[sources[op_ep].op[0]:sources[op_ep].op[0]+2159])
 
     op_merge = frequency_merge(*op_src, lowpass=lambda clip: DFTTest().denoise(clip))
 

@@ -31,13 +31,16 @@ sources = {
                  text=[(3795, 3965), (34645, None)]),
     "05": Source(op=(1152, 3309),
                  ed=(32487, 34644),
-                 text=[(3597, 3801), (34644, None)])
+                 text=[(3597, 3801), (34644, None)]),
+    "06": Source(op=(1152, 3309),
+                 ed=(32488, 34645),
+                 text=[(3309, 3549), (34645, None)])
 }
 
 for episode in sources:
-    matches = list(raws.glob(f"[S* - {episode} *"))
-    assert(len(matches) == 1)
-    sources[episode].source = matches[0]
+    if matches := list(raws.glob(f"[S* - {episode} *")):
+        assert(len(matches) == 1)
+        sources[episode].source = matches[0]
 
 for episode in sources:
     if matches := list(raws.glob(f"C*.S01E{episode}*b.mkv")):
