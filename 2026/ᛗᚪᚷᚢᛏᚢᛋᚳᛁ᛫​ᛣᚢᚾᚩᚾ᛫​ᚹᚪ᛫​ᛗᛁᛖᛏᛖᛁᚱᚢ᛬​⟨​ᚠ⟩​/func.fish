@@ -103,7 +103,7 @@ function mux_restyle_subtitle
     for style in "TopLeft"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H04E3E0EB,&H000000FF,&H00262423,&HA8000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.21,0,7,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "TopCenter" "Top" "Main_Top" "Gen_Main_Up" "Main - Top" "On Top" "Flashback Top" "Main_Flashback_Top" "Flashback_Top" "Overlap Top" "top" "Default - Top" "main - top" "main - flashback - top" "Flashback top" "Flashback Overlap top" "Flashback-Top"
+    for style in "TopCenter" "Top" "Main_Top" "Gen_Main_Up" "Main - Top" "On Top" "Flashback Top" "Main_Flashback_Top" "Flashback_Top" "Overlap Top" "top" "Default - Top" "main - top" "main - flashback - top" "Flashback top" "Flashback Overlap top" "Flashback-Top" "main - shifted"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H04E3E0EB,&H000000FF,&H00262423,&HA8000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.21,0,8,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "TopRight"
@@ -139,13 +139,13 @@ function mux
     set_color -o white ; echo "[mux] Muxing $episode..." ; set_color normal
 
 
-    set mkv_command mkvmerge
+    set -g mkv_command mkvmerge
 
     set title "[Kekkan] Majutsushi Kunon wa Mieteiru - $episode"
-    set -a mkv_command --title $title
+    set -g -a mkv_command --title $title
 
     set output_file "Publish/[Kekkan] Majutsushi Kunon wa Mieteiru (WebRip 1080p AV1 Multi-Subs Alicia)/$title (WebRip 1080p AV1 Multi-Subs Alicia).mkv"
-    set -a mkv_command --output $output_file
+    set -g -a mkv_command --output $output_file
 
 
     set video_file "Video/$episode.ivf"
@@ -153,7 +153,7 @@ function mux
         set_color red ; echo "[mux] Video file not found." ; set_color normal
         return 126
     end
-    set -a mkv_command --language 0:jpn --track-name 0:"Kekkan" $video_file
+    set -g -a mkv_command --language 0:jpn --track-name 0:"Kekkan" $video_file
 
 
     set subtitle_dir "Temp/$episode.subtitles"
@@ -186,142 +186,146 @@ function mux
     mkvextract $source_e tracks $head:$subtitle_head
     cp -v "Misc/Fonts/LibreBaskerville-Bold.ttf" "Misc/Fonts/LibreBaskerville-BoldItalic.ttf" "$fonts_dir/"
     mux_restyle_subtitle $subtitle_head latin
-    set -a mkv_command --language 0:en --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+    set -g -a mkv_command --language 0:en --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
     set head 3
     set subtitle_head "$subtitle_dir/pt-BR.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     mux_restyle_subtitle $subtitle_head latin
-    set -a mkv_command --language 0:pt-BR --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+    set -g -a mkv_command --language 0:pt-BR --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
     set head 4
     set subtitle_head "$subtitle_dir/es-419.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     mux_restyle_subtitle $subtitle_head latin
-    set -a mkv_command --language 0:es-419 --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+    set -g -a mkv_command --language 0:es-419 --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
     set head 5
     set subtitle_head "$subtitle_dir/es.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     mux_restyle_subtitle $subtitle_head latin
-    set -a mkv_command --language 0:es --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+    set -g -a mkv_command --language 0:es --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
     set head 6
     set subtitle_head "$subtitle_dir/ar.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     cp -v "Misc/Fonts/Bahij Nassim-Bold.ttf" "$fonts_dir/"
     mux_restyle_subtitle $subtitle_head arabic
-    set -a mkv_command --language 0:ar --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+    set -g -a mkv_command --language 0:ar --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
     set head 7
     set subtitle_head "$subtitle_dir/fr.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     mux_restyle_subtitle $subtitle_head latin
-    set -a mkv_command --language 0:fr --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+    set -g -a mkv_command --language 0:fr --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
     set head 8
     set subtitle_head "$subtitle_dir/de.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     mux_restyle_subtitle $subtitle_head latin
-    set -a mkv_command --language 0:de --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+    set -g -a mkv_command --language 0:de --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+
+    if test $episode = 08
+        string replace "3:56:41.16" "0:23:41.16" (cat $subtitle_head) > $subtitle_head
+    end
 
     set head 9
     set subtitle_head "$subtitle_dir/it.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     mux_restyle_subtitle $subtitle_head latin
-    set -a mkv_command --language 0:it --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+    set -g -a mkv_command --language 0:it --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
     set head 10
     set subtitle_head "$subtitle_dir/ru.ass"
     mkvextract $source_e tracks $head:$subtitle_head
     cp -v "Misc/Fonts/PTSerifPro-DemiBold.ttf" "Misc/Fonts/PTSerifPro-DemiBoldItalic.ttf" "$fonts_dir/"
     mux_restyle_subtitle $subtitle_head cyrillic
-    set -a mkv_command --language 0:ru --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+    set -g -a mkv_command --language 0:ru --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
     if test -z $source_t
         set head 11
         set subtitle_head "$subtitle_dir/id.ass"
         mkvextract $source_e tracks $head:$subtitle_head
         mux_restyle_subtitle $subtitle_head latin
-        set -a mkv_command --language 0:id --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+        set -g -a mkv_command --language 0:id --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
         
         set head 12
         set subtitle_head "$subtitle_dir/ms.ass"
         mkvextract $source_e tracks $head:$subtitle_head
         mux_restyle_subtitle $subtitle_head latin
-        set -a mkv_command --language 0:ms --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+        set -g -a mkv_command --language 0:ms --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
         
         set head 13
         set subtitle_head "$subtitle_dir/vi.ass"
         mkvextract $source_e tracks $head:$subtitle_head
         mux_restyle_subtitle $subtitle_head latin
-        set -a mkv_command --language 0:vi --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+        set -g -a mkv_command --language 0:vi --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
         
         set head 14
         set subtitle_head "$subtitle_dir/th.ass"
         mkvextract $source_e tracks $head:$subtitle_head
         cp -v "Misc/Fonts/Prompt-SemiBold.ttf" "$fonts_dir/"
         mux_restyle_subtitle $subtitle_head thai
-        set -a mkv_command --language 0:th --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+        set -g -a mkv_command --language 0:th --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
         
         set head 15
         set subtitle_head "$subtitle_dir/zh-Hans.ass"
         mkvextract $source_e tracks $head:$subtitle_head
         mux_restyle_subtitle $subtitle_head cjk-Hans
-        set -a mkv_command --language 0:zh-Hans --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+        set -g -a mkv_command --language 0:zh-Hans --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
         
         set head 16
         set subtitle_head "$subtitle_dir/zh-Hant.ass"
         mkvextract $source_e tracks $head:$subtitle_head
         mux_restyle_subtitle $subtitle_head cjk-Hant
-        set -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
+        set -g -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
     else
         set head 8
         set subtitle_head "$subtitle_dir/id.ass"
         mkvextract $source_t tracks $head:$subtitle_head
         mux_restyle_subtitle $subtitle_head latin
-        set -a mkv_command --language 0:id --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
+        set -g -a mkv_command --language 0:id --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
         
         set head 10
         set subtitle_head "$subtitle_dir/ms.ass"
         mkvextract $source_t tracks $head:$subtitle_head
         mux_restyle_subtitle $subtitle_head latin
-        set -a mkv_command --language 0:ms --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
+        set -g -a mkv_command --language 0:ms --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
         
         set head 16
         set subtitle_head "$subtitle_dir/vi.ass"
         mkvextract $source_t tracks $head:$subtitle_head
         mux_restyle_subtitle $subtitle_head latin
-        set -a mkv_command --language 0:vi --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
+        set -g -a mkv_command --language 0:vi --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
         
         set head 15
         set subtitle_head "$subtitle_dir/th.ass"
         mkvextract $source_t tracks $head:$subtitle_head
         cp -v "Misc/Fonts/Prompt-SemiBold.ttf" "$fonts_dir/"
         mux_restyle_subtitle $subtitle_head thai
-        set -a mkv_command --language 0:th --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
+        set -g -a mkv_command --language 0:th --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
         
         set head 4
         set subtitle_head "$subtitle_dir/zh-Hans.ass"
         mkvextract $source_t tracks $head:$subtitle_head
         mux_restyle_subtitle $subtitle_head cjk-Hans
-        set -a mkv_command --language 0:zh-Hans --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
+        set -g -a mkv_command --language 0:zh-Hans --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
         
         set head 5
         set subtitle_head "$subtitle_dir/zh-Hant.ass"
         mkvextract $source_t tracks $head:$subtitle_head
         mux_restyle_subtitle $subtitle_head cjk-Hant
-        set -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
+        set -g -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
     end
 
 
     set attach_fonts
     for f in (find $fonts_dir -type f)
-        set -a mkv_command --attach-file $f
+        set -g -a mkv_command --attach-file $f
     end
 
 
-    set -a mkv_command --no-video --track-name 1:"Erai-Raws CR" --no-subtitles --no-chapters --no-attachments --no-global-tags $source_e
+    set -g -a mkv_command --no-video --track-name 1:"Erai-Raws CR" --no-subtitles --no-chapters --no-attachments --no-global-tags $source_e
 
 
     echo $mkv_command
