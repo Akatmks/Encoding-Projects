@@ -38,9 +38,10 @@ else:
 
 
 if sources[episode].op:
+    assert sources[episode].op_type
     op_src = []
     for op_ep in sources:
-        if sources[op_ep].op:
+        if sources[op_ep].op and sources[op_ep].op_type == sources[episode].op_type:
             if sources[op_ep].source:
                 op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source))[sources[op_ep].op[0]:sources[op_ep].op[0]+2159])
             else:
