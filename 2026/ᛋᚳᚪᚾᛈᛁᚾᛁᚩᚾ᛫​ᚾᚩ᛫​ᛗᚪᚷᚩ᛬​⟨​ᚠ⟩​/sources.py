@@ -31,10 +31,10 @@ sources = {
     "04": Source(op=(0, 2159), op_type=1,
                  ed=(32488, 34645),
                  text=[(3795, 3965), (34645, None)]),
-    "05": Source(op=(1152, 3309), op_type=2,
+    "05": Source(op=(1152, 3309), op_type=2, # 2157
                  ed=(32487, 34644),
                  text=[(3597, 3801), (34644, None)]),
-    "06": Source(op=(1152, 3309), op_type=3,
+    "06": Source(op=(1152, 3309), op_type=3, # 2157
                  ed=(32488, 34645),
                  text=[(3309, 3549), (34645, None)]),
     "07": Source(op=(576, 2735), op_type=3,
@@ -42,7 +42,10 @@ sources = {
                  text=[(2795, 2945), (34646, None)]),
     "08": Source(op=(0, 2159), op_type=3,
                  ed=(32489, 34646),
-                 text=[(3046, 3262), (34646, None)])
+                 text=[(3046, 3262), (34646, None)]),
+    "09": Source(op=(1703, 3861), op_type=3, # 2158
+                 ed=(32488, 34645),
+                 text=[(1068, 1248), (34645, None)])
 }
 
 for episode in sources:

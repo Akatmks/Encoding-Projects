@@ -43,17 +43,17 @@ if sources[episode].op:
     for op_ep in sources:
         if sources[op_ep].op and sources[op_ep].op_type == sources[episode].op_type:
             if sources[op_ep].source:
-                op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source))[sources[op_ep].op[0]:sources[op_ep].op[0]+2159])
+                op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source))[sources[op_ep].op[0]:sources[op_ep].op[0]+2157])
             else:
                 assert sources[op_ep].source_t
-                op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source_t))[sources[op_ep].op[0]:sources[op_ep].op[0]+2159])
+                op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source_t))[sources[op_ep].op[0]:sources[op_ep].op[0]+2157])
 
     op_merge = frequency_merge(*op_src, lowpass=lambda clip: DFTTest().denoise(clip))
 
     src = insert_clip(src, op_merge, sources[episode].op[0])
-    # op_len = sources[episode].op[1] - sources[episode].op[0]
-    # if op_len > 2159:
-    #     src_merge = insert_clip(src_merge, op_merge[2154:op_len-2159+2154], sources[episode].op[0] + 2159)
+    op_len = sources[episode].op[1] - sources[episode].op[0]
+    if op_len > 2157:
+        src = insert_clip(src, op_merge[2152:op_len-2157+2152], sources[episode].op[0] + 2157)
 
 
 src_y = get_y(src)

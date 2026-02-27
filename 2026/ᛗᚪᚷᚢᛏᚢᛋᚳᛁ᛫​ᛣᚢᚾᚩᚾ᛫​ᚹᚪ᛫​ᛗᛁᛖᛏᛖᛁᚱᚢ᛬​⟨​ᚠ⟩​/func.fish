@@ -242,7 +242,10 @@ function mux
     mux_restyle_subtitle $subtitle_head cyrillic
     set -g -a mkv_command --language 0:ru --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
 
-    if test -z $source_t
+    if begin
+        test -z $source_t
+        and MediaInfo $source_e | grep "Language.*Chinese" > /dev/null
+    end
         set head 11
         set subtitle_head "$subtitle_dir/id.ass"
         mkvextract $source_e tracks $head:$subtitle_head
@@ -279,7 +282,7 @@ function mux
         mkvextract $source_e tracks $head:$subtitle_head
         mux_restyle_subtitle $subtitle_head cjk-Hant
         set -g -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · Erai-raws CR" $subtitle_head
-    else
+    else if MediaInfo $source_t | grep "Language.*Chinese" > /dev/null
         set head 8
         set subtitle_head "$subtitle_dir/id.ass"
         mkvextract $source_t tracks $head:$subtitle_head
@@ -316,6 +319,16 @@ function mux
         mkvextract $source_t tracks $head:$subtitle_head
         mux_restyle_subtitle $subtitle_head cjk-Hant
         set -g -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · ToonsHub CR" $subtitle_head
+    else
+        set subtitle_head "$subtitle_dir/zh-Hant.ass"
+        ffmpeg -hide_banner -i "Misc/Subtitles/$episode.zh-Hant.srt" -c:s ass $subtitle_head
+        mux_restyle_subtitle $subtitle_head cjk-Hant
+        set -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · MyVideo" $subtitle_head
+    
+        set subtitle_head "$subtitle_dir/zh-Hans.ass"
+        ffmpeg -hide_banner -i "Misc/Subtitles/$episode.zh-Hans.srt" -c:s ass $subtitle_head
+        mux_restyle_subtitle $subtitle_head cjk-Hans
+        set -a mkv_command --language 0:zh-Hans --track-name 0:"Kekkan · MyVideo" $subtitle_head
     end
 
 
