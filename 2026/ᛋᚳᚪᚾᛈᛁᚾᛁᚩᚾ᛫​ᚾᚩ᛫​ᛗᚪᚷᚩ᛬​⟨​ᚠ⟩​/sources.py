@@ -13,7 +13,7 @@ class Source:
     source: SPath | None = None
     source_t: SPath | None = None
     op: FrameRangeN | None = None
-    op_type: Literal[1, 2, 3] | None = None # 1: Red, 2: Tan, 3: Teal
+    op_type: Literal[1, 2, 3] | None = None # 1: Red, 2: Tan, 3: Teal, 4: Gold
     ed: FrameRangeN | None = None
     text: FrameRangesN | None = None
 
@@ -45,7 +45,16 @@ sources = {
                  text=[(3046, 3262), (34646, None)]),
     "09": Source(op=(1703, 3861), op_type=3, # 2158
                  ed=(32488, 34645),
-                 text=[(1068, 1248), (34645, None)])
+                 text=[(1068, 1248), (34645, None)]),
+    "10": Source(op=(744, 2903), op_type=3,
+                 ed=(32489, 34646),
+                 text=[(2903, 3083), (34646, None)]),
+    "11": Source(op=(0, 2159), op_type=3,
+                 ed=(32489, 34646),
+                 text=[(2159, 2358), (34646, None)]),
+    "12": Source(op=(0, 2159), op_type=4,
+                 ed=(32247, None),
+                 text=[(2159, 2371)])
 }
 
 for episode in sources:

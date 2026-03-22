@@ -51,9 +51,6 @@ if sources[episode].op:
     op_merge = frequency_merge(*op_src, lowpass=lambda clip: DFTTest().denoise(clip))
 
     src = insert_clip(src, op_merge, sources[episode].op[0])
-    op_len = sources[episode].op[1] - sources[episode].op[0]
-    if op_len > 2157:
-        src = insert_clip(src, op_merge[2152:op_len-2157+2152], sources[episode].op[0] + 2157)
 
 
 src_y = get_y(src)
