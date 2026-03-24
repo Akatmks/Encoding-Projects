@@ -144,6 +144,10 @@ function mux
     set title "[Kekkan] Majutsushi Kunon wa Mieteiru - $episode"
     set -g -a mkv_command --title $title
 
+    EPISODE=$episode python chapters.py
+    set chapters_file "Misc/Chapters/$episode.txt"
+    set -a mkv_command --chapters $chapters_file
+
     set output_file "Publish/[Kekkan] Majutsushi Kunon wa Mieteiru (WebRip 1080p AV1 Multi-Subs Alicia)/$title (WebRip 1080p AV1 Multi-Subs Alicia).mkv"
     set -g -a mkv_command --output $output_file
 
