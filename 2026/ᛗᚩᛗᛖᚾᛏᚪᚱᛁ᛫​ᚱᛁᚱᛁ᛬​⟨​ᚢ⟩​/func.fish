@@ -71,5 +71,5 @@ function clean
         return 126
     end
 
-    rm -rf "__pycache__" "Temp/$episode.vsmuxtools.tmp" "Temp/$episode.aac"
+    rm -rf "__pycache__" "Temp/$episode.vsmuxtools.tmp" "Temp/$episode.flac" "Temp/$episode.aac" "Temp/$episode.chapters.txt"
 end
