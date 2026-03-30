@@ -56,7 +56,7 @@ function mux
     set output_file "Publish/[SweetSub] Momentary Lily [01-14][BDRip][1080P][AVC 8bit][CHS]/[SweetSub] Momentary Lily - $episode [BDRip][1080P][AVC 8bit][CHS].mp4"
     mp4box -add $video_file -add $audio_file -chap $chapters_file -new $output_file
     if not test -e $output_file
-        set_color red ; echo "[encode_h264] Output file missing. Exiting..." ; set_color normal
+        set_color red ; echo "[mux] Output file missing. Exiting..." ; set_color normal
         return 126
     end
 end
