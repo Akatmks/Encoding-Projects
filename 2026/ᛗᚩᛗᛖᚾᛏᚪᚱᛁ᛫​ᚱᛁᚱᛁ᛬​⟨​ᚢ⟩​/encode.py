@@ -24,7 +24,7 @@ src = src_sd = initialize_clip(core.bs.VideoSource(sources[episode].source))
 dn = DFTTest().denoise(src, {0.0:0.45, 0.4:0.60, 0.6:12.00, 1.0:15.00}, planes=[0])
 dn = DFTTest().denoise(dn, {0.0:0.08, 0.4:0.10, 0.6:1.00, 1.0:1.20}, planes=[1, 2])
 
-db = pfdeband(dn, thr=2.0, debander=placebo_deband)
+db = pfdeband(dn, thr=1.3, debander=placebo_deband)
 
 final = finalize_clip(db, bits=8, dither_type=DitherType.NONE)
 
