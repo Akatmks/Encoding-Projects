@@ -4,6 +4,7 @@ These are source files for various encoding projects of mine. I'm not proficient
 
 Here is how much I'm satisfied with each of my projects at the time I finished them, about whether I think I've achieved what I want while causing minimum damage.  
 
+* [ᚷᛁᛋᚳᚩᚹ᛫​ᚪᛣᚢᛡᚪᛣᚢ᛫​ᚱᛖᛁᚷᚩ᛫​ᚾᚪ᛫​ᛣᚩᚾᛡᚪᛣᚢᛋᚳᚪ᛫​ᚾᚩ᛫​ᛣᚪᚾᛋᚪᛏᛋᚢ᛫​ᛣᛁᚱᚩᛣᚢ᛬​⟨​ᚠ⟩​](2026/ᚷᛁᛋᚳᚩᚹ᛫​ᚪᛣᚢᛡᚪᛣᚢ᛫​ᚱᛖᛁᚷᚩ᛫​ᚾᚪ᛫​ᛣᚩᚾᛡᚪᛣᚢᛋᚳᚪ᛫​ᚾᚩ᛫​ᛣᚪᚾᛋᚪᛏᛋᚢ᛫​ᛣᛁᚱᚩᛣᚢ᛬​⟨​ᚠ⟩​) - 7 (Good)
 * [ᛗᚪᚷᚢᛏᚢᛋᚳᛁ᛫​ᛣᚢᚾᚩᚾ᛫​ᚹᚪ᛫​ᛗᛁᛖᛏᛖᛁᚱᚢ᛬​⟨​ᚠ⟩​](2026/ᛗᚪᚷᚢᛏᚢᛋᚳᛁ᛫​ᛣᚢᚾᚩᚾ᛫​ᚹᚪ᛫​ᛗᛁᛖᛏᛖᛁᚱᚢ᛬​⟨​ᚠ⟩​) - 6 (Fine)
 * [ᛋᚳᚪᚾᛈᛁᚾᛁᚩᚾ᛫​ᚾᚩ᛫​ᛗᚪᚷᚩ᛬​⟨​ᚠ⟩​](2026/ᛋᚳᚪᚾᛈᛁᚾᛁᚩᚾ᛫​ᚾᚩ᛫​ᛗᚪᚷᚩ᛬​⟨​ᚠ⟩​) - 6 (Fine)
 * ᚪᚾᛞᚩᚱᚩᛁᛞᚩ᛫​ᚹᚪ᛫​ᛣᛖᛁᛣᛖᚾ᛫​ᚾᛁᚾᛋᚢᚹ᛫​ᚾᛁ᛫​ᚻᚪᛁᚱᛁᛗᚪᛋᛖᚾ᛫​ᛣᚪ᛬​⟨​ᚠ⟩​ - 5 (Average)
