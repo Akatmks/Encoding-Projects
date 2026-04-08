@@ -215,7 +215,7 @@ function mux
         mux_restyle_subtitle $subtitle_file cjk-Hans
         echo zh-Hans >> $sub_langs_file
         if test $episode = 01
-            set -g -a mkv_command --sync 0:-1000
+            set -g -a mkv_command --sync 0:-1001
         end
         set -g -a mkv_command --language 0:zh-Hans --track-name 0:"Kekkan · ToonsHub" $subtitle_file
     end
@@ -227,7 +227,7 @@ function mux
         mux_restyle_subtitle $subtitle_file cjk-Hant
         echo zh-Hant >> $sub_langs_file
         if test $episode = 01
-            set -g -a mkv_command --sync 0:-1000
+            set -g -a mkv_command --sync 0:-1001
         end
         set -g -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · ToonsHub" $subtitle_file
     end
@@ -257,7 +257,7 @@ function mux
         mux_restyle_subtitle $subtitle_file latin
         echo id >> $sub_langs_file
         if test $episode = 01
-            set -g -a mkv_command --sync 0:-1000
+            set -g -a mkv_command --sync 0:-1001
         end
         set -g -a mkv_command --language 0:id --track-name 0:"Kekkan · ToonsHub" $subtitle_file
     end
@@ -278,7 +278,7 @@ function mux
         mux_restyle_subtitle $subtitle_file latin
         echo ms >> $sub_langs_file
         if test $episode = 01
-            set -g -a mkv_command --sync 0:-1000
+            set -g -a mkv_command --sync 0:-1001
         end
         set -g -a mkv_command --language 0:ms --track-name 0:"Kekkan · ToonsHub" $subtitle_file
     end
@@ -327,7 +327,7 @@ function mux
         mux_restyle_subtitle $subtitle_file thai
         echo th >> $sub_langs_file
         if test $episode = 01
-            set -g -a mkv_command --sync 0:-1000
+            set -g -a mkv_command --sync 0:-1001
         end
         set -g -a mkv_command --language 0:th --track-name 0:"Kekkan · ToonsHub" $subtitle_file
     end
@@ -339,7 +339,7 @@ function mux
         mux_restyle_subtitle $subtitle_file latin
         echo vi >> $sub_langs_file
         if test $episode = 01
-            set -g -a mkv_command --sync 0:-1000
+            set -g -a mkv_command --sync 0:-1001
         end
         set -g -a mkv_command --language 0:vi --track-name 0:"Kekkan · ToonsHub" $subtitle_file
     end
