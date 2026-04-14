@@ -149,7 +149,7 @@ function mux
 
     set sub_langs_file "Publish/Info/subs.$episode.txt"
 
-    set -g mkv_command mkvmerge
+    set -g mkv_command mkvmerge --deterministic 0
 
     set title "[Kekkan] Jishou Akuyaku Reijou na Konyakusha no Kansatsu Kiroku - $episode"
     set -g -a mkv_command --title $title
@@ -393,5 +393,6 @@ function clean
         return 126
     end
 
-    rm -rf "__pycache__" log*.txt "Temp/$episode.vsmuxtools.tmp" "Temp/$episode.subtitles" "Temp/$episode.fonts" "Temp/$episode.settings.toml"
+    set log_files log*.txt
+    rm -rf "__pycache__" $log_files "Temp/$episode.vsmuxtools.tmp" "Temp/$episode.subtitles" "Temp/$episode.fonts" "Temp/$episode.settings.toml"
 end

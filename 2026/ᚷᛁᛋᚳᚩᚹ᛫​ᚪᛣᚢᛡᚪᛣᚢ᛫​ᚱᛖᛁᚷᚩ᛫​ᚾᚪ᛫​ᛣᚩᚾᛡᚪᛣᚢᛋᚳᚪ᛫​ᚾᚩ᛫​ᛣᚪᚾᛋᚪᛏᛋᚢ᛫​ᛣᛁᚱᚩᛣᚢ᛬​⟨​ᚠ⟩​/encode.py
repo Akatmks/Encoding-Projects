@@ -37,20 +37,31 @@ else:
 
 if sources[episode].op:
     op_src = []
-    op_src.append(src[sources[episode].op[0]:sources[episode].op[0]+2157])
+    assert sources[episode].op[0] + sources[episode].op_offset + 2157 <= sources[episode].op[1]
+    op_src.append(src[sources[episode].op[0]+sources[episode].op_offset:
+                      sources[episode].op[0]+sources[episode].op_offset+2157])
     for op_ep in reversed(sources):
         if op_ep != episode and sources[op_ep].op:
-            op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source, showprogress=False))[sources[op_ep].op[0]:sources[op_ep].op[0]+2157])
+            op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source, showprogress=False))[sources[op_ep].op[0]+sources[op_ep].op_offset:
+                                                                                                          sources[op_ep].op[0]+sources[op_ep].op_offset+2157])
 
             if len(op_src) >= 6:
                 break
 
+    if len(op_src) > 1:
+        for fno, fr in enumerate(core.vszip.PlaneMinMax(core.akarin.Expr([op_src[0], op_src[-1]], ["x y - abs", ""]), prop="Luma")[::49].frames()):
+            assert fr.props["LumaMax"] <= 64 << 8, f"{fno * 49}"
+        else:
+            print(f"\t\tfrequency_merge source check complete")
+
     op_merge = frequency_merge(*op_src, lowpass=lambda clip: DFTTest().denoise(clip))
 
-    src = insert_clip(src, op_merge, sources[episode].op[0])
-    op_len = sources[episode].op[1] - sources[episode].op[0]
-    if op_len > 2157:
-        src = insert_clip(src, op_merge[2152:op_len-2157+2152], sources[episode].op[0] + 2157)
+    # if sources[episode].op_offset > 0:
+    #     src = insert_clip(src, op_merge[0] * sources[episode].op_offset, sources[episode].op[0])
+    src = insert_clip(src, op_merge, sources[episode].op[0] + sources[episode].op_offset)
+    filled_frames = sources[episode].op[0] + sources[episode].op_offset + 2157
+    if filled_frames < sources[episode].op[1]:
+        src = insert_clip(src, op_merge[2152:sources[episode].op[1]-filled_frames+2152], filled_frames)
 
 src = bore(src, ythickness=(2, 2, 2, 2))
 
@@ -135,7 +146,7 @@ if "__main__" in dir(__main__):
 
     settings = settings_builder_5fish_svt_av1_psy(
         preset=2,
-        crf=25.85,
+        crf=25.22,
         lineart_psy_bias=3,
         texture_psy_bias=4,
         noise_psy_bias=2,

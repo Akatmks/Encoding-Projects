@@ -12,14 +12,18 @@ class Source:
     source: SPath | None = None
     source_s: SPath | None = None
     op: FrameRangeN | None = None
+    op_offset: int | None = None # Sparkles 19 frames after start
     ed: FrameRangeN | None = None
     outro: FrameRangeN | None = None
 
 
 sources = {
-    "01": Source(op=(1654, 3813),
+    "01": Source(op=(1654, 3813), op_offset=1,
                  ed=(30881, 33038),
-                 outro=(33038, 33926))
+                 outro=(33038, 33926)),
+    "02": Source(op=(2566, 4723), op_offset=0,
+                 ed=(30737, 32894),
+                 outro=(32894, 33926))
 }
 
 for episode in sources:
