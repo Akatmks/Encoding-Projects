@@ -3,22 +3,21 @@ import sys
 sys.path.insert(0, os.getcwd())
 
 from vsaa import based_aa, EEDI3
-from vsdeband import placebo_deband
-from vsdenoise import bm3d, mc_degrain, Prefilter, wnnm
+from vsdeband import Grainer, placebo_deband
+from vsdenoise import bm3d, decrease_size, DFTTest, mc_degrain, MotionMode, MVTools, Prefilter, SADMode, wnnm
 from vsmasktools import diff_creditless, Morpho, RScharr
 import vsmlrt
 from vsmuxtools import SourceFilter, src_file
 from vskernels import Lanczos
 from vsrgtools import gauss_blur, remove_grain
-from vsscale import Rescale, Waifu2x
+from vsscale import Rescale
 from vstools import core, depth, DitherType, finalize_clip, get_y, initialize_clip, insert_clip, join, replace_ranges, Sar, SPath, split, vs
 
-from sources import sources
-from vodesfunc_noise_mod import adaptive_grain, ntype4
+from sources import intermediates, sources
 
 
 
-def filterchain(episode):
+def intermediate_filterchain(episode):
     source_file = src_file(sources[episode].source, trim=sources[episode].trim, preview_sourcefilter=SourceFilter.BESTSOURCE)
     src = source_file.init_cut()
 
@@ -53,7 +52,7 @@ def filterchain(episode):
                                  width=1600, height=896, src_width=1600, src_height=896, src_left=-24, src_top=-11,
                                  format=vs.RGBS, range=1)
     cclip = cclip.akarin.Expr(["", "1.0 x - 0.75 * 1.0 swap -", "1.0 x - 0.9 * 1.0 swap -"])
-    
+
     cclip = vsmlrt.inference(cclip, SPath(vsmlrt.models_path) / "anime-segmentation" / "isnet_is.onnx", backend=vsmlrt.Backend.TRT(fp16=True))
     cclip = cclip.akarin.Expr("""
                      x[0,-2]
@@ -109,7 +108,7 @@ def filterchain(episode):
 
     aa = core.std.MaskedMerge(doubled, aa, aa_mask)
     rs.doubled = aa
-    
+
 
     descale_mask = src.std.BlankClip(format=vs.GRAY16)
 
@@ -170,7 +169,7 @@ def filterchain(episode):
     xcont@ yzcont@ 65535 min 0.8 * max
     """)
     line_mask = Morpho.inflate(line_mask, radius=1)
-    
+
     rs.line_mask = line_mask
 
 
@@ -199,7 +198,23 @@ def filterchain(episode):
 
 
 
-    db = placebo_deband(dn, thr=2.1, radius=22)
+    final = finalize_clip(dn, bits=16)
+    return final
+
+
+
+def cache_intermediate(episode):
+    core.bs.VideoSource(intermediates[episode], showprogress=False)
+
+
+
+def main_filterchain(episode):
+    dn = core.bs.VideoSource(intermediates[episode], showprogress=False)
+    dn = initialize_clip(dn)
+
+
+
+    db = placebo_deband(dn, thr=2.0, radius=22)
 
     dn_y = get_y(dn)
     db_y = get_y(db)
@@ -215,26 +230,57 @@ def filterchain(episode):
     db_dct = core.akarin.Expr([dn_y, diff_dct], ["y 30720 - 64 / x +"])
 
     db = join(db_dct, db)
-    db = core.vszip.LimitFilter(db, dn, dark_thr=0.6, bright_thr=0.6, elast=1.6)
+    db = core.vszip.LimitFilter(db, dn, dark_thr=0.55, bright_thr=0.55, elast=1.6)
 
 
 
-    final = finalize_clip(db)
+    rg = Grainer.SIMPLEX(db, strength=(2.1, 0.55), size=(4*(1552-1)/(1920-1), 4*(873-1)/(1080-1)),
+                             luma_scaling=7.21, temporal=(0.50, 3), seed=274810)
+
+
+
+    final = finalize_clip(rg)
     return final
 
 
 
-def main_filterchain(episode):
-    src = core.ffms2.Source(SPath("Intermediate") / f"{episode}.mkv",
-                            cachefile=SPath("Intermediate") / f"{episode}.mkv.ffindex")
-    src = initialize_clip(src)
+def mini_filterchain(episode):
+    dn = core.bs.VideoSource(intermediates[episode], showprogress=False)
+    dn = src_sd = initialize_clip(dn)
 
-    rg = adaptive_grain(src, strength=[1.8, 0.0], size=[2*(1552-1)/(1920-1), 2*(873-1)/(1080-1)],
-                             luma_scaling=13.2, temporal_radius=5, temporal_average=50, seed=274810,
-                             **ntype4)
-    rg = adaptive_grain(rg, strength=[0.0, 0.8], size=[4*(1552-1)/(1920-1), 4*(873-1)/(1080-1)],
-                            luma_scaling=13.2, temporal_radius=5, temporal_average=50, seed=274810,
-                            **ntype4)
 
-    final = finalize_clip(rg, dither_type=DitherType.NONE)
-    return final
+
+    dn = decrease_size(dn, sigmaS=3)
+
+    base_dn = DFTTest(backend=DFTTest.Backend.OLD).denoise(dn, {0.0:0.08, 0.4:0.12, 0.6:0.60, 1.0:1.00}, sbsize=32, sosize=24, tr=1)
+
+    base_db = placebo_deband(base_dn, thr=2.2, radius=22)
+
+    base_dn_y = get_y(base_dn)
+    base_db_y = get_y(base_db)
+    diff = core.akarin.Expr([base_db_y, base_dn_y], ["x y - 64 * 32768 +"])
+    diff_dct = diff.dctf.DCTFilter(factors=[0.9375, 0.85, 0.5,  0.3,  0.3,  0.3,  0.4,  0.6,
+                                            0.85,   0.98, 0.85, 0.75, 0.75, 0.75, 0.85, 0.95,
+                                            0.5,    0.85, 0.95, 0.95, 0.95, 0.95, 1,    1,
+                                            0.3,    0.75, 0.95, 1,    0.98, 1,    1,    1,
+                                            0.3,    0.75, 0.95, 0.98, 0.95, 0.98, 1,    1,
+                                            0.3,    0.75, 0.95, 1,    0.98, 1,    1,    1,
+                                            0.4,    0.85, 1,    1,    1,    1,    1,    1,
+                                            0.6,    0.95, 1,    1,    1,    1,    1,    1])
+    base_db_dct = core.akarin.Expr([base_dn_y, diff_dct], ["y 30720 - 64 / x +"])
+
+    base_db = join(base_db_dct, base_db)
+
+    base = core.akarin.Expr([base_db, base_dn, dn], "x y - z +")
+
+    mv = MVTools(dn, search_clip=Prefilter.DFTTEST)
+
+    mv.analyze(tr=2, blksize=32, overlap=16, truemotion=MotionMode.COHERENCE, divide=2)
+    mv.recalculate(thsad=50, blksize=8, overlap=4, dct=SADMode.ADAPTIVE_SATD_DCT, truemotion=MotionMode.COHERENCE)
+
+    dg = mv.degrain(base_db, base, tr=2, thsad=50, thscd=(100, 2))
+
+
+
+    final = finalize_clip(dg, dither_type=DitherType.NONE)
+    return final, src_sd

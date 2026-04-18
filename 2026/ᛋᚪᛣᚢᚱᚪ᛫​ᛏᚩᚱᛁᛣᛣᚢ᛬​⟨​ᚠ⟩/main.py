@@ -10,7 +10,7 @@ from argparse import ArgumentParser
 
 from encode import main
 from filterchain import main_filterchain
-from sources import sources
+from sources import intermediates
 
 
 parser = ArgumentParser()
@@ -21,7 +21,8 @@ if args.episode is not None:
 else:
     assert "EPISODE" in os.environ, "You need to pass the episode to encode via commandline parameters, or via environmental variable \"EPISODE\""
     episode = os.environ["EPISODE"]
-assert episode in sources
+assert episode in intermediates
+assert intermediates[episode].exists()
 
 
 final = main_filterchain(episode)

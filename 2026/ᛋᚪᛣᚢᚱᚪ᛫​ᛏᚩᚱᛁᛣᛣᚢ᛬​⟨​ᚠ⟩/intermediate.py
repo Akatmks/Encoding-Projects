@@ -9,7 +9,7 @@ import __main__
 from argparse import ArgumentParser
 
 from encode import intermediate
-from filterchain import filterchain
+from filterchain import cache_intermediate, intermediate_filterchain
 from sources import sources
 
 
@@ -24,9 +24,10 @@ else:
 assert episode in sources
 
 
-final = filterchain(episode)
+final = intermediate_filterchain(episode)
 
-if "__main__" in dir(__main__): 
+if "__main__" in dir(__main__):
     intermediate(episode, final)
+    cache_intermediate(episode)
 else:
     final.set_output()

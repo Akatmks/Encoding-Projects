@@ -19,6 +19,10 @@ vol_04_bdmv = SPath(os.environ["VOL_04_BDMV_DIR"])
 vol_05_bdmv = SPath(os.environ["VOL_05_BDMV_DIR"])
 vol_06_bdmv = SPath(os.environ["VOL_06_BDMV_DIR"])
 
+assert "INTERMEDIATE_DIR" in os.environ
+
+intermediate_dir = SPath(os.environ["INTERMEDIATE_DIR"])
+
 
 @dataclass
 class Source:
@@ -86,3 +90,12 @@ sources = {
     "NCED02": Source(source=vol_04_bdmv / "BDMV" / "STREAM" / "00010.m2ts",
                      trim=(None, -26))
 }
+
+intermediates = {}
+main_encodes = {}
+mini_encodes = {}
+
+for item in sources:
+    intermediates[item] = intermediate_dir / f"{item}.mkv"
+    main_encodes[item] = SPath("Main") / f"{item}.265"
+    mini_encodes[item] = SPath("Mini") / f"{item}.ivf"
