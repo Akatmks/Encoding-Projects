@@ -15,7 +15,7 @@ def main(episode, final):
     Setup(episode, config_file=None, work_dir=SPath("Temp") / f"{episode}.vsmuxtools.tmp")
 
     settings = settings_builder_x265(asm="avx512", hist_scenecut="", frames=final.num_frames,
-                                     crf=11.40, aq_mode=5, aq_strength=0.60)
+                                     crf=11.30, aq_mode=5, aq_strength=0.60)
     x265(settings, resumable=False, csv=False).encode(final, outfile=main_encodes[episode])
 
 
@@ -25,7 +25,7 @@ def mini(episode, final, src_sd):
 
     fgs_table = SPath("grain.tbl")
     settings = settings_builder_5fish_svt_av1_psy(preset=2,
-                                                  crf=27.60,
+                                                  crf=24.10,
                                                   lineart_psy_bias=6,
                                                   texture_psy_bias=3,
                                                   lineart_variance_thr=4.8,

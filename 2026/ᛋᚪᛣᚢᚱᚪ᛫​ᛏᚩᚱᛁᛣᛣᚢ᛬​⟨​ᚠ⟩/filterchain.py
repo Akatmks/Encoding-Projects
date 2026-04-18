@@ -234,8 +234,8 @@ def main_filterchain(episode):
 
 
 
-    rg = Grainer.SIMPLEX(db, strength=(2.1, 0.55), size=(4*(1552-1)/(1920-1), 4*(873-1)/(1080-1)),
-                             luma_scaling=7.21, temporal=(0.50, 3), seed=274810)
+    rg = Grainer.SIMPLEX(db, strength=(2.2, 0.55), size=(4*(1552-1)/(1920-1), 4*(873-1)/(1080-1)),
+                             luma_scaling=7.2, temporal=(0.50, 3), seed=274810)
 
 
 
