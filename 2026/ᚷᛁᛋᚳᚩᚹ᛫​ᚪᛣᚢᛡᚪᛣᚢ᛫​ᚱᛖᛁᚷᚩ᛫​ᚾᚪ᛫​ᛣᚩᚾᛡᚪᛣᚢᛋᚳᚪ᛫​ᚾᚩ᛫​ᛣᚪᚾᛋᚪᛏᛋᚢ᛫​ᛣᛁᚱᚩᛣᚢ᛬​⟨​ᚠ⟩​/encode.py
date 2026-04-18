@@ -146,7 +146,7 @@ if "__main__" in dir(__main__):
 
     settings = settings_builder_5fish_svt_av1_psy(
         preset=2,
-        crf=25.22,
+        crf=24.80,
         lineart_psy_bias=3,
         texture_psy_bias=4,
         noise_psy_bias=2,

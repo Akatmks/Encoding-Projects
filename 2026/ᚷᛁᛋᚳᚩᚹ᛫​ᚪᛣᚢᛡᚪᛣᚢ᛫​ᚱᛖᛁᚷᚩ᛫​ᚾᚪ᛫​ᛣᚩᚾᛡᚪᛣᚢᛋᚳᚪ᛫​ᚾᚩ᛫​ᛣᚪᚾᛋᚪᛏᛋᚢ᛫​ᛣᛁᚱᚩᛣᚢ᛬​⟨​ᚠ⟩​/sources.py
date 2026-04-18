@@ -23,7 +23,10 @@ sources = {
                  outro=(33038, 33926)),
     "02": Source(op=(2566, 4723), op_offset=0,
                  ed=(30737, 32894),
-                 outro=(32894, 33926))
+                 outro=(32894, 33926)),
+    "03": Source(op=(600, 2758), op_offset=0,
+                 ed=(31099, 33256),
+                 outro=(32894, 33928))
 }
 
 for episode in sources:
