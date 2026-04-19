@@ -154,7 +154,8 @@ def intermediate_filterchain(episode):
     title_card_mask = descale_mask.std.BlankClip(format=vs.GRAY16, color=[65535])
     descale_mask = replace_ranges(descale_mask, title_card_mask, sources[episode].title_cards, exclusive=True)
 
-    descale_mask = replace_ranges(descale_mask, preview_card_mask, sources[episode].preview_cards, exclusive=True)
+    if len(sources[episode].preview_cards) > 0:
+        descale_mask = replace_ranges(descale_mask, preview_card_mask, sources[episode].preview_cards, exclusive=True)
 
     rs.credit_mask = descale_mask
 
