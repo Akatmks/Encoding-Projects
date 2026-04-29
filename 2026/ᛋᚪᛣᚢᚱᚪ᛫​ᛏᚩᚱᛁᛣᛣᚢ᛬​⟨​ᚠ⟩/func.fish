@@ -4,11 +4,11 @@
 function audio
     set episode $argv[1]
     if test -z $episode
-        set_color red ; echo "[filter] Episode number not provided." ; set_color normal
+        set_color red ; echo "[intermediate] Episode number not provided." ; set_color normal
         return 126
     end
 
-    set_color -o white ; echo "[filter] Making audio for $episode..." ; set_color normal
+    set_color -o white ; echo "[intermediate] Making audio for $episode..." ; set_color normal
 
     set source_file (python information.py source $episode)
     or return $status
@@ -33,21 +33,21 @@ end
 function intermediate
     set episode $argv[1]
     if test -z $episode
-        set_color red ; echo "[filter] Episode number not provided." ; set_color normal
+        set_color red ; echo "[intermediate] Episode number not provided." ; set_color normal
         return 126
     end
 
-    set_color -o white ; echo "[filter] Filtering $episode..." ; set_color normal
+    set_color -o white ; echo "[intermediate] Filtering $episode..." ; set_color normal
 
     set intermediate_file "$INTERMEDIATE_DIR/$episode.mkv"
     if test -e $intermediate_file
-        set_color red ; echo "[filter] Intermediate file already exists. Exiting..." ; set_color normal
+        set_color red ; echo "[intermediate] Intermediate file already exists. Exiting..." ; set_color normal
         return 126
     end
     EPISODE=$episode python intermediate.py
     or return $status
     if not test -e $intermediate_file
-        set_color red ; echo "[filter] Intermediate file missing. Exiting..." ; set_color normal
+        set_color red ; echo "[intermediate] Intermediate file missing. Exiting..." ; set_color normal
         return 126
     end
 end
@@ -71,7 +71,6 @@ function encode
     set main_encode "Main/$episode.265"
     if test -e $main_encode
         set_color red ; echo "[encode] Main encode file already exists. Skipping main encode..." ; set_color normal
-        return 126
     else
         EPISODE=$episode python main.py &
     end
@@ -79,7 +78,6 @@ function encode
     set mini_encode "Mini/$episode.ivf"
     if test -e $mini_encode
         set_color red ; echo "[encode] Mini encode file already exists. Skipping mini encode..." ; set_color normal
-        return 126
     else
         EPISODE=$episode python mini.py &
     end

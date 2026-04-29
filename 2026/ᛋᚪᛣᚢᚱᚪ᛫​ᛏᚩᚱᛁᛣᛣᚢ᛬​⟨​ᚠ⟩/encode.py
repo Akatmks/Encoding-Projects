@@ -25,12 +25,12 @@ def mini(episode, final, src_sd):
 
     fgs_table = SPath("grain.tbl")
     settings = settings_builder_5fish_svt_av1_psy(preset=2,
-                                                  crf=24.10,
+                                                  crf=24.40,
                                                   lineart_psy_bias=6,
                                                   texture_psy_bias=3,
-                                                  lineart_variance_thr=4.8,
                                                   hierarchical_levels=4,
                                                   balancing_luminance_lambda_bias=0.5,
+                                                  psy_bias_optimize_b=1,
                                                   dlf_bias_min_dlf="0,0",
                                                   fgs_table=str(fgs_table))
     SVTAV1(**settings, sd_clip=src_sd).encode(final, outfile=mini_encodes[episode])
