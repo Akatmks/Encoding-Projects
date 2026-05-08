@@ -27,17 +27,17 @@ class Source:
 
 sources = {
     "01": Source(op=None),
-    "02": Source(),
-    "03": Source(),
-    "04": Source(),
-    "05": Source(),
-    "06": Source(),
-    "07": Source(),
-    "08": Source(),
-    "09": Source(),
-    "10": Source(),
-    "11": Source(),
-    "12": Source(),
+    "02": Source(op=(2901, 5059)),
+    "03": Source(op=(1008, 3165)),
+    "04": Source(op=(1510, 3669)),
+    "05": Source(op=(816, 2973)),
+    "06": Source(op=(648, 2806)),
+    "07": Source(op=None),
+    "08": Source(op=(2062, 4221)),
+    "09": Source(op=(1702, 3861)),
+    "10": Source(op=(2326, 4483)),
+    "11": Source(op=(1152, 3309)),
+    "12": Source(op=None),
     "NCOP": Source(source_bd=vol_01_bdmv / "BDMV" / "STREAM" / "00006.m2ts"),
     "NCED01": Source(source_bd=vol_01_bdmv / "BDMV" / "STREAM" / "00007.m2ts"),
     "NCED02": Source(source_bd=vol_02_bdmv / "BDMV" / "STREAM" / "00006.m2ts"),
@@ -49,7 +49,7 @@ for episode in range(1, 7):
     sources[f"{episode:02}"].source_bd = vol_01_bdmv / "BDMV" / "STREAM" / f"{episode - 1:05}.m2ts"
     assert sources[f"{episode:02}"].source_bd.exists()
 for episode in range(7, 13):
-    sources[f"{episode:02}"].source_bd = vol_01_bdmv / "BDMV" / "STREAM" / f"{episode - 7:05}.m2ts"
+    sources[f"{episode:02}"].source_bd = vol_02_bdmv / "BDMV" / "STREAM" / f"{episode - 7:05}.m2ts"
     assert sources[f"{episode:02}"].source_bd.exists()
 
 for episode in range(1, 13):

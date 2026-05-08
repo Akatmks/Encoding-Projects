@@ -19,11 +19,18 @@ assert episode in sources
 
 
 
-print(f"\033[1mSource:\033[0m \t{sources[episode].source_bd.name}")
+print(f"\033[1mSource:\033[0m \t{sources[episode].source_bd.name}", file=sys.stderr)
 src_bd = initialize_clip(core.bs.VideoSource(sources[episode].source_bd, showprogress=False))
 if sources[episode].source_web:
-    print(f"\033[1mSource:\033[0m \t{sources[episode].source_web.name}")
+    print(f"\033[1mSource:\033[0m \t{sources[episode].source_web.name}", file=sys.stderr)
     src_web = initialize_clip(core.bs.VideoSource(sources[episode].source_web, showprogress=False))
+
+if sources[episode].source_web:
+    for fno, fr in enumerate(core.vszip.PlaneMinMax(core.akarin.Expr([src_bd, src_web], ["x y - abs", ""]), prop="Luma").frames()):
+        if fr.props["LumaMax"] > 64 << 8:
+            print(f"\033[1;31m\t\tSource check error on frame {fno}\033[0m", file=sys.stderr)
+    else:
+        print(f"\t\tSource check complete", file=sys.stderr)
 
 
 

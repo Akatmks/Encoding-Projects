@@ -34,9 +34,9 @@ with file.open("wb") as f:
         f.write((9).to_bytes(4, byteorder="little", signed=True))
 
         f.write((3).to_bytes(4, byteorder="little", signed=True))
-        for n in "-9 -10 -11 -11 -11 -9 -8 -12 -12 -14 -18 -12 -9 -9 -12 -12 -11 -5 -9 -12 -10 -12 -17 -4".split():
+        for n in "3 4 3 3 3 3 3 3 4 2 0 2 3 3 3 2 -7 -19 -4 1 3 2 0 -18".split():
             f.write((int(n)).to_bytes(4, byteorder="little", signed=True))
-        f.write((8).to_bytes(4, byteorder="little", signed=True))
+        f.write((7).to_bytes(4, byteorder="little", signed=True))
         f.write((0).to_bytes(4, byteorder="little", signed=True))
 
         f.write((1).to_bytes(4, byteorder="little", signed=True))
