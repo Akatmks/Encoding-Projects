@@ -36,12 +36,13 @@ else:
     print(f"\t\tSource check complete")
 
 if sources[episode].op:
+    assert sources[episode].op_type
     op_src = []
     assert sources[episode].op[0] + sources[episode].op_offset + 2157 <= sources[episode].op[1]
     op_src.append(src[sources[episode].op[0]+sources[episode].op_offset:
                       sources[episode].op[0]+sources[episode].op_offset+2157])
     for op_ep in reversed(sources):
-        if op_ep != episode and sources[op_ep].op:
+        if op_ep != episode and sources[op_ep].op and sources[op_ep].op_type == sources[episode].op_type:
             op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source, showprogress=False))[sources[op_ep].op[0]+sources[op_ep].op_offset:
                                                                                                           sources[op_ep].op[0]+sources[op_ep].op_offset+2157])
 

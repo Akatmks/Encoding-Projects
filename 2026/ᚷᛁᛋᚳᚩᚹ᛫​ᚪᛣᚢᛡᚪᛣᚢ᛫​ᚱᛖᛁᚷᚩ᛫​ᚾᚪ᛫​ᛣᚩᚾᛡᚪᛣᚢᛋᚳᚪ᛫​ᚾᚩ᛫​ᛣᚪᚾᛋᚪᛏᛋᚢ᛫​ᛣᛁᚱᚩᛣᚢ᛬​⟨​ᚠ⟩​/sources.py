@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import os
 from vstools import FrameRangeN, FrameRangesN, SPath
+from typing import Literal
 
 
 assert "RAWS_DIRECTORY" in os.environ, "You need to set environmental variable \"RAWS_DIRECTORY\" to the directory containing the source files"
@@ -12,28 +13,29 @@ class Source:
     source: SPath | None = None
     source_s: SPath | None = None
     op: FrameRangeN | None = None
+    op_type: Literal[1, 2] | None = None
     op_offset: int | None = None # Sparkles 19 frames after start
     ed: FrameRangeN | None = None
     outro: FrameRangeN | None = None
 
 
 sources = {
-    "01": Source(op=(1654, 3813), op_offset=1,
+    "01": Source(op=(1654, 3813), op_type=1, op_offset=1,
                  ed=(30881, 33038),
                  outro=(33038, 33926)),
-    "02": Source(op=(2566, 4723), op_offset=0,
+    "02": Source(op=(2566, 4723), op_type=1, op_offset=0,
                  ed=(30737, 32894),
                  outro=(32894, 33926)),
-    "03": Source(op=(600, 2758), op_offset=0,
+    "03": Source(op=(600, 2758), op_type=1, op_offset=0,
                  ed=(31099, 33256),
                  outro=(32894, 33928)),
-    "04": Source(op=(1152, 3309), op_offset=0,
+    "04": Source(op=(1152, 3309), op_type=1, op_offset=0,
                  ed=(31505, 33663),
                  outro=(33663, 33927)),
-    "05": Source(op=(912, 3069), op_offset=0,
+    "05": Source(op=(912, 3069), op_type=1, op_offset=0,
                  ed=(30786, 32943),
                  outro=(32943, 33927)),
-    "06": Source(op=(3045, 5203), op_offset=0,
+    "06": Source(op=(3045, 5203), op_type=2, op_offset=0,
                  ed=(30809, 32966),
                  outro=(32966, 33926))
 }
