@@ -28,6 +28,8 @@ else:
 
 
 
+print(f"\t\tMini scene detection in progress", file=sys.stderr, end="\r")
+
 min_scene_length = 129
 min_still_scene_length = 193
 max_scene_length = 321
@@ -117,4 +119,4 @@ keyframes_str = "f,".join([str(i) for i in svt_av1_frames]) + "f"
 with keyframes_file.open("w", encoding="utf-8") as keyframes_f:
     keyframes_f.write(f"ForceKeyFrames : {keyframes_str}\n")
 
-print(f"\t\tMini scene detection complete", file=sys.stderr)
+print(f"\t\tMini scene detection complete   ", file=sys.stderr)

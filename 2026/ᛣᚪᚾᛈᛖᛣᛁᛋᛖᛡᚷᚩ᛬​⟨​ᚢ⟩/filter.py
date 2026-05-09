@@ -26,11 +26,12 @@ if sources[episode].source_web:
     src_web = initialize_clip(core.bs.VideoSource(sources[episode].source_web, showprogress=False))
 
 if sources[episode].source_web:
+    print(f"\t\tSource check in progress", file=sys.stderr, end="\r")
     for fno, fr in enumerate(core.vszip.PlaneMinMax(core.akarin.Expr([src_bd, src_web], ["x y - abs", ""]), prop="Luma").frames()):
         if fr.props["LumaMax"] > 72 << 8:
             print(f"\033[1;31m\t\tSource check error on frame {fno}\033[0m", file=sys.stderr)
     else:
-        print(f"\t\tSource check complete", file=sys.stderr)
+        print(f"\t\tSource check complete   ", file=sys.stderr)
 
 
 if sources[episode].op:
@@ -40,16 +41,18 @@ if sources[episode].op:
     for op_ep in sources: # Episode 02 is the only episode starting with odd frame. This will always include it.
         if op_ep != episode and sources[op_ep].op:
             assert sources[op_ep].op[0] + 2157 <= sources[op_ep].op[1]
+            print(f"Source: \t{sources[op_ep].source_web.name}", file=sys.stderr)
             op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source_web, showprogress=False))[sources[op_ep].op[0]:sources[op_ep].op[0]+2157])
             
         if len(op_src) >= 3:
             break
         
     assert len(op_src) == 3
+    print(f"\t\tfrequency_merge source check in progress", file=sys.stderr, end="\r")
     for fno, fr in enumerate(core.vszip.PlaneMinMax(core.akarin.Expr([op_src[0], op_src[-1]], ["x y - abs", ""]), prop="Luma")[::49].frames()):
         assert fr.props["LumaMax"] <= 64 << 8, f"{fno * 49}"
     else:
-        print(f"\t\tfrequency_merge source check complete")
+        print(f"\t\tfrequency_merge source check complete   ", file=sys.stderr)
 
     op_merge = frequency_merge(*op_src, lowpass=lambda clip: DFTTest().denoise(clip))
 
@@ -65,6 +68,7 @@ if sources[episode].op:
     for op_ep in sources:
         if op_ep != episode and sources[op_ep].op:
             assert sources[op_ep].op[0] + 2157 <= sources[op_ep].op[1]
+            print(f"Source: \t{sources[op_ep].source_bd.name}", file=sys.stderr)
             op_src.append(initialize_clip(core.bs.VideoSource(sources[op_ep].source_bd, showprogress=False))[sources[op_ep].op[0]:sources[op_ep].op[0]+2157])
             
         if len(op_src) >= 2:
