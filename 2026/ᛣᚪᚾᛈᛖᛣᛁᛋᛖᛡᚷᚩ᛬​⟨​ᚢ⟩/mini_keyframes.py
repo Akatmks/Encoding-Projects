@@ -2,7 +2,6 @@ import os
 import sys
 sys.path.insert(0, os.getcwd())
 
-import json
 from vsmuxtools.utils.source import generate_keyframes
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
@@ -18,7 +17,7 @@ assert episode in sources
 
 
 
-cache = SPath("Temp") / f"{episode}.cfg"
+keyframes_file = SPath("Temp") / f"{episode}.cfg"
 
 if sources[episode].source_web:
     print(f"\033[1mSource:\033[0m \t{sources[episode].source_web.name}")
@@ -114,9 +113,8 @@ svt_av1_frames.pop()
 
 
 
-cache_config = {
-    "frames": clip.num_frames,
-    "scenecuts": svt_av1_frames,
-}
-with cache.open("w") as cache_f:
-    json.dump(cache_config, cache_f)
+keyframes_str = "f,".join([str(i) for i in svt_av1_frames]) + "f"
+with keyframes_file.open("w", encoding="utf-8") as keyframes_f:
+    keyframes_f.write(f"ForceKeyFrames : {keyframes_str}\n")
+
+print(f"\t\tMini scene detection complete", file=sys.stderr)
