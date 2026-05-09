@@ -27,7 +27,7 @@ if sources[episode].source_web:
 
 if sources[episode].source_web:
     for fno, fr in enumerate(core.vszip.PlaneMinMax(core.akarin.Expr([src_bd, src_web], ["x y - abs", ""]), prop="Luma").frames()):
-        if fr.props["LumaMax"] > 64 << 8:
+        if fr.props["LumaMax"] > 72 << 8:
             print(f"\033[1;31m\t\tSource check error on frame {fno}\033[0m", file=sys.stderr)
     else:
         print(f"\t\tSource check complete", file=sys.stderr)
@@ -137,7 +137,7 @@ if (xabs >= yabs) {
 """, infix=1)
     b_merge = frequency_merge(mg_web, src_bd, lowpass=lambda clip: DFTTest().denoise(clip, {0.0:5.0, 0.4:4.0, 0.6:2.0, 1.0:1.0}), mode_high=high_adder)
 
-    merge = core.std.MaskedMerge(b_merge, c_merge, dl_cclip, planes=[0])
+    merge = core.std.MaskedMerge(b_merge, c_merge, dl_cclip)
 
     dl = core.akarin.Expr([merge, mg_web, dn_web], "x y - z +")
 else:
@@ -156,18 +156,18 @@ dh = dehalo_alpha(pro, brightstr=0.80, highsens=25)
 dh = core.std.MaskedMerge(pro, dh, dh_mask, planes=[0])
 
 dh_final_ref = bilateral(pro, ref=dh, sigmaR=3/255, sigmaS=6, planes=[0])
-dh_final = core.akarin.Expr([pro, dh, dh_final_ref], "y z < y z + 0.5 * x min y ?")
+dh_final = core.akarin.Expr([pro, dh, dh_final_ref], ["y z < y z + 0.5 * x min y ?", ""])
 
-dh_re = core.akarin.Expr([dh_final, pro, dl], "x y - z +")
+dh_re = core.akarin.Expr([dh_final, pro, dl], ["x y - z +", ""])
 
 
 
 db = pfdeband(dh_re, thr=1.2, debander=placebo_deband)
 
-rg = Grainer.PERLIN(db, strength=(1.6, 0.3), size=2.2,
-                        luma_scaling=1, temporal=(0.50, 3), seed=274810)
+rg = Grainer.PERLIN(db, strength=(2.5, 0.25), size=2.2,
+                        luma_scaling=2, temporal=(0.50, 3), seed=274810)
 
-rg = core.std.MaskedMerge(dh_re, rg, dl_cclip, planes=[0])
+rg = core.std.MaskedMerge(dh_re, rg, dl_cclip)
 
 
 final = finalize_clip(rg)
