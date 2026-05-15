@@ -17,6 +17,7 @@ class Source:
     op_offset: int | None = None # Sparkles 19 frames after start
     ed: FrameRangeN | None = None
     outro: FrameRangeN | None = None
+    side: FrameRangeN | None = None
 
 
 sources = {
@@ -34,10 +35,12 @@ sources = {
                  outro=(33663, 33927)),
     "05": Source(op=(912, 3069), op_type=1, op_offset=0,
                  ed=(30786, 32943),
-                 outro=(32943, 33927)),
+                 side=(32943, 33927)),
     "06": Source(op=(3045, 5203), op_type=2, op_offset=0,
                  ed=(30809, 32966),
-                 outro=(32966, 33926))
+                 side=(32966, 33926)),
+    "07": Source(op=(1104, 3261), op_type=2, op_offset=0,
+                 ed=(31768, 33926))
 }
 
 for episode in sources:

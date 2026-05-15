@@ -55,6 +55,16 @@ with open(f"Misc/Chapters/{episode}.txt", "w") as f:
             f.write(f"CHAPTER{i:02}NAME=Preview\n")
             i += 1
 
+    elif (source.side != None):
+        f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[1])}\n")
+        f.write(f"CHAPTER{i:02}NAME=Side Story\n")
+        i += 1
+
+        if (source.side[1] != None):
+            f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.side[1])}\n")
+            f.write(f"CHAPTER{i:02}NAME=Preview\n")
+            i += 1
+
     elif (source.ed[1] != None):
         f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[1])}\n")
         f.write(f"CHAPTER{i:02}NAME=Preview\n")

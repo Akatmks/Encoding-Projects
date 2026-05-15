@@ -115,13 +115,13 @@ function mux_restyle_subtitle
     for style in "TopLeft"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H08FFFFFF,&H000000FF,&H0C672E22,&HBF000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.4,0.6,7,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "TopCenter" "Top" "Main_Top" "Gen_Main_Up" "Main - Top" "On Top" "Flashback Top" "Main_Flashback_Top" "Flashback_Top" "Overlap Top" "top" "Default - Top" "main - top" "main - flashback - top" "Flashback top" "Flashback Overlap top" "Flashback-Top" "main - shifted" "flashbacktop" "Основной-сверху" "Flashback - Top"
+    for style in "TopCenter" "Top" "Main_Top" "Gen_Main_Up" "Main - Top" "On Top" "Flashback Top" "Main_Flashback_Top" "Flashback_Top" "Overlap Top" "top" "Default - Top" "main - top" "main - flashback - top" "Flashback top" "Flashback Overlap top" "Flashback-Top" "main - shifted" "flashbacktop" "Основной-сверху" "Flashback - Top" "overlaptop"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H08FFFFFF,&H000000FF,&H0C672E22,&HBF000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.4,0.6,8,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "TopRight"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H08FFFFFF,&H000000FF,&H0C672E22,&HBF000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.4,0.6,9,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "Italics Top" "Main_Top_Italic" "Gen_Italics_top" "DefaultItalicsTop" "Flashback Italics Top" "Italics - Top" "ItalicsTop" "Top Internal" "Italics_Top" "Internal Top" "main - italics top" "Italics-Top" "Main_Italic_Top" "flashbackitalicstop" "italicstop" "Курсив-сверху" "Flashback italics top" "Italics top"
+    for style in "Italics Top" "Main_Top_Italic" "Gen_Italics_top" "DefaultItalicsTop" "Flashback Italics Top" "Italics - Top" "ItalicsTop" "Top Internal" "Italics_Top" "Internal Top" "main - italics top" "Italics-Top" "Main_Italic_Top" "flashbackitalicstop" "italicstop" "Курсив-сверху" "Flashback italics top" "Italics top" "Overlap Internal Top"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H08FFFFFF,&H000000FF,&H0C672E22,&HBF000000,$b,$i,0,0,$fscx,100,$fsp,0,1,1.4,0.6,8,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "CenterLeft"
@@ -216,6 +216,8 @@ function mux
         echo zh-Hans >> $sub_langs_file
         if test $episode = 01
             set -g -a mkv_command --sync 0:-1001
+        else if test $episode = 05
+            set -g -a mkv_command --sync 0:-3603604
         end
         set -g -a mkv_command --language 0:zh-Hans --track-name 0:"Kekkan · ToonsHub" $subtitle_file
     end
@@ -228,6 +230,8 @@ function mux
         echo zh-Hant >> $sub_langs_file
         if test $episode = 01
             set -g -a mkv_command --sync 0:-1001
+        else if test $episode = 05
+            set -g -a mkv_command --sync 0:-3603604
         end
         set -g -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · ToonsHub" $subtitle_file
     end
@@ -258,6 +262,8 @@ function mux
         echo id >> $sub_langs_file
         if test $episode = 01
             set -g -a mkv_command --sync 0:-1001
+        else if test $episode = 05
+            set -g -a mkv_command --sync 0:-3603604
         end
         set -g -a mkv_command --language 0:id --track-name 0:"Kekkan · ToonsHub" $subtitle_file
     end
@@ -279,6 +285,8 @@ function mux
         echo ms >> $sub_langs_file
         if test $episode = 01
             set -g -a mkv_command --sync 0:-1001
+        else if test $episode = 05
+            set -g -a mkv_command --sync 0:-3603604
         end
         set -g -a mkv_command --language 0:ms --track-name 0:"Kekkan · ToonsHub" $subtitle_file
     end
@@ -328,6 +336,8 @@ function mux
         echo th >> $sub_langs_file
         if test $episode = 01
             set -g -a mkv_command --sync 0:-1001
+        else if test $episode = 05
+            set -g -a mkv_command --sync 0:-3603604
         end
         set -g -a mkv_command --language 0:th --track-name 0:"Kekkan · ToonsHub" $subtitle_file
     end
@@ -340,6 +350,8 @@ function mux
         echo vi >> $sub_langs_file
         if test $episode = 01
             set -g -a mkv_command --sync 0:-1001
+        else if test $episode = 05
+            set -g -a mkv_command --sync 0:-3603604
         end
         set -g -a mkv_command --language 0:vi --track-name 0:"Kekkan · ToonsHub" $subtitle_file
     end
