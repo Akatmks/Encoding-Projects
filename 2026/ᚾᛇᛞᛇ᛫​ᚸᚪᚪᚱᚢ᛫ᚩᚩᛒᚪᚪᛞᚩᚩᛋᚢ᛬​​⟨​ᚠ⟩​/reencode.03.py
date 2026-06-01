@@ -112,7 +112,7 @@ merge = frequency_merge(*src, lowpass=lambda clip: DFTTest().denoise(clip, 4.0),
 #             for source in ["source_j", "source_d", "source_m"]:
 #                 if hasattr(sources[op_ep], source) and getattr(sources[op_ep], source):
 #                     op_ep_src = initialize_clip(core.bs.VideoSource(getattr(sources[op_ep], source)))
-#                     if len(op_src) < 12:
+#                     if len(op_src) < 16:
 #                         op_src.append(op_ep_src[sources[op_ep].op[0]:sources[op_ep].op[0]+2157])
 #                     if op_ep_len >= 2158:
 #                         if len(op_src_2058) < 12:
