@@ -5,7 +5,7 @@ sys.path.insert(0, os.getcwd())
 import __main__
 
 from vsaa import based_aa
-from vsdenoise import DFTTest, frequency_merge
+from vsdenoise import deblock_qed, DFTTest, frequency_merge
 from vskernels import Bilinear
 from vsmuxtools import settings_builder_x265, Setup, x265
 from vsscale import Rescale
@@ -90,6 +90,10 @@ if sources[episode].op_type in [1, 3]:
     src = insert_clip(src, op_merge, sources[episode].op[0])
 
 
+db = deblock_qed(src, (18, 16))
+src = replace_ranges(src, db, sources[episode].op, exclusive=True)
+
+
 src_y = get_y(src)
 rs = Rescale(src_y, width=1500, height=843.75, kernel=Bilinear(), downscaler=Bilinear(linear=True))
 
@@ -105,7 +109,7 @@ z 0 >
     x 0.8 * y 0.2 * + ?
 """)
 
-ds_noise = core.akarin.Expr([ds_soften, re, src_y], "z y - 0.8 * x +")
+ds_noise = core.akarin.Expr([ds_soften, re, src_y], "z y - x +")
 ds_noise = join(ds_noise, src)
 
 aa_opp = TAAmbk(src_y, aatype=2, mclip=src.std.BlankClip(format=vs.GRAY16, color=65535))
@@ -150,7 +154,8 @@ if "__main__" in dir(__main__):
     assert final.num_frames <= 50000
     grain = SPath("grain.bin")
     settings = settings_builder_x265(asm="avx512", hist_scenecut="",
-                                     crf=14.20, cutree=True, aom_film_grain=grain)
+                                     crf=15.40, bframe_bias=75, ipratio=1.3, pbratio=1.4, psy_rdoq=3.0,
+                                     deblock=[0, 0], aom_film_grain=grain)
     x265(settings, resumable=False, csv=False).encode(final, outfile=output)
 else:
     final.set_output()
