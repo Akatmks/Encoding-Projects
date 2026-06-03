@@ -146,18 +146,31 @@ if sources[episode].ed:
 lineart_final = replace_ranges(lineart_final, src, sources[episode].text, exclusive=True)
 
 
-final = finalize_clip(lineart_final)
+from vsdenoise import bm3d, mc_degrain, nl_means
+
+ref = mc_degrain(lineart_final, tr=2, refine=1, thsad=120)
+dn_y = bm3d(lineart_final, sigma=0.95, tr=2, profile=bm3d.Profile.LOW_COMPLEXITY, ref=ref, planes=[0])
+dn_yuv = nl_means(dn_y, h=0.24, s=1, tr=2, ref=ref, planes=[1, 2])
+
+dn_fine = lineart_final
+dn_fine = replace_ranges(dn_fine, dn_yuv, sources[episode].op, exclusive=True)
+dn_fine = replace_ranges(dn_fine, dn_y, sources[episode].ed, exclusive=True)
+
+dn_final = DFTTest().denoise(dn_fine, {0.0:0.04, 0.48:0.04, 0.60:0.16, 1.0:0.32}, tr=1, planes=[0])
+
+
+final = finalize_clip(dn_final)
 
 
 if "__main__" in dir(__main__):
     setup = Setup(episode, config_file=None, work_dir=SPath("Temp") / f"{episode}.vsmuxtools.tmp")
     
-    output = SPath("Video") / f"{episode}.265"
+    output = SPath("Video") / f"{episode}.mini.265"
     assert final.num_frames <= 50000
     grain = SPath("grain.bin")
     settings = settings_builder_x265(asm="avx512", hist_scenecut="",
-                                     crf=15.40, bframe_bias=75, ipratio=1.3, pbratio=1.4, psy_rdoq=3.0,
-                                     deblock=[0, 0], aom_film_grain=grain)
+                                     tune="grain", crf=19.20, cutree=True, bframe_bias=75, ipratio=1.3, pbratio=1.4, psy_rdoq=3.0,
+                                     deblock=[1, 1], aom_film_grain="grain.bin")
     x265(settings, resumable=False, csv=False).encode(final, outfile=output)
 else:
     final.set_output()

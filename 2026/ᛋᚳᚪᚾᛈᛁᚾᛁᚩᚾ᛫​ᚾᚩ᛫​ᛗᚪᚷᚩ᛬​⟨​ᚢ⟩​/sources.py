@@ -69,7 +69,7 @@ sources = {
                  ed=(32489, 34646),
                  text=[(2159, 2358), (34646, None)]),
     "12": Source(source_bd=vol_02_bdmv / "BDMV" / "STREAM" / "00008.m2ts",
-                 op=(0,  ), op_type=4,
+                 op=(0, 2159), op_type=4,
                  ed=(32247, None),
                  text=[(2159, 2371)]),
     "NCOP01": Source(source_bd=vol_01_bdmv / "BDMV" / "STREAM" / "00009.m2ts",
@@ -80,8 +80,8 @@ sources = {
                      op=(0, None)),
     "NCOP04": Source(source_bd=vol_01_bdmv / "BDMV" / "STREAM" / "00016.m2ts",
                      op=(0, None)),
-    "NCED01": Source(source_bd=vol_01_bdmv / "BDMV" / "STREAM" / "00017.m2ts",
-                     ed=(0, None)),
+    "NCED": Source(source_bd=vol_01_bdmv / "BDMV" / "STREAM" / "00017.m2ts",
+                   ed=(0, None)),
 }
 
 for episode in sources:

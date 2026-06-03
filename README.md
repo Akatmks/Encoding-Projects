@@ -4,6 +4,8 @@ These are source files for various encoding projects of mine. I'm not proficient
 
 Here is how much I'm satisfied with each of my projects at the time I finished them, about whether I think I've achieved what I want while causing minimum damage.  
 
+* [ᛋᚳᚪᚾᛈᛁᚾᛁᚩᚾ᛫​ᚾᚩ᛫​ᛗᚪᚷᚩ᛬​⟨​ᚢ⟩​](2026/ᛋᚳᚪᚾᛈᛁᚾᛁᚩᚾ᛫​ᚾᚩ᛫​ᛗᚪᚷᚩ᛬​⟨​ᚢ⟩​) - 8 (Very Good)
+* [ᚾᛇᛞᛇ᛫​ᚸᚪᚪᚱᚢ᛫ᚩᚩᛒᚪᚪᛞᚩᚩᛋᚢ᛬​​⟨​ᚠ⟩​](2026/ᚾᛇᛞᛇ᛫​ᚸᚪᚪᚱᚢ᛫ᚩᚩᛒᚪᚪᛞᚩᚩᛋᚢ᛬​​⟨​ᚠ⟩​) - 8 (Very Good)
 * [ᛋᚪᛣᚢᚱᚪ᛫​ᛏᚩᚱᛁᛣᛣᚢ᛬​⟨​ᚠ⟩](2026/ᛋᚪᛣᚢᚱᚪ᛫​ᛏᚩᚱᛁᛣᛣᚢ᛬​⟨​ᚠ⟩) - 9 (Great)
 * [ᛣᚪᚾᛈᛖᛣᛁᛋᛖᛡᚷᚩ᛬​⟨​ᚢ⟩](2026/ᛣᚪᚾᛈᛖᛣᛁᛋᛖᛡᚷᚩ᛬​⟨​ᚢ⟩) - 8 (Very Good)
 * [ᚷᛁᛋᚳᚩᚹ᛫​ᚪᛣᚢᛡᚪᛣᚢ᛫​ᚱᛖᛁᚷᚩ᛫​ᚾᚪ᛫​ᛣᚩᚾᛡᚪᛣᚢᛋᚳᚪ᛫​ᚾᚩ᛫​ᛣᚪᚾᛋᚪᛏᛋᚢ᛫​ᛣᛁᚱᚩᛣᚢ᛬​⟨​ᚠ⟩​](2026/ᚷᛁᛋᚳᚩᚹ᛫​ᚪᛣᚢᛡᚪᛣᚢ᛫​ᚱᛖᛁᚷᚩ᛫​ᚾᚪ᛫​ᛣᚩᚾᛡᚪᛣᚢᛋᚳᚪ᛫​ᚾᚩ᛫​ᛣᚪᚾᛋᚪᛏᛋᚢ᛫​ᛣᛁᚱᚩᛣᚢ᛬​⟨​ᚠ⟩​) - 7 (Good)
