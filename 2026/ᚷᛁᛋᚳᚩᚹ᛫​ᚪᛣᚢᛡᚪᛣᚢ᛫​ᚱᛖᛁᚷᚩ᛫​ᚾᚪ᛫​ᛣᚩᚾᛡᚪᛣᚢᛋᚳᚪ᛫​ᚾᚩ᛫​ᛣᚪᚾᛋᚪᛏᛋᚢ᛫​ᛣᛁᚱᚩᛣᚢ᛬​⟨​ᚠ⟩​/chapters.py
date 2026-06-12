@@ -41,31 +41,48 @@ with open(f"Misc/Chapters/{episode}.txt", "w") as f:
     f.write(f"CHAPTER{i:02}NAME=Episode\n")
     i += 1
 
-    f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[0])}\n")
-    f.write(f"CHAPTER{i:02}NAME=Ending\n")
-    i += 1
-
-    if (source.outro != None):
-        f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[1])}\n")
-        f.write(f"CHAPTER{i:02}NAME=Outro\n")
+    if source.ed != None:
+        f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[0])}\n")
+        f.write(f"CHAPTER{i:02}NAME=Ending\n")
         i += 1
 
-        if (source.outro[1] != None):
-            f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.outro[1])}\n")
+        if source.outro != None:
+            f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[1])}\n")
+            f.write(f"CHAPTER{i:02}NAME=Outro\n")
+            i += 1
+    
+            if source.outro[1] != None:
+                f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.outro[1])}\n")
+                f.write(f"CHAPTER{i:02}NAME=Preview\n")
+                i += 1
+    
+        elif source.side != None:
+            f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[1])}\n")
+            f.write(f"CHAPTER{i:02}NAME=Side Story\n")
+            i += 1
+    
+            if source.side[1] != None:
+                f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.side[1])}\n")
+                f.write(f"CHAPTER{i:02}NAME=Preview\n")
+                i += 1
+
+        elif source.ed[1] != None:
+            f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[1])}\n")
             f.write(f"CHAPTER{i:02}NAME=Preview\n")
             i += 1
 
-    elif (source.side != None):
-        f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[1])}\n")
-        f.write(f"CHAPTER{i:02}NAME=Side Story\n")
-        i += 1
+    elif (source.preview != None):
+        if source.outro != None:
+            f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.outro[0])}\n")
+            f.write(f"CHAPTER{i:02}NAME=Outro\n")
+            i += 1
+    
+            if source.outro[1] != None:
+                f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.outro[1])}\n")
+                f.write(f"CHAPTER{i:02}NAME=Preview\n")
+                i += 1
 
-        if (source.side[1] != None):
-            f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.side[1])}\n")
+        else:
+            f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.preview[0])}\n")
             f.write(f"CHAPTER{i:02}NAME=Preview\n")
             i += 1
-
-    elif (source.ed[1] != None):
-        f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[1])}\n")
-        f.write(f"CHAPTER{i:02}NAME=Preview\n")
-        i += 1

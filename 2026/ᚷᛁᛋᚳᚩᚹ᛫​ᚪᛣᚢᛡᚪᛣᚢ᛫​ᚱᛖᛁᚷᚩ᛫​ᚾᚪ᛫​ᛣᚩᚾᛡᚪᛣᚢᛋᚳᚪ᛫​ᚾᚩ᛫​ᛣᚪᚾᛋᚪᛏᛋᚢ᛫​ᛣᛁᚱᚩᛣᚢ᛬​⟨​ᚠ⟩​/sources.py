@@ -18,6 +18,7 @@ class Source:
     ed: FrameRangeN | None = None
     outro: FrameRangeN | None = None
     side: FrameRangeN | None = None
+    preview: FrameRangeN | None = None
 
 
 sources = {
@@ -40,15 +41,26 @@ sources = {
                  ed=(30809, 32966),
                  side=(32966, 33926)),
     "07": Source(op=(1104, 3261), op_type=2, op_offset=0,
-                 ed=(31768, 33926))
+                 ed=(31768, 33926)),
+    "08": Source(op=(3213, 5371), op_type=2, op_offset=0,
+                 ed=(26280, 28437),
+                 outro=(28437, 33926)),
+    "09": Source(op=(1918, 4077), op_type=2, op_offset=0,
+                 preview=(33926, None)),
+    "10": Source(op=(2350, 4507), op_type=2, op_offset=0,
+                 ed=(31768, 33926),
+                 preview=(33926, None)),
+    "11": Source(op=(456, 2614), op_type=2, op_offset=0,
+                 outro=(33475, 33926),
+                 preview=(33926, None)),
 }
 
 for episode in sources:
-    matches = list(raws.glob(f"A*.S01E{episode}.*b.mkv"))
-    assert(len(matches) == 1)
+    matches = list(raws.glob(f"A*.S01E{episode}.*.JPN.*b.mkv"))
+    assert(len(matches) == 1), str(matches)
     sources[episode].source = matches[0]
 
 for episode in sources:
     matches = list(raws.glob(f"[S* - {episode} *.mkv"))
-    assert(len(matches) == 1)
+    assert(len(matches) == 1), str(matches)
     sources[episode].source_s = matches[0]

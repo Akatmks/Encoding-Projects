@@ -60,9 +60,9 @@ if sources[episode].op:
     # if sources[episode].op_offset > 0:
     #     src = insert_clip(src, op_merge[0] * sources[episode].op_offset, sources[episode].op[0])
     src = insert_clip(src, op_merge, sources[episode].op[0] + sources[episode].op_offset)
-    filled_frames = sources[episode].op[0] + sources[episode].op_offset + 2157
-    if filled_frames < sources[episode].op[1]:
-        src = insert_clip(src, op_merge[2152:sources[episode].op[1]-filled_frames+2152], filled_frames)
+    # filled_frames = sources[episode].op[0] + sources[episode].op_offset + 2157 # It's messy after frame 2157. Some episode don't have credit.
+    # if filled_frames < sources[episode].op[1]:
+    #     src = insert_clip(src, op_merge[2152:sources[episode].op[1]-filled_frames+2152], filled_frames)
 
 src = bore(src, ythickness=(2, 2, 2, 2))
 

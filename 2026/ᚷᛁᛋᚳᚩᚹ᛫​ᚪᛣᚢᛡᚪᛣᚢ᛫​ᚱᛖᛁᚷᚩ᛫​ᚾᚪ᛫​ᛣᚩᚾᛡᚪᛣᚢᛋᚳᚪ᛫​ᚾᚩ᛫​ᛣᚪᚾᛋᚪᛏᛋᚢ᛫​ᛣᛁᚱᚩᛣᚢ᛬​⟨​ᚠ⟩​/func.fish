@@ -103,7 +103,7 @@ function mux_restyle_subtitle
     for style in "BottomLeft"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H08FFFFFF,&H000000FF,&H0C672E22,&HBF000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.4,0.6,1,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "BottomCenter" "Default" "Main" "Gen_Main" "TiretsDefault" "Default overlap" "Flashback" "Main_Flashback" "Overlap" "Main_Overlap" "Flashback_Overlap" "main" "flashback" "main - flashback" "Font1" "flashback" "Основной"
+    for style in "BottomCenter" "Default" "Main" "Gen_Main" "TiretsDefault" "Default overlap" "Flashback" "Main_Flashback" "Overlap" "Main_Overlap" "Flashback_Overlap" "main" "flashback" "main - flashback" "Font1" "flashback" "Основной" "Flashback Overlap" "Flashback 2"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H08FFFFFF,&H000000FF,&H0C672E22,&HBF000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.4,0.6,2,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "BottomRight"
@@ -115,7 +115,7 @@ function mux_restyle_subtitle
     for style in "TopLeft"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H08FFFFFF,&H000000FF,&H0C672E22,&HBF000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.4,0.6,7,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "TopCenter" "Top" "Main_Top" "Gen_Main_Up" "Main - Top" "On Top" "Flashback Top" "Main_Flashback_Top" "Flashback_Top" "Overlap Top" "top" "Default - Top" "main - top" "main - flashback - top" "Flashback top" "Flashback Overlap top" "Flashback-Top" "main - shifted" "flashbacktop" "Основной-сверху" "Flashback - Top" "overlaptop"
+    for style in "TopCenter" "Top" "Main_Top" "Gen_Main_Up" "Main - Top" "On Top" "Flashback Top" "Main_Flashback_Top" "Flashback_Top" "Overlap Top" "top" "Default - Top" "main - top" "main - flashback - top" "Flashback top" "Flashback Overlap top" "Flashback-Top" "main - shifted" "flashbacktop" "Основной-сверху" "Flashback - Top" "overlaptop" "Overlap top"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H08FFFFFF,&H000000FF,&H0C672E22,&HBF000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.4,0.6,8,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "TopRight"
