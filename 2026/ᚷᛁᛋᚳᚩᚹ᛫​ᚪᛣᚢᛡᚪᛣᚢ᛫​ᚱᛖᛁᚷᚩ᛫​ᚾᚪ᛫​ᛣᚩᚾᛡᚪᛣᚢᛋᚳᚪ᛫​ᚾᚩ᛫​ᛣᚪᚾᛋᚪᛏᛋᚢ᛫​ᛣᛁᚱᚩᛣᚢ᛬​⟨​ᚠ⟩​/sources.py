@@ -53,6 +53,9 @@ sources = {
     "11": Source(op=(456, 2614), op_type=2, op_offset=0,
                  outro=(33475, 33926),
                  preview=(33926, None)),
+    "12": Source(op=(6738, 8894), op_type=2, op_offset=0,
+                 ed=(29993, 32152),
+                 outro=(32152, None))
 }
 
 for episode in sources:

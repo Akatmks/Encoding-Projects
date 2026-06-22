@@ -108,23 +108,25 @@ if sources[episode].op:
     op_src_2058 = []
     op_src_2059 = []
     for op_ep in sources:
+        if sources[op_ep].op_type != sources[episode].op_type:
+            continue
         if sources[op_ep].op:
             op_ep_len = sources[op_ep].op[1] - sources[op_ep].op[0]
             for source in ["source_j", "source_d", "source_m"]:
                 if hasattr(sources[op_ep], source) and getattr(sources[op_ep], source):
                     op_ep_src = initialize_clip(core.bs.VideoSource(getattr(sources[op_ep], source)))
-                    if len(op_src) < 16:
+                    if len(op_src) < 20:
                         op_src.append(op_ep_src[sources[op_ep].op[0]:sources[op_ep].op[0]+2157])
                     if op_ep_len >= 2158:
-                        if len(op_src_2058) < 12:
+                        if len(op_src_2058) < 10:
                             op_src_2058.append(op_ep_src[sources[op_ep].op[0]+2158-1])
                     if op_ep_len >= 2159:
-                        if len(op_src_2059) < 12:
+                        if len(op_src_2059) < 10:
                             op_src_2059.append(op_ep_src[sources[op_ep].op[0]+2159-1])
 
-                if len(op_src_2059) >= 12:
+                if len(op_src_2059) >= 10:
                     break
-        if len(op_src_2059) >= 12:
+        if len(op_src_2059) >= 10:
             break
 
     if episode != "01":

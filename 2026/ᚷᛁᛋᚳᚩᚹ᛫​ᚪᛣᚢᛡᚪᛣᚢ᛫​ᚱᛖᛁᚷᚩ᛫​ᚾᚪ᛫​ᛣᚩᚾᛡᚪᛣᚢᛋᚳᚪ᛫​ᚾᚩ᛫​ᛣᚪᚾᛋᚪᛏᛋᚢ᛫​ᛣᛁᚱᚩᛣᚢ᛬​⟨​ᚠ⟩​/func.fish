@@ -183,7 +183,7 @@ function mux
     mkdir $fonts_dir
 
 
-    set source_t (find $RAWS_DIRECTORY -regex ".*/A.*\.S01E$episode\..*b\.mkv")
+    set source_t (find $RAWS_DIRECTORY -regex ".*/A.*\.S01E$episode\..*\.JPN\..*b\.mkv")
     if begin test -z $source_t ; or not test -e $source_t ; end
         set_color red ; echo "[mux] Source T not found." ; set_color normal
         return 126

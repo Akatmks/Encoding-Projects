@@ -103,7 +103,7 @@ function mux_restyle_subtitle
     for style in "BottomLeft"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H04FFFFFF,&H000000FF,&H4048262E,&HBF000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.15,0,1,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "BottomCenter" "Default" "Main" "Gen_Main" "TiretsDefault" "Default overlap" "Flashback" "Main_Flashback" "Overlap" "Main_Overlap" "Flashback_Overlap" "main" "flashback" "main - flashback" "Font1" "flashback" "Основной" "Flashback - Internal" "BD DX"
+    for style in "BottomCenter" "Default" "Main" "Gen_Main" "TiretsDefault" "Default overlap" "Flashback" "Main_Flashback" "Overlap" "Main_Overlap" "Flashback_Overlap" "main" "flashback" "main - flashback" "Font1" "flashback" "Основной" "Flashback - Internal" "BD DX" "ImagetextBD"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H04FFFFFF,&H000000FF,&H4048262E,&HBF000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.15,0,2,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "BottomRight"
@@ -121,7 +121,7 @@ function mux_restyle_subtitle
     for style in "TopRight"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H04FFFFFF,&H000000FF,&H4048262E,&HBF000000,$b,0,0,0,$fscx,100,$fsp,0,1,1.15,0,9,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "Italics Top" "Main_Top_Italic" "Gen_Italics_top" "DefaultItalicsTop" "Flashback Italics Top" "Italics - Top" "ItalicsTop" "Top Internal" "Italics_Top" "Internal Top" "main - italics top" "Italics-Top" "Main_Italic_Top" "flashbackitalicstop" "italicstop" "Курсив-сверху" "Flashback italics top" "Italics top" "Overlap Internal Top"
+    for style in "Italics Top" "Main_Top_Italic" "Gen_Italics_top" "DefaultItalicsTop" "Flashback Italics Top" "Italics - Top" "ItalicsTop" "Top Internal" "Italics_Top" "Internal Top" "main - italics top" "Italics-Top" "Main_Italic_Top" "flashbackitalicstop" "italicstop" "Курсив-сверху" "Flashback italics top" "Italics top" "Overlap Internal Top" "Narrator - Top"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$fs,&H04FFFFFF,&H000000FF,&H4048262E,&HBF000000,$b,$i,0,0,$fscx,100,$fsp,0,1,1.15,0,8,40,40,$(math 20 + $margin_v_adjust),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "CenterLeft"
@@ -216,7 +216,7 @@ function mux_restyle_subtitle_1080p
     for style in "BottomLeft"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$(math $fs \* 3),&H04FFFFFF,&H000000FF,&H4048262E,&HBF000000,$b,0,0,0,$fscx,100,$(math $fsp \* 3),0,1,3.45,0,1,120,120,$(math $(math 20 + $margin_v_adjust) \* 3),1" (cat $subtitle_file) > $subtitle_file
     end
-    for style in "BottomCenter" "Default" "Main" "Gen_Main" "TiretsDefault" "Default overlap" "Flashback" "Main_Flashback" "Overlap" "Main_Overlap" "Flashback_Overlap" "main" "flashback" "main - flashback" "Font1" "flashback" "Основной" "Flashback - Internal" "BD DX"
+    for style in "BottomCenter" "Default" "Main" "Gen_Main" "TiretsDefault" "Default overlap" "Flashback" "Main_Flashback" "Overlap" "Main_Overlap" "Flashback_Overlap" "main" "flashback" "main - flashback" "Font1" "flashback" "Основной" "Flashback - Internal" "BD DX" "ImagetextBD"
         string replace --regex "^Style: $style,.*" "Style: $style,$fn,$(math $fs \* 3),&H04FFFFFF,&H000000FF,&H4048262E,&HBF000000,$b,0,0,0,$fscx,100,$(math $fsp \* 3),0,1,3.45,0,2,120,120,$(math $(math 20 + $margin_v_adjust) \* 3),1" (cat $subtitle_file) > $subtitle_file
     end
     for style in "BottomRight"
@@ -260,7 +260,8 @@ function mux
     set_color -o white ; echo "[mux] Muxing $episode..." ; set_color normal
 
 
-    set sub_langs_file "Publish/Info/osubs.$episode.txt"
+    set osub_langs_file "Publish/Info/osubs.$episode.txt"
+    set fsub_langs_file "Publish/Info/fsubs.$episode.txt"
 
     set -g mkv_command mkvmerge --deterministic 0
 
@@ -310,27 +311,49 @@ function mux
         return 126
     end
 
+
+    echo > $fsub_langs_file
+
     set source_g (find $RAWS_DIRECTORY -regex ".*/\[St.... ........\].* \[$episode\].*\.mkv")
     if begin test -z $source_g ; or not test -e $source_g ; end
         set_color red ; echo "[mux] Source G not found." ; set_color normal
-        return 126
+    else
+        set subtitle_file "$subtitle_dir/G.zh-Hans.ass"
+        mkvextract $source_g tracks 2:$subtitle_file
+        echo zh-Hans >> $fsub_langs_file
+        set -g -a mkv_command --language 0:zh-Hans --track-name 0:"绿茶字幕组" $subtitle_file
+        set subtitle_file "$subtitle_dir/G.zh-Hant.ass"
+        mkvextract $source_g tracks 3:$subtitle_file
+        echo zh-Hant >> $fsub_langs_file
+        set -g -a mkv_command --language 0:zh-Hant --track-name 0:"綠茶字幕組" $subtitle_file
+        begin cd $fonts_dir
+            mkvextract $source_g attachments (seq 1 50)
+            for f in (find . -type f)
+                if string match --quiet --regex " " $f
+                    mv $f (string replace --all --regex " " "-" $f)
+                end
+            end
+            prevd
+        end
     end
 
-
-    set subtitle_file "$subtitle_dir/G.zh-Hans.ass"
-    mkvextract $source_g tracks 2:$subtitle_file
-    set -g -a mkv_command --language 0:zh-Hans --track-name 0:"绿茶字幕组" $subtitle_file
-    set subtitle_file "$subtitle_dir/G.zh-Hant.ass"
-    mkvextract $source_g tracks 3:$subtitle_file
-    set -g -a mkv_command --language 0:zh-Hant --track-name 0:"綠茶字幕組" $subtitle_file
-    begin cd $fonts_dir
-        mkvextract $source_g attachments (seq 1 75)
-        for f in (find . -type f)
-            if string match --quiet --regex " " $f
-                mv $f (string replace --all --regex " " "-" $f)
+    set source_f (find $RAWS_DIRECTORY -regex ".*/\[Fr.......\].* - S01E$episode.*\.mkv")
+    if begin test -z $source_f ; or not test -e $source_f ; end
+        set_color red ; echo "[mux] Source F not found." ; set_color normal
+    else
+        set subtitle_file "$subtitle_dir/F.pl.ass"
+        mkvextract $source_f tracks 2:$subtitle_file
+        echo pl >> $fsub_langs_file
+        set -g -a mkv_command --language 0:pl --track-name 0:"FrixySubs" $subtitle_file
+        begin cd $fonts_dir
+            mkvextract $source_f attachments (seq 1 50)
+            for f in (find . -type f)
+                if string match --quiet --regex " " $f
+                    mv $f (string replace --all --regex " " "-" $f)
+                end
             end
+            prevd
         end
-        prevd
     end
 
 
@@ -345,7 +368,7 @@ function mux
     set subtitle_file "$subtitle_dir/en.ass"
     mkvextract $source_t tracks $head:$subtitle_file
     mux_restyle_subtitle $subtitle_file latin
-    echo en > $sub_langs_file
+    echo en > $osub_langs_file
     set -g -a mkv_command --language 0:en --track-name 0:"Himejoshi · ToonsHub" $subtitle_file
 
 
@@ -355,7 +378,7 @@ function mux
         mkvextract $source_t tracks $head:$subtitle_file
         cp -v "Misc/Fonts/Bahij-Nassim-Bold.ttf" "$fonts_dir/"
         mux_restyle_subtitle $subtitle_file arabic
-        echo ar >> $sub_langs_file
+        echo ar >> $osub_langs_file
         set -g -a mkv_command --language 0:ar --track-name 0:"Himejoshi · ToonsHub" $subtitle_file
     end
 
@@ -365,7 +388,7 @@ function mux
         mkvextract $source_t tracks $head:$subtitle_file
         python Misc/fix_gap.py --output $subtitle_file $subtitle_file
         mux_restyle_subtitle $subtitle_file latin
-        echo fr >> $sub_langs_file
+        echo fr >> $osub_langs_file
         set -g -a mkv_command --language 0:fr --track-name 0:"Himejoshi · ToonsHub" $subtitle_file
     end
 
@@ -374,7 +397,7 @@ function mux
         set subtitle_file "$subtitle_dir/de.ass"
         mkvextract $source_t tracks $head:$subtitle_file
         mux_restyle_subtitle $subtitle_file latin
-        echo de >> $sub_langs_file
+        echo de >> $osub_langs_file
         set -g -a mkv_command --language 0:de --track-name 0:"Himejoshi · ToonsHub" $subtitle_file
     end
     
@@ -383,7 +406,7 @@ function mux
         set subtitle_file "$subtitle_dir/it.ass"
         mkvextract $source_t tracks $head:$subtitle_file
         mux_restyle_subtitle $subtitle_file latin
-        echo it >> $sub_langs_file
+        echo it >> $osub_langs_file
         set -g -a mkv_command --language 0:it --track-name 0:"Himejoshi · ToonsHub" $subtitle_file
     end
 
@@ -393,7 +416,7 @@ function mux
         mkvextract $source_t tracks $head:$subtitle_file
         python Misc/fix_gap.py --output $subtitle_file $subtitle_file
         mux_restyle_subtitle $subtitle_file latin
-        echo pt-BR >> $sub_langs_file
+        echo pt-BR >> $osub_langs_file
         set -g -a mkv_command --language 0:pt-BR --track-name 0:"Himejoshi · ToonsHub" $subtitle_file
     end
 
@@ -402,7 +425,7 @@ function mux
         set subtitle_file "$subtitle_dir/ru.ass"
         mkvextract $source_t tracks $head:$subtitle_file
         mux_restyle_subtitle $subtitle_file cyrillic
-        echo ru >> $sub_langs_file
+        echo ru >> $osub_langs_file
         set -g -a mkv_command --language 0:ru --track-name 0:"Himejoshi · ToonsHub" $subtitle_file
 
         if test $episode = 02
@@ -416,7 +439,7 @@ function mux
         mkvextract $source_t tracks $head:$subtitle_file
         python Misc/fix_gap.py --output $subtitle_file $subtitle_file
         mux_restyle_subtitle $subtitle_file latin
-        echo es-419 >> $sub_langs_file
+        echo es-419 >> $osub_langs_file
         set -g -a mkv_command --language 0:es-419 --track-name 0:"Himejoshi · ToonsHub" $subtitle_file
     end
 
@@ -426,8 +449,21 @@ function mux
         mkvextract $source_t tracks $head:$subtitle_file
         python Misc/fix_gap.py --output $subtitle_file $subtitle_file
         mux_restyle_subtitle $subtitle_file latin
-        echo es-ES >> $sub_langs_file
+        echo es-ES >> $osub_langs_file
         set -g -a mkv_command --language 0:es-ES --track-name 0:"Himejoshi · ToonsHub" $subtitle_file
+    end
+
+    if begin test -z $source_g ; or not test -e $source_g ; end
+        set subtitle_file "$subtitle_dir/zh-Hant.ass"
+        ffmpeg -hide_banner -i "Misc/Subtitles/$episode.zh-Hant.srt" -c:s ass $subtitle_file
+        mux_restyle_subtitle $subtitle_file cjk-Hant
+        echo zh-Hant >> $osub_langs_file
+        set -g -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · CatchPlay" --sync 0:-5506 $subtitle_file
+        set subtitle_file "$subtitle_dir/zh-Hans.ass"
+        ffmpeg -hide_banner -i "Misc/Subtitles/$episode.zh-Hans.srt" -c:s ass $subtitle_file
+        mux_restyle_subtitle $subtitle_file cjk-Hans
+        echo zh-Hans >> $osub_langs_file
+        set -g -a mkv_command --language 0:zh-Hans --track-name 0:"Kekkan · CatchPlay" --sync 0:-5506 $subtitle_file
     end
 
 
@@ -479,5 +515,5 @@ function clean
     end
 
     set log_files log*.txt
-    rm -rf "__pycache__" $log_files "Temp/$episode.vsmuxtools.tmp" "Temp/$episode.subtitles" "Temp/$episode.fonts"
+    rm -rf "__pycache__" $log_files "Temp/$episode.vsmuxtools.tmp" "Temp/$episode.subtitles" "Temp/$episode.fonts" "Temp/$episode.settings.toml"
 end
