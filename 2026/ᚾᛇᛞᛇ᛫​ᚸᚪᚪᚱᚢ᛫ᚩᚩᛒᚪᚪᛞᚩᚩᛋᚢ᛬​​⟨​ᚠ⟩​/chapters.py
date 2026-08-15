@@ -28,31 +28,34 @@ def frame_to_timestamp(frame_number):
 with open(f"Misc/Chapters/{episode}.txt", "w") as f:
     i = 1
 
-    if source.op[0] != 0:
+    if not source.op or source.op[0] != 0:
         f.write(f"CHAPTER{i:02}={frame_to_timestamp(0)}\n")
         f.write(f"CHAPTER{i:02}NAME=Episode\n")
         i += 1
 
-    f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.op[0])}\n")
-    if source.op[0] <= 20000:
-        f.write(f"CHAPTER{i:02}NAME=Opening\n")
-    else:
-        f.write(f"CHAPTER{i:02}NAME=In\n")
-    i += 1
+    if source.op:
+        f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.op[0])}\n")
+        if source.op[0] <= 20000:
+            f.write(f"CHAPTER{i:02}NAME=Opening\n")
+        else:
+            f.write(f"CHAPTER{i:02}NAME=In\n")
+        i += 1
 
-    f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.op[1])}\n")
-    f.write(f"CHAPTER{i:02}NAME=Episode\n")
-    i += 1
-
-    f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[0])}\n")
-    f.write(f"CHAPTER{i:02}NAME=Ending\n")
-    i += 1
-
-    if source.ed[1] != source.preview[0]:
-        f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[1])}\n")
+        f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.op[1])}\n")
         f.write(f"CHAPTER{i:02}NAME=Episode\n")
         i += 1
 
-    f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.preview[0])}\n")
-    f.write(f"CHAPTER{i:02}NAME=Preview\n")
-    i += 1
+    if source.ed:
+        f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[0])}\n")
+        f.write(f"CHAPTER{i:02}NAME=Ending\n")
+        i += 1
+    
+        if source.ed[1] != source.preview[0]:
+            f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.ed[1])}\n")
+            f.write(f"CHAPTER{i:02}NAME=Episode\n")
+            i += 1
+    
+    if source.preview:
+        f.write(f"CHAPTER{i:02}={frame_to_timestamp(source.preview[0])}\n")
+        f.write(f"CHAPTER{i:02}NAME=Preview\n")
+        i += 1

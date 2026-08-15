@@ -16,7 +16,6 @@ class Source:
     op: FrameRangeN | None = None
     op_type: Literal[1, 2] | None = None
     ed: FrameRangeN | None = None
-    ed_as_op: bool = False
     preview: FrameRangeN | None = None
 
 
@@ -54,6 +53,9 @@ sources = {
     "11": Source(op=(0, 2158), op_type=2,
                  ed=(31526, 33685),
                  preview=(33685, None)),
+    "12": Source(ed=(30088, 32247),
+                 preview=(33685, None)),
+    "13": Source(op=(432, 2590), op_type=1),
 }
 
 for episode in sources:

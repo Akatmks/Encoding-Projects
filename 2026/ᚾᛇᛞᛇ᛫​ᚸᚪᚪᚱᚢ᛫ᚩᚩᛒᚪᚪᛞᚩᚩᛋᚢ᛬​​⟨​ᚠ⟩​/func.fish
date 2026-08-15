@@ -33,6 +33,8 @@ function mux_restyle_subtitle
         set_color red ; echo "[mux_restyle_subtitle] Subtitle file not found." ; set_color normal
         return 126
     end
+    
+    echo "[mux_restyle_subtitle] Processing $subtitle_file"
 
     # python Misc/fix_gap.py --output $subtitle_file $subtitle_file
 
@@ -42,21 +44,21 @@ function mux_restyle_subtitle
     set fsp 0
     set margin_v_adjust 0
     if test $script = latin
-        set fn SN Pro SemiBold
-        set fs 26
-        set b 0
-        set margin_v_adjust -6
+        set fn Nunito
+        set fs 24
+        set b -1
+        set margin_v_adjust 0
     else if test $script = arabic
         set fn Bahij Nassim
-        set fs 33
+        set fs 31
         set b 0
         set i 0
-        set margin_v_adjust -8
+        set margin_v_adjust -7
     else if test $script = cyrillic
-        set fn SN Pro SemiBold
-        set fs 26
-        set b 0
-        set margin_v_adjust -6
+        set fn Nunito
+        set fs 25
+        set b -1
+        set margin_v_adjust -1
     else if test $script = thai
         set fn Prompt SemiBold
         set fs 26
@@ -74,6 +76,13 @@ function mux_restyle_subtitle
         set b -1
         set fsp 0.01
         set margin_v_adjust 0
+    else if test $script = cjk-JP
+        set fn HiraMaruPro-W4
+        set fs 20
+        set b 0
+        set fsp 0.01
+        set shad_adjust -0.50
+        set margin_v_adjust -18
     else
         set_color red ; echo "[mux_restyle_subtitle] Unrecognised script `$script`." ; set_color normal
         return 126
@@ -144,6 +153,8 @@ function mux_restyle_subtitle_1080p
         set_color red ; echo "[mux_restyle_subtitle] Subtitle file not found." ; set_color normal
         return 126
     end
+    
+    echo "[mux_restyle_subtitle] Processing $subtitle_file"
 
     # python Misc/fix_gap.py --output $subtitle_file $subtitle_file
 
@@ -153,21 +164,21 @@ function mux_restyle_subtitle_1080p
     set fsp 0
     set margin_v_adjust 0
     if test $script = latin
-        set fn SN Pro SemiBold
-        set fs 26
-        set b 0
-        set margin_v_adjust -6
+        set fn Nunito
+        set fs 24
+        set b -1
+        set margin_v_adjust 0
     else if test $script = arabic
         set fn Bahij Nassim
-        set fs 33
+        set fs 31
         set b 0
         set i 0
-        set margin_v_adjust -9
+        set margin_v_adjust -7
     else if test $script = cyrillic
-        set fn SN Pro SemiBold
-        set fs 26
-        set b 0
-        set margin_v_adjust -6
+        set fn Nunito
+        set fs 25
+        set b -1
+        set margin_v_adjust -1
     else if test $script = thai
         set fn Prompt SemiBold
         set fs 26
@@ -185,6 +196,13 @@ function mux_restyle_subtitle_1080p
         set b -1
         set fsp 0.01
         set margin_v_adjust 0
+    else if test $script = cjk-JP
+        set fn HiraMaruPro-W4
+        set fs 20
+        set b 0
+        set fsp 0.01
+        set shad_adjust -0.50
+        set margin_v_adjust -18
     else
         set_color red ; echo "[mux_restyle_subtitle] Unrecognised script `$script`." ; set_color normal
         return 126
@@ -312,7 +330,21 @@ function mux
     end
 
 
-    echo > $fsub_langs_file
+    set subtitle_head "$subtitle_dir/ja.ass"
+    ffmpeg -hide_banner -i "Misc/Subtitles/ja/$episode.ja.srt" -c:s ass $subtitle_head
+    python Misc/fix_gap.py --output $subtitle_head $subtitle_head
+    mux_restyle_subtitle $subtitle_head cjk-JP
+    ASSFontSubset.Console $subtitle_head --fonts "Misc/Subtitles/ja/Fonts" --output $fonts_dir/output | cat
+    or return $status
+    mv $fonts_dir/output/ja.ass $subtitle_head
+    mv $fonts_dir/output/* $fonts_dir
+    rm -rf $fonts_dir/output
+    echo ja > $osub_langs_file
+    if test $episode = 01
+        set -g -a mkv_command --language 0:ja --track-name 0:"Himejoshi · NF" $subtitle_head
+    else
+        set -g -a mkv_command --language 0:ja --sync 0:-1001 --track-name 0:"Himejoshi · NF" $subtitle_head
+    end
 
     set source_g (find $RAWS_DIRECTORY -regex ".*/\[St.... ........\].* \[$episode\].*\.mkv")
     if begin test -z $source_g ; or not test -e $source_g ; end
@@ -320,11 +352,9 @@ function mux
     else
         set subtitle_file "$subtitle_dir/G.zh-Hans.ass"
         mkvextract $source_g tracks 2:$subtitle_file
-        echo zh-Hans >> $fsub_langs_file
         set -g -a mkv_command --language 0:zh-Hans --track-name 0:"绿茶字幕组" $subtitle_file
         set subtitle_file "$subtitle_dir/G.zh-Hant.ass"
         mkvextract $source_g tracks 3:$subtitle_file
-        echo zh-Hant >> $fsub_langs_file
         set -g -a mkv_command --language 0:zh-Hant --track-name 0:"綠茶字幕組" $subtitle_file
         begin cd $fonts_dir
             mkvextract $source_g attachments (seq 1 50)
@@ -336,6 +366,17 @@ function mux
             prevd
         end
     end
+    
+    ASSFontSubset.Console "Misc/Subtitles/zh/$episode.zh-Hans.ass" "Misc/Subtitles/zh/$episode.zh-Hant.ass" --fonts "Misc/Subtitles/zh/Fonts" --output $fonts_dir/output | cat
+    or return $status
+    mv $fonts_dir/output/$episode.zh-Hans.ass $subtitle_dir/S.zh-Hans.ass
+    mv $fonts_dir/output/$episode.zh-Hant.ass $subtitle_dir/S.zh-Hant.ass
+    mv $fonts_dir/output/* $fonts_dir
+    rm -rf $fonts_dir/output
+    echo zh-Hans > $fsub_langs_file
+    echo zh-Hant >> $fsub_langs_file
+    set -g -a mkv_command --language 0:zh-Hans --track-name 0:"桜都字幕组" $subtitle_dir/S.zh-Hans.ass
+    set -g -a mkv_command --language 0:zh-Hant --track-name 0:"桜都字幕組" $subtitle_dir/S.zh-Hant.ass
 
     set source_f (find $RAWS_DIRECTORY -regex ".*/\[Fr.......\].* - S01E$episode.*\.mkv")
     if begin test -z $source_f ; or not test -e $source_f ; end
@@ -359,7 +400,7 @@ function mux
 
     set subtitle_file "$subtitle_dir/U.en.ass"
     mkvextract $source_u tracks 2:$subtitle_file
-    cp -v "Misc/Fonts/SNPro-SemiBold.ttf" "Misc/Fonts/SNPro-SemiBoldItalic.ttf" "$fonts_dir/"
+    cp -v "Misc/Fonts/Nunito-Bold.ttf" "Misc/Fonts/Nunito-BoldItalic.ttf" "$fonts_dir/"
     mux_restyle_subtitle_1080p $subtitle_file latin
     set -g -a mkv_command --language 0:en --track-name 0:"Himejoshi · Un----ed" $subtitle_file
 
@@ -368,7 +409,7 @@ function mux
     set subtitle_file "$subtitle_dir/en.ass"
     mkvextract $source_t tracks $head:$subtitle_file
     mux_restyle_subtitle $subtitle_file latin
-    echo en > $osub_langs_file
+    echo en >> $osub_langs_file
     set -g -a mkv_command --language 0:en --track-name 0:"Himejoshi · ToonsHub" $subtitle_file
 
 
@@ -453,18 +494,18 @@ function mux
         set -g -a mkv_command --language 0:es-ES --track-name 0:"Himejoshi · ToonsHub" $subtitle_file
     end
 
-    if begin test -z $source_g ; or not test -e $source_g ; end
-        set subtitle_file "$subtitle_dir/zh-Hant.ass"
-        ffmpeg -hide_banner -i "Misc/Subtitles/$episode.zh-Hant.srt" -c:s ass $subtitle_file
-        mux_restyle_subtitle $subtitle_file cjk-Hant
-        echo zh-Hant >> $osub_langs_file
-        set -g -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · CatchPlay" --sync 0:-5506 $subtitle_file
-        set subtitle_file "$subtitle_dir/zh-Hans.ass"
-        ffmpeg -hide_banner -i "Misc/Subtitles/$episode.zh-Hans.srt" -c:s ass $subtitle_file
-        mux_restyle_subtitle $subtitle_file cjk-Hans
-        echo zh-Hans >> $osub_langs_file
-        set -g -a mkv_command --language 0:zh-Hans --track-name 0:"Kekkan · CatchPlay" --sync 0:-5506 $subtitle_file
-    end
+    # if begin test -z $source_g ; or not test -e $source_g ; end
+    #     set subtitle_file "$subtitle_dir/zh-Hant.ass"
+    #     ffmpeg -hide_banner -i "Misc/Subtitles/$episode.zh-Hant.srt" -c:s ass $subtitle_file
+    #     mux_restyle_subtitle $subtitle_file cjk-Hant
+    #     echo zh-Hant >> $osub_langs_file
+    #     set -g -a mkv_command --language 0:zh-Hant --track-name 0:"Kekkan · CatchPlay" --sync 0:-5506 $subtitle_file
+    #     set subtitle_file "$subtitle_dir/zh-Hans.ass"
+    #     ffmpeg -hide_banner -i "Misc/Subtitles/$episode.zh-Hans.srt" -c:s ass $subtitle_file
+    #     mux_restyle_subtitle $subtitle_file cjk-Hans
+    #     echo zh-Hans >> $osub_langs_file
+    #     set -g -a mkv_command --language 0:zh-Hans --track-name 0:"Kekkan · CatchPlay" --sync 0:-5506 $subtitle_file
+    # end
 
 
     set attach_fonts
