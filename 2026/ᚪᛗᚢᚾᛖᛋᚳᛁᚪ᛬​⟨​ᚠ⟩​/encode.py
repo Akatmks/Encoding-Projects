@@ -189,16 +189,15 @@ final = finalize_clip(dn, dither_type=DitherType.NONE)
 
 
 if "__main__" in dir(__main__):
-    setup = Setup(episode, work_dir=SPath("Temp") / f"{episode}.vsmuxtools.tmp")
+    setup = Setup(episode, config_file=None, work_dir=SPath("Temp") / f"{episode}.vsmuxtools.tmp")
     
     output = SPath("Video") / f"{episode}.ivf"
     fgs_table = SPath("grain.tbl")
     
-    SVTAV1(preset=2, crf=17.20,
-           lineart_psy_bias=5, texture_psy_bias=4,
-           dlf_bias_max_dlf="12,2", dlf_bias_min_dlf="4,0",
-           cdef_bias_max_cdef="4,1,2,0", texture_cdef_bias_max_cdef="2,0,0,0",
+    SVTAV1(preset=2, crf=16.00,
+           lineart_psy_bias=7, texture_psy_bias=4,
+           cdef_bias_max_cdef="4,2,2,0", texture_cdef_bias_max_cdef="2,0,0,0",
            fgs_table=str(fgs_table),
-           progress=2, sd_clip=src_sd).encode(final, outfile=output)
+           progress=2, sd_clip=src_sd, resumable=False).encode(final, outfile=output)
 else:
     final.set_output()
